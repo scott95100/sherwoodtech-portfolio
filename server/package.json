@@ -1,7 +1,7 @@
 {
   "name": "portfolio-server",
   "version": "1.0.0",
-  "description": "Backend server for Scott's Portfolio Site",
+  "description": "Backend server for Scott's Portfolio Site - Railway Deploy",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
