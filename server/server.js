@@ -75,7 +75,8 @@ app.listen(PORT, () => {
   console.log('Environment check:', {
     hasJwtSecret: !!process.env.JWT_SECRET,
     hasMongoUri: !!process.env.MONGODB_URI,
-    nodeEnv: process.env.NODE_ENV
+    nodeEnv: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
   });
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
