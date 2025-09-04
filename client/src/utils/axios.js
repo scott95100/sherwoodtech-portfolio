@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Set base URL for all axios requests
 const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-backend-url.railway.app' // You'll replace this with your actual backend URL
+  ? 'https://sherwoodtech-portfolio-production.up.railway.app'
   : process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
 axios.defaults.baseURL = API_URL;
