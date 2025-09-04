@@ -67,6 +67,11 @@ app.use('*', (req, res) => {
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${port}`);
+console.log('Environment check:', {
+  hasJwtSecret: !!process.env.JWT_SECRET,
+  hasMongoUri: !!process.env.MONGODB_URI,
+  nodeEnv: process.env.NODE_ENV
+});
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
