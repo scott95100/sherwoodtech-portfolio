@@ -81,7 +81,10 @@ app.listen(PORT, () => {
     hasMongoUri: !!process.env.MONGODB_URI,
     nodeEnv: process.env.NODE_ENV,
     timestamp: new Date().toISOString(),
-    allEnvKeys: Object.keys(process.env).filter(key => key.includes('MONGO') || key.includes('JWT') || key.includes('NODE'))
+    totalEnvVars: Object.keys(process.env).length,
+    relevantKeys: Object.keys(process.env).filter(key => 
+      key.includes('MONGO') || key.includes('JWT') || key.includes('NODE') || key.includes('PORT')
+    )
   });
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
