@@ -1,0 +1,25 @@
+{
+  "name": "scott-portfolio-site",
+  "version": "1.0.0",
+  "description": "Professional Software Engineering Portfolio Site - MERN Stack",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "keywords": [
+    "portfolio",
+    "mern",
+    "react",
+    "node",
+    "mongodb"
+  ],
+  "author": "Scott Sherwood",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
