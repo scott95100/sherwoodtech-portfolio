@@ -1,0 +1,12 @@
+{
+  "name": "sherwoodtech-portfolio",
+  "version": "1.0.0",
+  "description": "Scott Sherwood Portfolio Site",
+  "scripts": {
+    "build": "cd server && npm install",
+    "start": "cd server && npm start"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
