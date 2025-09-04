@@ -32,7 +32,12 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/portfolio', {
+const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://portfolio-admin:5B5pSpU7YT1fyOeU@cluster0.jeg3hhb.mongodb.net/portfolio';
+console.log('Connecting to MongoDB...');
+console.log('MONGODB_URI from env:', !!process.env.MONGODB_URI);
+console.log('Using URI:', mongoUri.substring(0, 20) + '...');
+
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
