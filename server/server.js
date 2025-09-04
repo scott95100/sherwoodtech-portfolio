@@ -80,7 +80,8 @@ app.listen(PORT, () => {
     hasJwtSecret: !!process.env.JWT_SECRET,
     hasMongoUri: !!process.env.MONGODB_URI,
     nodeEnv: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    allEnvKeys: Object.keys(process.env).filter(key => key.includes('MONGO') || key.includes('JWT') || key.includes('NODE'))
   });
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
