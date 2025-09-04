@@ -197,6 +197,21 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
+// @route   GET /api/auth/test
+// @desc    Test route for debugging
+// @access  Public
+router.get('/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Auth route is working',
+    environment: {
+      nodeEnv: process.env.NODE_ENV,
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasMongoUri: !!process.env.MONGODB_URI
+    }
+  });
+});
+
 // @route   POST /api/auth/logout
 // @desc    Logout user (client-side token removal)
 // @access  Private
