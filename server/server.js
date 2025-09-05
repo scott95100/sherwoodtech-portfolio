@@ -33,16 +33,29 @@ app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection
 const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://portfolio-admin:5B5pSpU7YT1fyOeU@cluster0.jeg3hhb.mongodb.net/portfolio';
-console.log('Connecting to MongoDB...');
+console.log('🔍 MongoDB Configuration:');
 console.log('MONGODB_URI from env:', !!process.env.MONGODB_URI);
-console.log('Using URI:', mongoUri.substring(0, 20) + '...');
+console.log('Using URI:', mongoUri.substring(0, 25) + '...');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT);
 
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected successfully'))
-.catch(err => console.error('MongoDB connection error:', err));
+.then(() => {
+  console.log('✅ MongoDB connected successfully');
+  console.log('📊 Database ready for requests');
+})
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err.message);
+  console.error('🔧 Connection details:', {
+    uri: mongoUri.substring(0, 25) + '...',
+    error: err.name,
+    reason: err.reason?.message || 'Unknown'
+  });
+  // Don't exit process - let server continue for debugging
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
