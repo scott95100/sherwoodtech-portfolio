@@ -50,6 +50,15 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/portfolio', require('./routes/portfolio'));
 app.use('/api/admin', require('./routes/admin'));
 
+// Simple health check for Railway
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    port: PORT 
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -80,16 +89,18 @@ app.use('*', (req, res) => {
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 Server accessible at http://0.0.0.0:${PORT}`);
-  console.log('🔧 Environment check:', {
+  console.log(`Server running on port ${PORT}`);
+  console.log('Environment check:', {
     hasJwtSecret: !!process.env.JWT_SECRET,
     hasMongoUri: !!process.env.MONGODB_URI,
     nodeEnv: process.env.NODE_ENV,
     timestamp: new Date().toISOString(),
+    totalEnvVars: Object.keys(process.env).length,
+    relevantKeys: Object.keys(process.env).filter(key => 
+      key.includes('MONGO') || key.includes('JWT') || key.includes('NODE') || key.includes('PORT')
+    ),
     actualPort: PORT,
     railwayPort: process.env.PORT
   });
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log('✅ Server is ready to accept connections!');
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
