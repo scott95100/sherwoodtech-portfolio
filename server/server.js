@@ -77,21 +77,19 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log('Environment check:', {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 Server accessible at http://0.0.0.0:${PORT}`);
+  console.log('🔧 Environment check:', {
     hasJwtSecret: !!process.env.JWT_SECRET,
     hasMongoUri: !!process.env.MONGODB_URI,
     nodeEnv: process.env.NODE_ENV,
     timestamp: new Date().toISOString(),
-    totalEnvVars: Object.keys(process.env).length,
-    relevantKeys: Object.keys(process.env).filter(key => 
-      key.includes('MONGO') || key.includes('JWT') || key.includes('NODE') || key.includes('PORT')
-    ),
     actualPort: PORT,
     railwayPort: process.env.PORT
   });
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log('✅ Server is ready to accept connections!');
 });

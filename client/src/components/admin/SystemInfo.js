@@ -273,12 +273,12 @@ const SystemInfo = () => {
               <div className="value">{new Date().toLocaleString()}</div>
             </SingleInfoItem>
             <InfoItem>
-              <div className="label">Process ID</div>
-              <div className="value">{process.pid || 'N/A'}</div>
+              <div className="label">Client Type</div>
+              <div className="value">React App</div>
             </InfoItem>
             <InfoItem>
-              <div className="label">Platform</div>
-              <div className="value">{process.platform || 'N/A'}</div>
+              <div className="label">User Agent</div>
+              <div className="value">{navigator.userAgent?.split(' ')[0] || 'N/A'}</div>
             </InfoItem>
           </InfoGrid>
         </SystemCard>
