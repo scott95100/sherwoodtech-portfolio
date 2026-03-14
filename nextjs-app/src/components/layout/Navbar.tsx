@@ -1,0 +1,128 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiMenu, FiX } from 'react-icons/fi';
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/contact', label: 'Contact' },
+];
+
+export default function Navbar() {
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+      <nav className="section-container flex items-center justify-between h-16">
+        {/* Logo */}
+        <Link href="/" className="text-xl font-bold text-teal-DEFAULT hover:opacity-80 transition-opacity">
+          Scott Sherwood
+        </Link>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`font-medium transition-colors duration-200 hover:text-teal-DEFAULT ${
+                pathname === link.href ? 'text-teal-DEFAULT' : 'text-gray-600'
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          {session ? (
+            <div className="flex items-center gap-3">
+              {session.user?.role === 'ADMIN' && (
+                <Link href="/admin" className="font-medium text-gray-600 hover:text-teal-DEFAULT">
+                  Admin
+                </Link>
+              )}
+              <Link href="/dashboard" className="font-medium text-gray-600 hover:text-teal-DEFAULT">
+                Dashboard
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="btn-secondary text-sm px-4 py-2"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link href="/login" className="btn-primary text-sm px-4 py-2">
+              Sign In
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden text-gray-600 hover:text-teal-DEFAULT"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+        >
+          {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+      </nav>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-gray-100 bg-white"
+          >
+            <div className="section-container py-4 flex flex-col gap-3">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`font-medium py-2 transition-colors hover:text-teal-DEFAULT ${
+                    pathname === link.href ? 'text-teal-DEFAULT' : 'text-gray-600'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              {session ? (
+                <>
+                  {session.user?.role === 'ADMIN' && (
+                    <Link href="/admin" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-gray-600">
+                      Admin
+                    </Link>
+                  )}
+                  <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-gray-600">
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => { signOut({ callbackUrl: '/' }); setMenuOpen(false); }}
+                    className="btn-secondary text-sm text-left"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link href="/login" onClick={() => setMenuOpen(false)} className="btn-primary text-sm text-center">
+                  Sign In
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}
