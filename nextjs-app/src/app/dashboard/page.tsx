@@ -185,7 +185,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-gray-800">{p.title}</h3>
                       {p.featured && (
-                        <span className="text-xs bg-teal-DEFAULT text-white px-2 py-0.5 rounded-full">Featured</span>
+                        <span className="text-xs bg-brand text-white px-2 py-0.5 rounded-full">Featured</span>
                       )}
                     </div>
                     <p className="text-gray-500 text-sm mb-2 line-clamp-2">{p.description}</p>
@@ -196,12 +196,12 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex gap-3">
                       {p.githubUrl && (
-                        <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-teal-DEFAULT flex items-center gap-1">
+                        <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand flex items-center gap-1">
                           <FiGithub size={12} /> GitHub
                         </a>
                       )}
                       {p.liveUrl && (
-                        <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-teal-DEFAULT flex items-center gap-1">
+                        <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand flex items-center gap-1">
                           <FiExternalLink size={12} /> Live
                         </a>
                       )}

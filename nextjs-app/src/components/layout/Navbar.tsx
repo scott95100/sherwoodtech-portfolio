@@ -9,8 +9,8 @@ import { FiMenu, FiX } from 'react-icons/fi';
 
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/services', label: 'Services' },
   { href: '/about', label: 'About' },
-  { href: '/projects', label: 'Projects' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -23,8 +23,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm">
       <nav className="section-container flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-teal-DEFAULT hover:opacity-80 transition-opacity">
-          Scott Sherwood
+        <Link href="/" className="text-xl font-bold text-brand hover:opacity-80 transition-opacity">
+          STC
         </Link>
 
         {/* Desktop Nav */}
@@ -33,8 +33,8 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`font-medium transition-colors duration-200 hover:text-teal-DEFAULT ${
-                pathname === link.href ? 'text-teal-DEFAULT' : 'text-gray-600'
+              className={`font-medium transition-colors duration-200 hover:text-brand ${
+                pathname === link.href ? 'text-brand' : 'text-gray-600'
               }`}
             >
               {link.label}
@@ -44,13 +44,15 @@ export default function Navbar() {
           {session ? (
             <div className="flex items-center gap-3">
               {session.user?.role === 'ADMIN' && (
-                <Link href="/admin" className="font-medium text-gray-600 hover:text-teal-DEFAULT">
+                <Link href="/admin" className="font-medium text-gray-600 hover:text-brand">
                   Admin
                 </Link>
               )}
-              <Link href="/dashboard" className="font-medium text-gray-600 hover:text-teal-DEFAULT">
-                Dashboard
-              </Link>
+              {(session.user?.role === 'CLIENT' || session.user?.role === 'ADMIN') && (
+                <Link href="/client-portal" className="font-medium text-gray-600 hover:text-brand">
+                  Client Portal
+                </Link>
+              )}
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="btn-secondary text-sm px-4 py-2"
@@ -60,14 +62,14 @@ export default function Navbar() {
             </div>
           ) : (
             <Link href="/login" className="btn-primary text-sm px-4 py-2">
-              Sign In
+              Client Login
             </Link>
           )}
         </div>
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden text-gray-600 hover:text-teal-DEFAULT"
+          className="md:hidden text-gray-600 hover:text-brand"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -90,8 +92,8 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`font-medium py-2 transition-colors hover:text-teal-DEFAULT ${
-                    pathname === link.href ? 'text-teal-DEFAULT' : 'text-gray-600'
+                  className={`font-medium py-2 transition-colors hover:text-brand ${
+                    pathname === link.href ? 'text-brand' : 'text-gray-600'
                   }`}
                 >
                   {link.label}
@@ -104,9 +106,11 @@ export default function Navbar() {
                       Admin
                     </Link>
                   )}
-                  <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-gray-600">
-                    Dashboard
-                  </Link>
+                  {(session.user?.role === 'CLIENT' || session.user?.role === 'ADMIN') && (
+                    <Link href="/client-portal" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-gray-600">
+                      Client Portal
+                    </Link>
+                  )}
                   <button
                     onClick={() => { signOut({ callbackUrl: '/' }); setMenuOpen(false); }}
                     className="btn-secondary text-sm text-left"
@@ -116,7 +120,7 @@ export default function Navbar() {
                 </>
               ) : (
                 <Link href="/login" onClick={() => setMenuOpen(false)} className="btn-primary text-sm text-center">
-                  Sign In
+                  Client Login
                 </Link>
               )}
             </div>

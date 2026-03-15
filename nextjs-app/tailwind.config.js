@@ -8,13 +8,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        teal: {
+        brand: {
           DEFAULT: '#008080',
           dark: '#006666',
           light: '#00a0a0',
-        },
-        sky: {
-          dark: '#0d7390',
+          50: '#f0fafa',
+          100: '#cceeee',
         },
         rackley: '#5d8aa8',
       },

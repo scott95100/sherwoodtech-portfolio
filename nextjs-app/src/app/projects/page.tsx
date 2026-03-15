@@ -47,7 +47,7 @@ export default async function ProjectsPage() {
                   </div>
 
                   <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-xl font-bold text-teal-DEFAULT mb-3">{project.title}</h3>
+                    <h3 className="text-xl font-bold text-brand mb-3">{project.title}</h3>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">
                       {project.description}
                     </p>
@@ -71,7 +71,7 @@ export default async function ProjectsPage() {
                           href={project.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-sm font-medium text-teal-DEFAULT hover:text-teal-dark"
+                          className="flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-dark"
                         >
                           <FiGithub size={14} /> GitHub
                         </a>
@@ -81,7 +81,7 @@ export default async function ProjectsPage() {
                           href={project.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-sm font-medium text-teal-DEFAULT hover:text-teal-dark"
+                          className="flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-dark"
                         >
                           <FiExternalLink size={14} /> Live Demo
                         </a>

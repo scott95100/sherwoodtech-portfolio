@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { FiSend, FiMail, FiGithub, FiLinkedin } from 'react-icons/fi';
+import { FiSend, FiMail } from 'react-icons/fi';
 
 type FormData = {
   name: string;
@@ -31,7 +31,7 @@ export default function ContactPage() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Something went wrong');
-      toast.success('Message sent! I\'ll get back to you soon.');
+      toast.success('Message sent! We\'ll be in touch within 24 hours.');
       reset();
     } catch (err: any) {
       toast.error(err.message || 'Failed to send message');
@@ -47,7 +47,7 @@ export default function ContactPage() {
         <div className="section-container text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h1>
           <p className="text-teal-100 text-lg max-w-xl mx-auto">
-            Have a project in mind or want to chat? I&apos;d love to hear from you.
+            Let&apos;s discuss your project. We&apos;ll respond within 24 hours.
           </p>
         </div>
       </section>
@@ -56,38 +56,19 @@ export default function ContactPage() {
         <div className="section-container grid md:grid-cols-2 gap-12">
           {/* Contact Info */}
           <div>
-            <h2 className="text-2xl font-bold text-teal-DEFAULT mb-6">Contact Info</h2>
+            <h2 className="text-2xl font-bold text-brand mb-6">Contact STC</h2>
             <p className="text-gray-600 mb-8 leading-relaxed">
-              I&apos;m always open to discussing new projects, creative ideas, or opportunities to
-              be part of something great. Fill out the form and I&apos;ll get back to you as soon as
-              possible.
+              Have a project in mind or want to explore a consulting engagement? Fill out the form
+              and we&apos;ll get back to you within 24 hours — no commitment required.
             </p>
 
             <div className="space-y-4">
               <a
-                href="mailto:scott@sherwoodtech.dev"
-                className="flex items-center gap-3 text-gray-600 hover:text-teal-DEFAULT transition-colors"
+                href="mailto:sherwoodtechconsulting@gmail.com"
+                className="flex items-center gap-3 text-gray-600 hover:text-brand transition-colors"
               >
-                <FiMail size={20} className="text-teal-DEFAULT" />
-                scott@sherwoodtech.dev
-              </a>
-              <a
-                href="https://github.com/scott95100"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 text-gray-600 hover:text-teal-DEFAULT transition-colors"
-              >
-                <FiGithub size={20} className="text-teal-DEFAULT" />
-                github.com/scott95100
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 text-gray-600 hover:text-teal-DEFAULT transition-colors"
-              >
-                <FiLinkedin size={20} className="text-teal-DEFAULT" />
-                LinkedIn Profile
+                <FiMail size={20} className="text-brand" />
+                sherwoodtechconsulting@gmail.com
               </a>
             </div>
           </div>
@@ -137,7 +118,7 @@ export default function ContactPage() {
                   minLength: { value: 10, message: 'Message must be at least 10 characters' },
                 })}
                 className={`input min-h-[120px] resize-y ${errors.message ? 'input-error' : ''}`}
-                placeholder="Tell me about your project..."
+                placeholder="Tell us about your project..."
               />
               {errors.message && (
                 <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>
