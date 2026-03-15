@@ -7,23 +7,23 @@ import { FiArrowRight, FiCode, FiServer, FiShield, FiUsers } from 'react-icons/f
 const services = [
   {
     icon: <FiCode size={28} />,
-    title: 'Web & App Development',
-    desc: 'Custom full-stack applications built with modern frameworks — React, Next.js, Node.js, and PostgreSQL.',
+    title: 'Salesforce Development',
+    desc: 'Custom LWC components, Apex classes, automation flows, and full org implementations — built for real-world production use.',
   },
   {
     icon: <FiServer size={28} />,
-    title: 'Cloud & Infrastructure',
-    desc: 'Scalable cloud deployments on AWS, Vercel, and Railway. CI/CD pipelines, Docker, and managed databases.',
+    title: 'Full Stack Web Development',
+    desc: 'End-to-end React, Next.js, and Node.js applications with cloud deployments on AWS and Vercel.',
   },
   {
     icon: <FiShield size={28} />,
     title: 'API & Backend Engineering',
-    desc: 'Robust REST and GraphQL APIs, authentication systems, third-party integrations, and database architecture.',
+    desc: 'Robust REST APIs, Salesforce integrations, authentication systems, and scalable database architecture.',
   },
   {
     icon: <FiUsers size={28} />,
     title: 'Technology Consulting',
-    desc: 'Strategic guidance on stack selection, architecture decisions, code reviews, and technical roadmapping.',
+    desc: 'Strategic guidance on stack selection, Salesforce org architecture, code reviews, and technical roadmapping.',
   },
 ];
 
@@ -52,8 +52,8 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15 }}
             >
-              We Build Technology <br className="hidden sm:block" />
-              That Drives Growth
+              Salesforce & Full Stack <br className="hidden sm:block" />
+              Development Experts
             </motion.h1>
             <motion.p
               className="text-lg text-teal-100 max-w-2xl mx-auto mb-10 leading-relaxed"
@@ -61,8 +61,8 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.25 }}
             >
-              Full-stack development and technology consulting for businesses that need
-              clean, scalable, and reliable software — delivered on time.
+              LWC, Apex, React, Next.js, and cloud infrastructure — delivered by a senior engineer
+              who takes ownership from day one.
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -116,16 +116,18 @@ export default function HomePage() {
           <div>
             <p className="text-brand font-semibold uppercase tracking-widest text-sm mb-3">Why STC</p>
             <h2 className="text-4xl font-bold text-gray-800 mb-6 leading-tight">
-              Senior-level engineering without the overhead
+              Senior-level Salesforce & web engineering without the overhead
             </h2>
             <p className="text-gray-600 leading-relaxed mb-4">
-              Sherwood Technology Consulting brings enterprise-grade development expertise to
-              businesses of all sizes. Whether you need a new product built from scratch, an
-              existing system modernized, or a trusted technical partner — we deliver.
+              Sherwood Technology Consulting brings deep Salesforce platform expertise — LWC,
+              Apex, and org architecture — alongside modern full-stack web development. Whether
+              you need a custom Salesforce solution, a new web product, or a trusted technical
+              partner for both, we deliver.
             </p>
             <p className="text-gray-600 leading-relaxed mb-8">
-              Every project is handled with direct communication, transparent progress tracking,
-              and a focus on long-term maintainability — not just shipping fast.
+              You work directly with Scott, the engineer building your product. Clear communication,
+              transparent progress tracking, and a focus on long-term maintainability — not just
+              shipping fast.
             </p>
             <Link href="/about" className="btn-primary inline-flex items-center gap-2">
               About STC <FiArrowRight />

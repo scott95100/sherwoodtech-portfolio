@@ -1,7 +1,21 @@
 import Link from 'next/link';
-import { FiArrowRight, FiCode, FiServer, FiShield, FiUsers, FiDatabase, FiCloud } from 'react-icons/fi';
+import { FiArrowRight, FiCode, FiServer, FiShield, FiUsers, FiDatabase, FiCloud, FiZap } from 'react-icons/fi';
 
 const services = [
+  {
+    icon: <FiZap size={32} />,
+    title: 'Salesforce Development',
+    desc: 'Full-cycle Salesforce development from custom LWC components and Apex classes to complex automation, integrations, and org architecture.',
+    features: [
+      'Lightning Web Components (LWC)',
+      'Apex classes, triggers & batch jobs',
+      'Flow & Process Builder automation',
+      'REST/SOAP API integrations',
+      'Custom objects & schema design',
+      'Salesforce org migrations & cleanup',
+    ],
+    highlight: true,
+  },
   {
     icon: <FiCode size={32} />,
     title: 'Web & App Development',
@@ -20,7 +34,7 @@ const services = [
     features: [
       'REST & GraphQL API design',
       'Authentication & authorization',
-      'Third-party integrations',
+      'Salesforce Connected App integrations',
       'Webhook & event systems',
     ],
   },
@@ -63,9 +77,9 @@ const services = [
     desc: 'Strategic technical guidance to help you make the right decisions early — saving time, money, and rework down the road.',
     features: [
       'Stack selection & architecture',
+      'Salesforce org assessments',
       'Code & system audits',
       'Technical roadmapping',
-      'Team advisory & mentorship',
     ],
   },
 ];
@@ -88,8 +102,8 @@ export default function ServicesPage() {
           </p>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Our Services</h1>
           <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            From first line of code to production deployment, STC handles your full technology stack
-            with precision and care.
+            From Salesforce LWC and Apex to full-stack web apps and cloud infrastructure — STC
+            covers your entire technology stack with senior-level expertise.
           </p>
         </div>
       </section>
@@ -99,7 +113,15 @@ export default function ServicesPage() {
         <div className="section-container">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((s) => (
-              <div key={s.title} className="card p-8">
+              <div
+                key={s.title}
+                className={`card p-8 ${'highlight' in s && s.highlight ? 'ring-2 ring-brand' : ''}`}
+              >
+                {'highlight' in s && s.highlight && (
+                  <span className="inline-block bg-brand text-white text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
+                    Core Expertise
+                  </span>
+                )}
                 <div className="text-brand mb-5">{s.icon}</div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">{s.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed mb-5">{s.desc}</p>

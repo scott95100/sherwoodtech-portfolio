@@ -25,10 +25,10 @@ const values = [
 ];
 
 const stack = {
+  Salesforce: ['Lightning Web Components', 'Apex', 'SOQL / SOSL', 'Flows & Automation', 'REST/SOAP APIs', 'Salesforce DX'],
   Frontend: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
   Backend: ['Node.js', 'Express.js', 'REST APIs', 'GraphQL', 'NextAuth'],
-  Database: ['PostgreSQL', 'Prisma ORM', 'MongoDB', 'Redis'],
-  DevOps: ['AWS', 'Vercel', 'Railway', 'Docker', 'CI/CD Pipelines'],
+  'Database & DevOps': ['PostgreSQL', 'Prisma ORM', 'MongoDB', 'AWS', 'Vercel', 'Docker'],
 };
 
 export default function AboutPage() {
@@ -59,18 +59,20 @@ export default function AboutPage() {
             </p>
             <h2 className="text-3xl font-bold text-gray-800 mb-6">Scott Sherwood</h2>
             <p className="text-gray-600 mb-4 leading-relaxed">
-              Scott is a full-stack software engineer with deep expertise in modern web technologies.
-              He founded Sherwood Technology Consulting to bring senior-level engineering to businesses
-              that need results — without the overhead of a large agency.
+              Scott is a full-stack software engineer and certified Salesforce developer with deep
+              expertise across the modern web stack and the Salesforce platform. He founded Sherwood
+              Technology Consulting to bring senior-level engineering to businesses that need
+              results — without the overhead of a large agency.
             </p>
             <p className="text-gray-600 mb-4 leading-relaxed">
-              Specializing in React, Next.js, Node.js, and PostgreSQL, Scott has designed and
-              delivered production systems across a range of industries — from SaaS platforms to
-              client-facing web portals.
+              On the Salesforce side, Scott builds production-grade Lightning Web Components,
+              complex Apex solutions, and end-to-end org automations. On the web side, he
+              specializes in React, Next.js, Node.js, and PostgreSQL — designing and delivering
+              full-stack systems from architecture to deployment.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Every client gets direct access to Scott throughout the engagement. No hand-offs,
-              no account managers — just clear communication and quality work.
+              Every client works directly with Scott. No hand-offs, no account managers — just
+              clear communication, transparent progress tracking, and quality work delivered on time.
             </p>
           </div>
           <div className="bg-gradient-to-br from-[#008080] to-[#0d7390] rounded-2xl flex items-center justify-center min-h-[300px] text-white text-lg font-medium">
