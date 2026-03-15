@@ -154,10 +154,10 @@ export default function ServicesPage() {
             Schedule a free 30-minute consultation to discuss your project.
           </p>
           <Link
-            href="/contact"
+            href="/pricing"
             className="bg-white text-brand font-semibold px-10 py-4 rounded-lg hover:bg-teal-50 transition-colors inline-flex items-center gap-2 text-lg"
           >
-            Start a Conversation <FiArrowRight />
+            Get a Free Quote <FiArrowRight />
           </Link>
         </div>
       </section>

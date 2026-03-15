@@ -71,7 +71,7 @@ export default function HomePage() {
               transition={{ duration: 0.7, delay: 0.35 }}
             >
               <Link
-                href="/contact"
+                href="/pricing"
                 className="bg-white text-brand font-semibold px-8 py-3 rounded-lg hover:bg-teal-50 transition-colors flex items-center justify-center gap-2"
               >
                 Start a Project <FiArrowRight />
@@ -157,7 +157,7 @@ export default function HomePage() {
             Tell us about your project and we&apos;ll get back to you within 24 hours.
           </p>
           <Link
-            href="/contact"
+            href="/pricing"
             className="bg-white text-brand font-semibold px-10 py-4 rounded-lg hover:bg-teal-50 transition-colors inline-flex items-center gap-2 text-lg"
           >
             Get a Free Consultation <FiArrowRight />

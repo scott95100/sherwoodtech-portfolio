@@ -127,10 +127,10 @@ export default function AboutPage() {
             Have a project in mind? We&apos;d love to hear about it.
           </p>
           <Link
-            href="/contact"
+            href="/pricing"
             className="bg-white text-brand font-semibold px-8 py-3 rounded-lg hover:bg-teal-50 transition-colors inline-flex items-center gap-2"
           >
-            Contact Us <FiArrowRight />
+            Get a Quote <FiArrowRight />
           </Link>
         </div>
       </section>
