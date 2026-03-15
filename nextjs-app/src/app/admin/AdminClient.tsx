@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp } from 'react-icons/fi';
+import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp, FiRadio, FiCopy, FiEdit2, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 type User = { id: string; name: string; email: string; role: string; createdAt: Date; isActive: boolean };
@@ -18,7 +18,21 @@ type Inquiry = {
   description: string; complexity: string; features: string[];
   estimatedLow: number; estimatedHigh: number; estimatedWeeks: number;
   desiredTimeline: string; status: string; adminNotes: string | null;
+  utmSource: string | null; utmCampaign: string | null; utmMedium: string | null;
   createdAt: string;
+};
+
+type CampaignPost = {
+  id: string; campaignId: string; platform: string; content: string;
+  status: string; scheduledAt: string | null; notes: string | null; createdAt: string;
+};
+
+type Campaign = {
+  id: string; name: string; goal: string | null; platforms: string[];
+  status: string; startDate: string | null; endDate: string | null;
+  notes: string | null; utmSlug: string; createdAt: string;
+  posts: { id: string; platform: string; status: string }[];
+  leadCount: number;
 };
 
 const statusColors: Record<string, string> = {
@@ -41,7 +55,7 @@ export default function AdminClient({
   projects: Project[];
   inquiries: Inquiry[];
 }) {
-  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads'>('users');
+  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'campaigns'>('users');
   const [msgList, setMsgList] = useState(messages);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [clientProjects, setClientProjects] = useState<ClientProject[]>([]);
@@ -52,6 +66,24 @@ export default function AdminClient({
   const [inviteLoading, setInviteLoading] = useState(false);
   const [clientsLoaded, setClientsLoaded] = useState(false);
   const [invitesLoaded, setInvitesLoaded] = useState(false);
+
+  // ── Campaign state ──────────────────────────────────────────────────────────
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [campaignsLoaded, setCampaignsLoaded] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [campaignPosts, setCampaignPosts] = useState<CampaignPost[]>([]);
+  const [postsLoaded, setPostsLoaded] = useState(false);
+  const [showCampaignForm, setShowCampaignForm] = useState(false);
+  const [showPostForm, setShowPostForm] = useState(false);
+  const [editingPost, setEditingPost] = useState<CampaignPost | null>(null);
+  const [campaignForm, setCampaignForm] = useState({
+    name: '', goal: '', platforms: [] as string[], status: 'DRAFT',
+    startDate: '', endDate: '', notes: '', utmSlug: '',
+  });
+  const [postForm, setPostForm] = useState({
+    platform: 'linkedin', content: '', status: 'DRAFT', scheduledAt: '', notes: '',
+  });
+  const [campaignLoading, setCampaignLoading] = useState(false);
 
   // New Client Project form state
   const [cpForm, setCpForm] = useState({
@@ -205,10 +237,149 @@ export default function AdminClient({
     }
   };
 
+  // ── Campaign functions ──────────────────────────────────────────────────────
+  const loadCampaigns = async () => {
+    if (campaignsLoaded) return;
+    try {
+      const res = await fetch('/api/admin/campaigns');
+      const data = await res.json();
+      setCampaigns(data.campaigns || []);
+      setCampaignsLoaded(true);
+    } catch {
+      toast.error('Failed to load campaigns');
+    }
+  };
+
+  const loadCampaignPosts = async (campaignId: string) => {
+    setPostsLoaded(false);
+    try {
+      const res = await fetch(`/api/admin/campaigns/${campaignId}/posts`);
+      const data = await res.json();
+      setCampaignPosts(data.posts || []);
+      setPostsLoaded(true);
+    } catch {
+      toast.error('Failed to load posts');
+    }
+  };
+
+  const createCampaign = async () => {
+    if (!campaignForm.name || !campaignForm.utmSlug) return toast.error('Name and UTM slug required');
+    setCampaignLoading(true);
+    try {
+      const res = await fetch('/api/admin/campaigns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(campaignForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setCampaigns((prev) => [{ ...data.campaign, posts: [], leadCount: 0 }, ...prev]);
+      setCampaignForm({ name: '', goal: '', platforms: [], status: 'DRAFT', startDate: '', endDate: '', notes: '', utmSlug: '' });
+      setShowCampaignForm(false);
+      toast.success('Campaign created');
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setCampaignLoading(false);
+    }
+  };
+
+  const updateCampaignStatus = async (id: string, status: string) => {
+    try {
+      const res = await fetch(`/api/admin/campaigns/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setCampaigns((prev) => prev.map((c) => c.id === id ? { ...c, status } : c));
+      if (selectedCampaign?.id === id) setSelectedCampaign((prev) => prev ? { ...prev, status } : null);
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  const deleteCampaign = async (id: string) => {
+    if (!confirm('Delete this campaign and all its posts?')) return;
+    try {
+      await fetch(`/api/admin/campaigns/${id}`, { method: 'DELETE' });
+      setCampaigns((prev) => prev.filter((c) => c.id !== id));
+      if (selectedCampaign?.id === id) { setSelectedCampaign(null); setCampaignPosts([]); }
+      toast.success('Campaign deleted');
+    } catch {
+      toast.error('Failed to delete');
+    }
+  };
+
+  const createPost = async () => {
+    if (!selectedCampaign || !postForm.content) return toast.error('Content is required');
+    setCampaignLoading(true);
+    try {
+      const res = await fetch(`/api/admin/campaigns/${selectedCampaign.id}/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setCampaignPosts((prev) => [data.post, ...prev]);
+      setPostForm({ platform: 'linkedin', content: '', status: 'DRAFT', scheduledAt: '', notes: '' });
+      setShowPostForm(false);
+      toast.success('Post saved');
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setCampaignLoading(false);
+    }
+  };
+
+  const updatePost = async () => {
+    if (!editingPost || !selectedCampaign) return;
+    setCampaignLoading(true);
+    try {
+      const res = await fetch(`/api/admin/campaigns/${selectedCampaign.id}/posts/${editingPost.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setCampaignPosts((prev) => prev.map((p) => p.id === editingPost.id ? data.post : p));
+      setEditingPost(null);
+      setPostForm({ platform: 'linkedin', content: '', status: 'DRAFT', scheduledAt: '', notes: '' });
+      setShowPostForm(false);
+      toast.success('Post updated');
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setCampaignLoading(false);
+    }
+  };
+
+  const deletePost = async (postId: string) => {
+    if (!selectedCampaign) return;
+    if (!confirm('Delete this post?')) return;
+    try {
+      await fetch(`/api/admin/campaigns/${selectedCampaign.id}/posts/${postId}`, { method: 'DELETE' });
+      setCampaignPosts((prev) => prev.filter((p) => p.id !== postId));
+      toast.success('Post deleted');
+    } catch {
+      toast.error('Failed to delete');
+    }
+  };
+
+  const copyUtmLink = (slug: string) => {
+    const url = `${window.location.origin}/pricing?utm_source=linkedin&utm_medium=social&utm_campaign=${slug}`;
+    navigator.clipboard.writeText(url);
+    toast.success('UTM link copied!');
+  };
+
   const tabs = [
     { key: 'users',       label: 'Users',           icon: <FiUsers size={16} />,      count: users.length },
     { key: 'messages',    label: 'Messages',         icon: <FiMail size={16} />,       count: msgList.filter((m) => m.status === 'UNREAD').length },
     { key: 'leads',       label: 'Leads',            icon: <FiTrendingUp size={16} />, count: inquiries.filter((i) => i.status === 'NEW').length },
+    { key: 'campaigns',   label: 'Campaigns',        icon: <FiRadio size={16} />,      count: campaigns.filter((c) => c.status === 'ACTIVE').length },
     { key: 'clients',     label: 'Client Projects',  icon: <FiFolder size={16} />,     count: null },
     { key: 'invitations', label: 'Invitations',      icon: <FiLink size={16} />,       count: null },
     { key: 'projects',    label: 'Portfolio',        icon: <FiFolder size={16} />,     count: projects.length },
@@ -255,6 +426,7 @@ export default function AdminClient({
                   setTab(t.key);
                   if (t.key === 'invitations') loadInvitations();
                   if (t.key === 'clients') loadClientProjects();
+                  if (t.key === 'campaigns') loadCampaigns();
                 }}
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
                   tab === t.key
@@ -708,6 +880,358 @@ export default function AdminClient({
                           ✉ Draft Proposal Email
                         </a>
                       </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ── Campaigns Tab ── */}
+            {tab === 'campaigns' && (
+              <div className="flex gap-6 min-h-[500px]">
+                {/* Left — Campaign List */}
+                <div className="w-72 shrink-0 border-r border-gray-100 pr-4 space-y-2">
+                  <button
+                    onClick={() => { setShowCampaignForm(true); setShowPostForm(false); setSelectedCampaign(null); }}
+                    className="btn-primary w-full text-sm flex items-center justify-center gap-2 mb-3"
+                  >
+                    <FiPlus size={14} /> New Campaign
+                  </button>
+                  {campaigns.length === 0 && (
+                    <p className="text-gray-400 text-sm text-center py-8">No campaigns yet</p>
+                  )}
+                  {campaigns.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setSelectedCampaign(c);
+                        setShowCampaignForm(false);
+                        setShowPostForm(false);
+                        loadCampaignPosts(c.id);
+                      }}
+                      className={`w-full text-left rounded-xl p-3 border transition-colors ${
+                        selectedCampaign?.id === c.id
+                          ? 'border-brand bg-brand/5'
+                          : 'border-gray-100 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-1">
+                        <span className="font-medium text-sm text-gray-800 leading-snug">{c.name}</span>
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full shrink-0 ${
+                          c.status === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+                          c.status === 'DRAFT' ? 'bg-gray-100 text-gray-500' :
+                          c.status === 'PAUSED' ? 'bg-yellow-100 text-yellow-700' :
+                          c.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700' :
+                          'bg-red-100 text-red-600'
+                        }`}>{c.status}</span>
+                      </div>
+                      <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                        <span>{c.posts.length} posts</span>
+                        <span>{c.leadCount} leads</span>
+                        <span>{c.platforms.join(', ')}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Right — Campaign Detail or New Form */}
+                <div className="flex-1 min-w-0">
+                  {/* New Campaign Form */}
+                  {showCampaignForm && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-bold text-gray-800">New Campaign</h3>
+                        <button onClick={() => setShowCampaignForm(false)}><FiX size={18} className="text-gray-400" /></button>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Campaign Name *</label>
+                          <input className="input w-full" placeholder="e.g. Salesforce Pilot Launch Q2"
+                            value={campaignForm.name} onChange={(e) => setCampaignForm((p) => ({ ...p, name: e.target.value }))} />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">UTM Slug * <span className="text-gray-400 font-normal">(lowercase, hyphens only)</span></label>
+                          <input className="input w-full font-mono" placeholder="e.g. sf-pilot-q2-2026"
+                            value={campaignForm.utmSlug} onChange={(e) => setCampaignForm((p) => ({ ...p, utmSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }))} />
+                          {campaignForm.utmSlug && (
+                            <p className="text-xs text-gray-400 mt-1">
+                              Link: <span className="font-mono">/pricing?utm_source=linkedin&utm_campaign={campaignForm.utmSlug}</span>
+                            </p>
+                          )}
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Goal</label>
+                          <input className="input w-full" placeholder="e.g. Generate 5 Salesforce pilot leads"
+                            value={campaignForm.goal} onChange={(e) => setCampaignForm((p) => ({ ...p, goal: e.target.value }))} />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Platforms</label>
+                          <div className="flex flex-wrap gap-2">
+                            {['linkedin', 'twitter', 'email', 'other'].map((p) => (
+                              <button key={p} onClick={() => setCampaignForm((prev) => ({
+                                ...prev,
+                                platforms: prev.platforms.includes(p) ? prev.platforms.filter((x) => x !== p) : [...prev.platforms, p],
+                              }))}
+                                className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                                  campaignForm.platforms.includes(p) ? 'bg-brand text-white border-brand' : 'bg-white text-gray-600 border-gray-200'
+                                }`}
+                              >{p}</button>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+                          <select className="input w-full" value={campaignForm.status}
+                            onChange={(e) => setCampaignForm((p) => ({ ...p, status: e.target.value }))}>
+                            <option value="DRAFT">Draft</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="PAUSED">Paused</option>
+                            <option value="COMPLETED">Completed</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Start Date</label>
+                          <input type="date" className="input w-full" value={campaignForm.startDate}
+                            onChange={(e) => setCampaignForm((p) => ({ ...p, startDate: e.target.value }))} />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">End Date</label>
+                          <input type="date" className="input w-full" value={campaignForm.endDate}
+                            onChange={(e) => setCampaignForm((p) => ({ ...p, endDate: e.target.value }))} />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Notes</label>
+                          <textarea className="input w-full" rows={2} placeholder="What's the strategy for this campaign?"
+                            value={campaignForm.notes} onChange={(e) => setCampaignForm((p) => ({ ...p, notes: e.target.value }))} />
+                        </div>
+                      </div>
+                      <button onClick={createCampaign} disabled={campaignLoading} className="btn-primary text-sm">
+                        {campaignLoading ? 'Creating...' : 'Create Campaign'}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Campaign Detail */}
+                  {selectedCampaign && !showCampaignForm && (
+                    <div className="space-y-5">
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-bold text-gray-800 text-lg">{selectedCampaign.name}</h3>
+                          {selectedCampaign.goal && <p className="text-gray-500 text-sm mt-0.5">{selectedCampaign.goal}</p>}
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <select
+                            value={selectedCampaign.status}
+                            onChange={(e) => updateCampaignStatus(selectedCampaign.id, e.target.value)}
+                            className="input text-sm"
+                          >
+                            <option value="DRAFT">Draft</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="PAUSED">Paused</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="ARCHIVED">Archived</option>
+                          </select>
+                          <button onClick={() => deleteCampaign(selectedCampaign.id)} className="text-red-400 hover:text-red-600 p-1">
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Stats row */}
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-gray-50 rounded-xl p-3 text-center">
+                          <div className="text-xl font-bold text-brand">{selectedCampaign.leadCount}</div>
+                          <div className="text-xs text-gray-500">Leads Attributed</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-xl p-3 text-center">
+                          <div className="text-xl font-bold text-brand">{campaignPosts.length}</div>
+                          <div className="text-xs text-gray-500">Posts</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-xl p-3 text-center">
+                          <div className="text-xl font-bold text-brand">
+                            {campaignPosts.filter((p) => p.status === 'PUBLISHED').length}
+                          </div>
+                          <div className="text-xs text-gray-500">Published</div>
+                        </div>
+                      </div>
+
+                      {/* UTM Link */}
+                      <div className="bg-brand/5 border border-brand/20 rounded-xl p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-gray-600 mb-0.5">Campaign UTM Link</div>
+                            <div className="font-mono text-xs text-gray-700 truncate">
+                              /pricing?utm_source=linkedin&utm_medium=social&utm_campaign={selectedCampaign.utmSlug}
+                            </div>
+                          </div>
+                          <button onClick={() => copyUtmLink(selectedCampaign.utmSlug)}
+                            className="shrink-0 flex items-center gap-1.5 text-brand text-xs font-semibold hover:underline">
+                            <FiCopy size={13} /> Copy
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Posts */}
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-gray-700 text-sm">Posts</h4>
+                          <button
+                            onClick={() => {
+                              setEditingPost(null);
+                              setPostForm({ platform: 'linkedin', content: '', status: 'DRAFT', scheduledAt: '', notes: '' });
+                              setShowPostForm(true);
+                            }}
+                            className="flex items-center gap-1 text-brand text-sm font-semibold hover:underline"
+                          >
+                            <FiPlus size={14} /> Add Post
+                          </button>
+                        </div>
+
+                        {/* Post form */}
+                        {showPostForm && (
+                          <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-3 border border-gray-200">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-semibold text-gray-700">{editingPost ? 'Edit Post' : 'New Post'}</span>
+                              <button onClick={() => { setShowPostForm(false); setEditingPost(null); }}><FiX size={16} className="text-gray-400" /></button>
+                            </div>
+                            <div className="grid sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-600 mb-1">Platform</label>
+                                <select className="input w-full text-sm" value={postForm.platform}
+                                  onChange={(e) => setPostForm((p) => ({ ...p, platform: e.target.value }))}>
+                                  <option value="linkedin">LinkedIn</option>
+                                  <option value="twitter">Twitter / X</option>
+                                  <option value="email">Email</option>
+                                  <option value="other">Other</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+                                <select className="input w-full text-sm" value={postForm.status}
+                                  onChange={(e) => setPostForm((p) => ({ ...p, status: e.target.value }))}>
+                                  <option value="DRAFT">Draft</option>
+                                  <option value="READY">Ready</option>
+                                  <option value="PUBLISHED">Published</option>
+                                </select>
+                              </div>
+                              <div className="sm:col-span-2">
+                                <div className="flex items-center justify-between mb-1">
+                                  <label className="block text-xs font-semibold text-gray-600">Content *</label>
+                                  <span className={`text-xs ${
+                                    postForm.platform === 'twitter' && postForm.content.length > 260 ? 'text-red-500' :
+                                    postForm.platform === 'twitter' && postForm.content.length > 230 ? 'text-yellow-500' :
+                                    'text-gray-400'
+                                  }`}>
+                                    {postForm.content.length}
+                                    {postForm.platform === 'twitter' && ' / 280'}
+                                    {postForm.platform === 'linkedin' && ' / 3000'}
+                                  </span>
+                                </div>
+                                <textarea
+                                  className="input w-full text-sm font-mono"
+                                  rows={6}
+                                  placeholder={postForm.platform === 'linkedin'
+                                    ? "Write your LinkedIn post here...\n\nTip: Start with a hook, add value, end with a CTA linking to your UTM URL."
+                                    : postForm.platform === 'twitter'
+                                    ? "Write your tweet here (280 chars max)..."
+                                    : "Write your post content here..."}
+                                  value={postForm.content}
+                                  onChange={(e) => setPostForm((p) => ({ ...p, content: e.target.value }))}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-600 mb-1">Scheduled Date</label>
+                                <input type="datetime-local" className="input w-full text-sm" value={postForm.scheduledAt}
+                                  onChange={(e) => setPostForm((p) => ({ ...p, scheduledAt: e.target.value }))} />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-600 mb-1">Notes</label>
+                                <input className="input w-full text-sm" placeholder="Hashtags, target audience..."
+                                  value={postForm.notes} onChange={(e) => setPostForm((p) => ({ ...p, notes: e.target.value }))} />
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={editingPost ? updatePost : createPost}
+                                disabled={campaignLoading}
+                                className="btn-primary text-sm"
+                              >
+                                {campaignLoading ? 'Saving...' : editingPost ? 'Update Post' : 'Save Post'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(
+                                    postForm.content + `\n\n👉 ${window.location.origin}/pricing?utm_source=${postForm.platform}&utm_medium=social&utm_campaign=${selectedCampaign.utmSlug}`
+                                  );
+                                  toast.success('Post + UTM link copied!');
+                                }}
+                                className="btn-secondary text-sm flex items-center gap-1.5"
+                              >
+                                <FiCopy size={13} /> Copy with Link
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Posts list */}
+                        {!postsLoaded && <p className="text-gray-400 text-sm">Loading posts...</p>}
+                        {postsLoaded && campaignPosts.length === 0 && (
+                          <p className="text-gray-400 text-sm text-center py-6">No posts yet — add your first one above</p>
+                        )}
+                        <div className="space-y-3">
+                          {campaignPosts.map((post) => (
+                            <div key={post.id} className="border border-gray-100 rounded-xl p-4 bg-white">
+                              <div className="flex items-start justify-between gap-2 mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full capitalize">{post.platform}</span>
+                                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                    post.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' :
+                                    post.status === 'READY' ? 'bg-blue-100 text-blue-700' :
+                                    'bg-gray-100 text-gray-500'
+                                  }`}>{post.status}</span>
+                                  {post.scheduledAt && (
+                                    <span className="text-xs text-gray-400">
+                                      📅 {new Date(post.scheduledAt).toLocaleDateString()}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <button
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(
+                                        post.content + `\n\n👉 ${window.location.origin}/pricing?utm_source=${post.platform}&utm_medium=social&utm_campaign=${selectedCampaign.utmSlug}`
+                                      );
+                                      toast.success('Copied!');
+                                    }}
+                                    className="text-gray-400 hover:text-brand p-1"
+                                    title="Copy post + link"
+                                  ><FiCopy size={14} /></button>
+                                  <button
+                                    onClick={() => {
+                                      setEditingPost(post);
+                                      setPostForm({ platform: post.platform, content: post.content, status: post.status, scheduledAt: post.scheduledAt ? post.scheduledAt.slice(0, 16) : '', notes: post.notes || '' });
+                                      setShowPostForm(true);
+                                    }}
+                                    className="text-gray-400 hover:text-brand p-1"
+                                  ><FiEdit2 size={14} /></button>
+                                  <button onClick={() => deletePost(post.id)} className="text-gray-400 hover:text-red-500 p-1">
+                                    <FiTrash2 size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed line-clamp-4">{post.content}</p>
+                              {post.notes && <p className="text-xs text-gray-400 mt-2 italic">{post.notes}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {!selectedCampaign && !showCampaignForm && (
+                    <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                      ← Select a campaign or create a new one
                     </div>
                   )}
                 </div>

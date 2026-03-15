@@ -15,6 +15,8 @@ export async function POST(req: NextRequest) {
       low, high, weeks,
       // also accept explicit keys if sent that way
       estimatedLow: _estimatedLow, estimatedHigh: _estimatedHigh, estimatedWeeks: _estimatedWeeks,
+      // UTM attribution
+      utmSource, utmCampaign, utmMedium,
     } = body;
 
     if (!name || !email || !title || !description) {
@@ -45,6 +47,9 @@ export async function POST(req: NextRequest) {
         estimatedLow:   resolvedLow,
         estimatedHigh:  resolvedHigh,
         estimatedWeeks: resolvedWeeks,
+        utmSource:    utmSource  || null,
+        utmCampaign:  utmCampaign || null,
+        utmMedium:    utmMedium  || null,
       },
     });
 

@@ -325,6 +325,10 @@ model ProjectInquiry {
   status          InquiryStatus       @default(NEW)
   adminNotes      String?
   convertedToProject Boolean          @default(false)
+  // UTM attribution
+  utmSource       String?             // e.g. 'linkedin', 'twitter', 'email'
+  utmCampaign     String?             // campaign slug
+  utmMedium       String?             // e.g. 'social', 'cpc'
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
@@ -338,4 +342,55 @@ enum InquiryStatus {
   PROPOSAL_SENT
   CONVERTED
   DECLINED
+}
+
+// ─── Campaign Manager ─────────────────────────────────────────────────────────
+
+model Campaign {
+  id          String           @id @default(cuid())
+  name        String
+  goal        String?          // e.g. "Generate 5 leads for Salesforce pilot"
+  platforms   String[]         // e.g. ["linkedin", "twitter"]
+  status      CampaignStatus   @default(DRAFT)
+  startDate   DateTime?
+  endDate     DateTime?
+  notes       String?
+  utmSlug     String           @unique  // used as utm_campaign value
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  posts       CampaignPost[]
+
+  @@index([status])
+}
+
+model CampaignPost {
+  id           String       @id @default(cuid())
+  campaignId   String
+  platform     String       // 'linkedin' | 'twitter' | 'email' | 'other'
+  content      String       // the post body text
+  status       PostStatus   @default(DRAFT)
+  scheduledAt  DateTime?
+  publishedAt  DateTime?
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  campaign     Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum PostStatus {
+  DRAFT
+  READY
+  PUBLISHED
 }

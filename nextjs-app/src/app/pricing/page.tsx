@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { FiArrowRight, FiArrowLeft, FiCheck, FiDollarSign, FiClock, FiSend } from 'react-icons/fi';
@@ -135,12 +136,23 @@ function StepDots({ current, total }: { current: number; total: number }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function PricingPage() {
+function PricingInner() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(INITIAL);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ low: number; high: number; weeks: number } | null>(null);
+
+  // Capture UTM params from URL on mount
+  const [utm, setUtm] = useState({ utmSource: '', utmCampaign: '', utmMedium: '' });
+  useEffect(() => {
+    setUtm({
+      utmSource:   searchParams.get('utm_source')   || '',
+      utmCampaign: searchParams.get('utm_campaign') || '',
+      utmMedium:   searchParams.get('utm_medium')   || '',
+    });
+  }, [searchParams]);
 
   const update = (field: keyof FormState, value: any) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -171,7 +183,7 @@ export default function PricingPage() {
       const res = await fetch('/api/pricing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, ...est }),
+        body: JSON.stringify({ ...form, ...est, ...utm }),
       });
       if (!res.ok) throw new Error('Submission failed');
       setResult(est);
@@ -651,5 +663,13 @@ export default function PricingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-gray-400">Loading...</div></div>}>
+      <PricingInner />
+    </Suspense>
   );
 }
