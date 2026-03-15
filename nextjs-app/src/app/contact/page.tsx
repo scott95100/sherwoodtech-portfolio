@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { FiSend, FiMail } from 'react-icons/fi';
+import Link from 'next/link';
+import { FiSend, FiMail, FiZap, FiArrowRight } from 'react-icons/fi';
 
 type FormData = {
   name: string;
@@ -57,10 +58,35 @@ export default function ContactPage() {
           {/* Contact Info */}
           <div>
             <h2 className="text-2xl font-bold text-brand mb-6">Contact STC</h2>
-            <p className="text-gray-600 mb-8 leading-relaxed">
-              Have a project in mind or want to explore a consulting engagement? Fill out the form
-              and we&apos;ll get back to you within 24 hours — no commitment required.
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              Have a question, a general inquiry, or just want to say hello? Fill out the form
+              and we&apos;ll get back to you within 24 hours.
             </p>
+
+            {/* ⚡ Faster response tip */}
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                  <FiZap size={16} className="text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-amber-800 mb-1">
+                    Get a faster response for project requests
+                  </p>
+                  <p className="text-sm text-amber-700 leading-relaxed mb-3">
+                    If you&apos;re looking to start a project, using the <strong>Project Estimator</strong> gives
+                    us everything we need to respond with a real proposal — no back-and-forth required.
+                    You&apos;ll also get an instant cost and timeline estimate on the spot.
+                  </p>
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800 hover:text-amber-900 transition-colors"
+                  >
+                    Browse services &amp; get a quote <FiArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
+            </div>
 
             <div className="space-y-4">
               <a
@@ -124,6 +150,14 @@ export default function ContactPage() {
                 <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>
               )}
             </div>
+
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Starting a project?{' '}
+              <Link href="/services" className="text-brand hover:underline font-medium">
+                Use the Project Estimator
+              </Link>{' '}
+              for a faster, more detailed response.
+            </p>
 
             <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2">
               <FiSend size={16} />
