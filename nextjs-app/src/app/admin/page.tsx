@@ -11,7 +11,7 @@ export default async function AdminPage() {
     redirect('/');
   }
 
-  const [users, messages, projects] = await Promise.all([
+  const [users, messages, projects, inquiries] = await Promise.all([
     prisma.user.findMany({
       select: { id: true, name: true, email: true, role: true, createdAt: true, isActive: true },
       orderBy: { createdAt: 'desc' },
@@ -21,7 +21,8 @@ export default async function AdminPage() {
       take: 20,
     }),
     prisma.project.findMany({ orderBy: { createdAt: 'desc' } }),
+    (prisma as any).projectInquiry.findMany({ orderBy: { createdAt: 'desc' } }),
   ]);
 
-  return <AdminClient users={users} messages={messages} projects={projects} />;
+  return <AdminClient users={users} messages={messages} projects={projects} inquiries={inquiries} />;
 }

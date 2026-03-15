@@ -292,3 +292,50 @@ model Invitation {
   createdAt DateTime  @default(now())
   invitedBy String?
 }
+
+// ─── Project Inquiries (Pricing Calculator Leads) ─────────────────────────────
+
+model ProjectInquiry {
+  id              String              @id @default(cuid())
+  // Contact info
+  name            String
+  email           String
+  company         String?
+  phone           String?
+  // Project type
+  projectType     String              // 'pilot' | 'full'
+  serviceCategory String              // e.g. 'salesforce', 'web', 'api', 'consulting'
+  // Scope inputs
+  title           String
+  description     String
+  features        String[]            // selected feature checkboxes
+  complexity      String              // 'simple' | 'moderate' | 'complex'
+  hasDesign       Boolean             @default(false)
+  needsHosting    Boolean             @default(false)
+  needsAuth       Boolean             @default(false)
+  needsIntegrations Boolean           @default(false)
+  integrationNotes String?
+  // Timeline
+  desiredTimeline String              // 'asap' | '1month' | '3months' | 'flexible'
+  // Calculated outputs
+  estimatedLow    Int                 // in USD
+  estimatedHigh   Int
+  estimatedWeeks  Int
+  // Admin fields
+  status          InquiryStatus       @default(NEW)
+  adminNotes      String?
+  convertedToProject Boolean          @default(false)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([status])
+  @@index([email])
+}
+
+enum InquiryStatus {
+  NEW
+  REVIEWED
+  PROPOSAL_SENT
+  CONVERTED
+  DECLINED
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus } from 'react-icons/fi';
+import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 type User = { id: string; name: string; email: string; role: string; createdAt: Date; isActive: boolean };
@@ -11,6 +11,14 @@ type Invitation = { id: string; email: string; role: string; used: boolean; expi
 type ClientProject = {
   id: string; title: string; status: string; client: { name: string; email: string };
   technologies: string[]; deadline: string | null;
+};
+type Inquiry = {
+  id: string; name: string; email: string; company: string | null;
+  projectType: string; serviceCategory: string; title: string;
+  description: string; complexity: string; features: string[];
+  estimatedLow: number; estimatedHigh: number; estimatedWeeks: number;
+  desiredTimeline: string; status: string; adminNotes: string | null;
+  createdAt: string;
 };
 
 const statusColors: Record<string, string> = {
@@ -26,15 +34,19 @@ export default function AdminClient({
   users,
   messages,
   projects,
+  inquiries: initialInquiries,
 }: {
   users: User[];
   messages: Message[];
   projects: Project[];
+  inquiries: Inquiry[];
 }) {
-  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations'>('users');
+  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads'>('users');
   const [msgList, setMsgList] = useState(messages);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [clientProjects, setClientProjects] = useState<ClientProject[]>([]);
+  const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries);
+  const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('CLIENT');
   const [inviteLoading, setInviteLoading] = useState(false);
@@ -164,12 +176,42 @@ export default function AdminClient({
     }
   };
 
+  const updateInquiryStatus = async (id: string, status: string, adminNotes?: string) => {
+    try {
+      const res = await fetch(`/api/pricing/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, adminNotes }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setInquiries((prev) => prev.map((i) => i.id === id ? { ...i, status, adminNotes: adminNotes ?? i.adminNotes } : i));
+      if (selectedInquiry?.id === id) setSelectedInquiry((prev) => prev ? { ...prev, status, adminNotes: adminNotes ?? prev.adminNotes } : null);
+      toast.success('Lead updated');
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  const deleteInquiry = async (id: string) => {
+    if (!confirm('Delete this lead?')) return;
+    try {
+      await fetch(`/api/pricing/${id}`, { method: 'DELETE' });
+      setInquiries((prev) => prev.filter((i) => i.id !== id));
+      if (selectedInquiry?.id === id) setSelectedInquiry(null);
+      toast.success('Lead deleted');
+    } catch {
+      toast.error('Failed to delete');
+    }
+  };
+
   const tabs = [
-    { key: 'users', label: 'Users', icon: <FiUsers size={16} />, count: users.length },
-    { key: 'messages', label: 'Messages', icon: <FiMail size={16} />, count: msgList.filter((m) => m.status === 'UNREAD').length },
-    { key: 'clients', label: 'Client Projects', icon: <FiFolder size={16} />, count: null },
-    { key: 'invitations', label: 'Invitations', icon: <FiLink size={16} />, count: null },
-    { key: 'projects', label: 'Portfolio', icon: <FiFolder size={16} />, count: projects.length },
+    { key: 'users',       label: 'Users',           icon: <FiUsers size={16} />,      count: users.length },
+    { key: 'messages',    label: 'Messages',         icon: <FiMail size={16} />,       count: msgList.filter((m) => m.status === 'UNREAD').length },
+    { key: 'leads',       label: 'Leads',            icon: <FiTrendingUp size={16} />, count: inquiries.filter((i) => i.status === 'NEW').length },
+    { key: 'clients',     label: 'Client Projects',  icon: <FiFolder size={16} />,     count: null },
+    { key: 'invitations', label: 'Invitations',      icon: <FiLink size={16} />,       count: null },
+    { key: 'projects',    label: 'Portfolio',        icon: <FiFolder size={16} />,     count: projects.length },
   ] as const;
 
   return (
@@ -194,8 +236,8 @@ export default function AdminClient({
             <div className="text-gray-500 text-sm">Unread Messages</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5 text-center">
-            <div className="text-3xl font-bold text-brand mb-1">{clientProjects.length}</div>
-            <div className="text-gray-500 text-sm">Client Projects</div>
+            <div className="text-3xl font-bold text-brand mb-1">{inquiries.filter((i) => i.status === 'NEW').length}</div>
+            <div className="text-gray-500 text-sm">New Leads</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5 text-center">
             <div className="text-3xl font-bold text-brand mb-1">{invitations.filter((i) => !i.used).length}</div>
@@ -221,7 +263,7 @@ export default function AdminClient({
                 }`}
               >
                 {t.icon} {t.label}
-                {t.key === 'messages' && (t.count ?? 0) > 0 && (
+                {(t.key === 'messages' || t.key === 'leads') && (t.count ?? 0) > 0 && (
                   <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {t.count}
                   </span>
@@ -500,6 +542,174 @@ export default function AdminClient({
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── Leads Tab ── */}
+            {tab === 'leads' && (
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Lead list */}
+                <div>
+                  <h2 className="text-lg font-bold text-gray-800 mb-4">
+                    Project Inquiries ({inquiries.length})
+                  </h2>
+                  {inquiries.length === 0 ? (
+                    <p className="text-gray-400 text-center py-8">No inquiries yet.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {inquiries.map((inq) => (
+                        <button
+                          key={inq.id}
+                          onClick={() => setSelectedInquiry(inq)}
+                          className={`w-full text-left border rounded-xl p-4 transition-all ${
+                            selectedInquiry?.id === inq.id
+                              ? 'border-brand bg-brand/5'
+                              : 'border-gray-100 hover:border-brand/30'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-gray-800 text-sm truncate">{inq.title}</p>
+                              <p className="text-xs text-gray-500">{inq.name} — {inq.email}</p>
+                              {inq.company && <p className="text-xs text-gray-400">{inq.company}</p>}
+                            </div>
+                            <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                inq.status === 'NEW' ? 'bg-red-50 text-red-500' :
+                                inq.status === 'REVIEWED' ? 'bg-yellow-50 text-yellow-600' :
+                                inq.status === 'PROPOSAL_SENT' ? 'bg-blue-50 text-blue-600' :
+                                inq.status === 'CONVERTED' ? 'bg-green-50 text-green-600' :
+                                'bg-gray-100 text-gray-500'
+                              }`}>
+                                {inq.status.replace('_', ' ')}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                ${inq.estimatedLow.toLocaleString()}–${inq.estimatedHigh.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                            <span className="capitalize">{inq.projectType}</span>
+                            <span>·</span>
+                            <span className="capitalize">{inq.serviceCategory || 'pilot'}</span>
+                            <span>·</span>
+                            <span>{inq.estimatedWeeks}w</span>
+                            <span>·</span>
+                            <span>{new Date(inq.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Lead detail / proposal */}
+                <div>
+                  {!selectedInquiry ? (
+                    <div className="border border-dashed border-gray-200 rounded-xl p-8 text-center text-gray-400 text-sm h-full flex items-center justify-center">
+                      Select a lead to view the full proposal
+                    </div>
+                  ) : (
+                    <div className="border border-gray-100 rounded-xl p-6 space-y-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-bold text-gray-800 text-lg">{selectedInquiry.title}</h3>
+                          <p className="text-sm text-gray-500">{selectedInquiry.name} · {selectedInquiry.email}</p>
+                          {selectedInquiry.company && <p className="text-xs text-gray-400">{selectedInquiry.company}</p>}
+                        </div>
+                        <button onClick={() => deleteInquiry(selectedInquiry.id)} className="text-red-400 hover:text-red-600">
+                          <FiTrash2 size={16} />
+                        </button>
+                      </div>
+
+                      {/* Estimate highlight */}
+                      <div className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white rounded-xl p-4 grid grid-cols-3 gap-3 text-center">
+                        <div>
+                          <div className="text-teal-100 text-xs mb-0.5">Estimate</div>
+                          <div className="font-bold text-sm">${selectedInquiry.estimatedLow.toLocaleString()}–${selectedInquiry.estimatedHigh.toLocaleString()}</div>
+                        </div>
+                        <div>
+                          <div className="text-teal-100 text-xs mb-0.5">Timeline</div>
+                          <div className="font-bold text-sm">{selectedInquiry.estimatedWeeks} weeks</div>
+                        </div>
+                        <div>
+                          <div className="text-teal-100 text-xs mb-0.5">Type</div>
+                          <div className="font-bold text-sm capitalize">{selectedInquiry.projectType}</div>
+                        </div>
+                      </div>
+
+                      {/* Details */}
+                      <dl className="text-sm space-y-2">
+                        <div className="flex justify-between">
+                          <dt className="text-gray-500">Category</dt>
+                          <dd className="font-medium capitalize">{selectedInquiry.serviceCategory || 'Pilot'}</dd>
+                        </div>
+                        <div className="flex justify-between">
+                          <dt className="text-gray-500">Complexity</dt>
+                          <dd className="font-medium capitalize">{selectedInquiry.complexity}</dd>
+                        </div>
+                        <div className="flex justify-between">
+                          <dt className="text-gray-500">Timeline preference</dt>
+                          <dd className="font-medium capitalize">{selectedInquiry.desiredTimeline.replace('month', ' month')}</dd>
+                        </div>
+                      </dl>
+
+                      <div>
+                        <p className="text-xs font-semibold text-gray-500 mb-1">Description</p>
+                        <p className="text-sm text-gray-700 leading-relaxed">{selectedInquiry.description}</p>
+                      </div>
+
+                      {selectedInquiry.features.length > 0 && (
+                        <div>
+                          <p className="text-xs font-semibold text-gray-500 mb-2">Selected Features</p>
+                          <div className="flex flex-wrap gap-1">
+                            {selectedInquiry.features.map((f) => (
+                              <span key={f} className="text-xs bg-brand/10 text-brand px-2 py-0.5 rounded-full">{f}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Admin controls */}
+                      <div className="border-t border-gray-100 pt-4 space-y-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Update Status</label>
+                          <select
+                            value={selectedInquiry.status}
+                            onChange={(e) => updateInquiryStatus(selectedInquiry.id, e.target.value)}
+                            className="input text-sm w-full"
+                          >
+                            <option value="NEW">New</option>
+                            <option value="REVIEWED">Reviewed</option>
+                            <option value="PROPOSAL_SENT">Proposal Sent</option>
+                            <option value="CONVERTED">Converted</option>
+                            <option value="DECLINED">Declined</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 mb-1">Internal Notes</label>
+                          <textarea
+                            className="input text-sm w-full"
+                            rows={3}
+                            placeholder="Notes visible only to admin..."
+                            defaultValue={selectedInquiry.adminNotes || ''}
+                            onBlur={(e) => {
+                              if (e.target.value !== (selectedInquiry.adminNotes || '')) {
+                                updateInquiryStatus(selectedInquiry.id, selectedInquiry.status, e.target.value);
+                              }
+                            }}
+                          />
+                        </div>
+                        <a
+                          href={`mailto:${selectedInquiry.email}?subject=Re: ${encodeURIComponent(selectedInquiry.title)} — STC Proposal&body=Hi ${encodeURIComponent(selectedInquiry.name)},%0A%0AThank you for submitting your project inquiry to Sherwood Technology Consulting.%0A%0ABased on your submission, here is our preliminary proposal...%0A%0AProject: ${encodeURIComponent(selectedInquiry.title)}%0AEstimate: $${selectedInquiry.estimatedLow.toLocaleString()} – $${selectedInquiry.estimatedHigh.toLocaleString()}%0ATimeline: ${selectedInquiry.estimatedWeeks} weeks%0A%0A`}
+                          className="btn-primary text-sm w-full text-center block"
+                        >
+                          ✉ Draft Proposal Email
+                        </a>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

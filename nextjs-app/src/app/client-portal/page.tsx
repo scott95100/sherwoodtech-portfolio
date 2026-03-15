@@ -51,7 +51,12 @@ export default function ClientPortalPage() {
       return;
     }
     if (status === 'authenticated') {
-      if (session.user?.role !== 'CLIENT' && session.user?.role !== 'ADMIN') {
+      if (session.user?.role === 'ADMIN') {
+        // Admins manage everything from /admin — not the client portal
+        router.replace('/admin');
+        return;
+      }
+      if (session.user?.role !== 'CLIENT') {
         router.replace('/');
         return;
       }

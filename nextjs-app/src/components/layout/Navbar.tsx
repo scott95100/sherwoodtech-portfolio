@@ -10,6 +10,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
+  { href: '/pricing', label: 'Get a Quote' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -48,9 +49,9 @@ export default function Navbar() {
                   Admin
                 </Link>
               )}
-              {(session.user?.role === 'CLIENT' || session.user?.role === 'ADMIN') && (
+              {session.user?.role === 'CLIENT' && (
                 <Link href="/client-portal" className="font-medium text-gray-600 hover:text-brand">
-                  Client Portal
+                  My Projects
                 </Link>
               )}
               <button
@@ -106,9 +107,9 @@ export default function Navbar() {
                       Admin
                     </Link>
                   )}
-                  {(session.user?.role === 'CLIENT' || session.user?.role === 'ADMIN') && (
+                  {session.user?.role === 'CLIENT' && (
                     <Link href="/client-portal" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-gray-600">
-                      Client Portal
+                      My Projects
                     </Link>
                   )}
                   <button

@@ -23,6 +23,7 @@ export default function Footer() {
         <nav className="flex gap-4 text-sm">
           <Link href="/" className="hover:text-white transition-colors">Home</Link>
           <Link href="/services" className="hover:text-white transition-colors">Services</Link>
+          <Link href="/pricing" className="hover:text-white transition-colors">Get a Quote</Link>
           <Link href="/about" className="hover:text-white transition-colors">About</Link>
           <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
         </nav>

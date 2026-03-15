@@ -3,20 +3,6 @@ import { FiArrowRight, FiCode, FiServer, FiShield, FiUsers, FiDatabase, FiCloud,
 
 const services = [
   {
-    icon: <FiZap size={32} />,
-    title: 'Salesforce Development',
-    desc: 'Full-cycle Salesforce development from custom LWC components and Apex classes to complex automation, integrations, and org architecture.',
-    features: [
-      'Lightning Web Components (LWC)',
-      'Apex classes, triggers & batch jobs',
-      'Flow & Process Builder automation',
-      'REST/SOAP API integrations',
-      'Custom objects & schema design',
-      'Salesforce org migrations & cleanup',
-    ],
-    highlight: true,
-  },
-  {
     icon: <FiCode size={32} />,
     title: 'Web & App Development',
     desc: 'End-to-end development of web applications and client portals. We handle design, architecture, implementation, and deployment — delivering production-ready software.',
@@ -72,6 +58,19 @@ const services = [
     ],
   },
   {
+    icon: <FiZap size={32} />,
+    title: 'Salesforce Development',
+    desc: 'Full-cycle Salesforce development from custom LWC components and Apex classes to complex automation, integrations, and org architecture.',
+    features: [
+      'Lightning Web Components (LWC)',
+      'Apex classes, triggers & batch jobs',
+      'Flow & Process Builder automation',
+      'REST/SOAP API integrations',
+      'Custom objects & schema design',
+      'Salesforce org migrations & cleanup',
+    ],
+  },
+  {
     icon: <FiUsers size={32} />,
     title: 'Technology Consulting',
     desc: 'Strategic technical guidance to help you make the right decisions early — saving time, money, and rework down the road.',
@@ -113,15 +112,7 @@ export default function ServicesPage() {
         <div className="section-container">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((s) => (
-              <div
-                key={s.title}
-                className={`card p-8 ${'highlight' in s && s.highlight ? 'ring-2 ring-brand' : ''}`}
-              >
-                {'highlight' in s && s.highlight && (
-                  <span className="inline-block bg-brand text-white text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
-                    Core Expertise
-                  </span>
-                )}
+              <div key={s.title} className="card p-8">
                 <div className="text-brand mb-5">{s.icon}</div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">{s.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed mb-5">{s.desc}</p>
