@@ -11,12 +11,19 @@ export async function POST(req: NextRequest) {
       complexity, hasDesign, needsHosting,
       needsAuth, needsIntegrations, integrationNotes,
       desiredTimeline,
-      estimatedLow, estimatedHigh, estimatedWeeks,
+      // from calculateEstimate spread: { low, high, weeks }
+      low, high, weeks,
+      // also accept explicit keys if sent that way
+      estimatedLow: _estimatedLow, estimatedHigh: _estimatedHigh, estimatedWeeks: _estimatedWeeks,
     } = body;
 
     if (!name || !email || !title || !description) {
       return NextResponse.json({ error: 'Name, email, title, and description are required' }, { status: 400 });
     }
+
+    const resolvedLow   = Number(_estimatedLow  ?? low  ?? 0);
+    const resolvedHigh  = Number(_estimatedHigh ?? high  ?? 0);
+    const resolvedWeeks = Number(_estimatedWeeks ?? weeks ?? 0);
 
     const inquiry = await (prisma as any).projectInquiry.create({
       data: {
@@ -24,20 +31,20 @@ export async function POST(req: NextRequest) {
         company: company || null,
         phone: phone || null,
         projectType,
-        serviceCategory,
+        serviceCategory: serviceCategory || '',
         title,
         description,
         features: features || [],
-        complexity,
+        complexity: complexity || 'moderate',
         hasDesign: hasDesign || false,
         needsHosting: needsHosting || false,
         needsAuth: needsAuth || false,
         needsIntegrations: needsIntegrations || false,
         integrationNotes: integrationNotes || null,
-        desiredTimeline,
-        estimatedLow,
-        estimatedHigh,
-        estimatedWeeks,
+        desiredTimeline: desiredTimeline || 'flexible',
+        estimatedLow:   resolvedLow,
+        estimatedHigh:  resolvedHigh,
+        estimatedWeeks: resolvedWeeks,
       },
     });
 
