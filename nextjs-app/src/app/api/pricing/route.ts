@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       name, email, company, phone,
+      industry, country,
       projectType, serviceCategory,
       title, description, features,
       complexity, hasDesign, needsHosting,
@@ -32,6 +33,8 @@ export async function POST(req: NextRequest) {
         name, email,
         company: company || null,
         phone: phone || null,
+        industry: industry || null,
+        country: country || null,
         projectType,
         serviceCategory: serviceCategory || '',
         title,
