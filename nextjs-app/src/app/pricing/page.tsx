@@ -68,14 +68,97 @@ const COUNTRIES = [
   'Other',
 ];
 
+// ─── Service Configs (per-service pricing + messaging) ───────────────────────
+
+type ServiceConfig = {
+  label: string;
+  pilotDeliverable: string;
+  pilotExamples: string[];
+  fullDescription: string;
+  fullFeatures: string[];
+  pilotLow: number;
+  pilotHigh: number;
+  fullLow: number;
+  fullHigh: number;
+  fullWeeks: number;
+};
+
+const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
+  salesforce: {
+    label: 'Salesforce Development',
+    pilotDeliverable: 'One custom LWC component or Apex class — built, tested, and deployed to your org.',
+    pilotExamples: ['Custom Lightning Web Component', 'Apex trigger + handler class', 'Flow automation for one process', 'Connected App + REST integration'],
+    fullDescription: 'Full-cycle Salesforce development: LWC component suites, Apex services, Flow automation, external integrations, custom objects, and org architecture.',
+    fullFeatures: ['LWC component library', 'Apex classes, triggers & batch jobs', 'Flow & Process Builder automation', 'REST/SOAP Connected App integrations', 'Custom objects, fields & page layouts', 'Permission sets, profiles & sharing rules', 'Data migration & org cleanup', 'Salesforce DX deployment pipeline'],
+    pilotLow: 1500, pilotHigh: 3000,
+    fullLow: 8000, fullHigh: 35000, fullWeeks: 6,
+  },
+  web: {
+    label: 'Web & App Development',
+    pilotDeliverable: 'One production-ready page or feature module — responsive, deployed, and fully handed off.',
+    pilotExamples: ['Landing page with contact form', 'User auth flow (login/register)', 'Admin dashboard with one data view', 'Client portal MVP with one core feature'],
+    fullDescription: 'End-to-end web applications built with React & Next.js — from architecture through production deployment with CI/CD.',
+    fullFeatures: ['React / Next.js App Router', 'Responsive, accessible UI', 'Authentication & role-based access', 'Database + API layer', 'Admin dashboard', 'Payment integration', 'SEO & performance optimization', 'Cloud deployment + CI/CD'],
+    pilotLow: 1500, pilotHigh: 3000,
+    fullLow: 8000, fullHigh: 40000, fullWeeks: 7,
+  },
+  api: {
+    label: 'API & Backend Engineering',
+    pilotDeliverable: 'One authenticated REST API endpoint or third-party integration — documented and tested.',
+    pilotExamples: ['REST API endpoint with auth middleware', 'Salesforce Connected App + OAuth flow', 'Webhook receiver + event handler', 'Third-party API integration (Stripe, Twilio, etc.)'],
+    fullDescription: 'Robust backend systems: REST and GraphQL APIs, authentication layers, webhook systems, and third-party integrations built for production.',
+    fullFeatures: ['REST & GraphQL API design', 'JWT / OAuth authentication', 'Rate limiting & security middleware', 'Webhook + event-driven systems', 'Third-party API integrations', 'Caching layer (Redis / edge)', 'OpenAPI / Swagger documentation', 'Load testing & performance tuning'],
+    pilotLow: 1500, pilotHigh: 3000,
+    fullLow: 5000, fullHigh: 25000, fullWeeks: 5,
+  },
+  database: {
+    label: 'Database Architecture',
+    pilotDeliverable: 'Schema design + migrations for one domain — reviewed, documented, and deployed.',
+    pilotExamples: ['Data model design for one domain (ERD + Prisma schema)', 'Migration strategy for existing schema', 'Query audit + optimization for top 5 slow queries', 'Normalization review + recommendations'],
+    fullDescription: 'Thoughtful schema design, Prisma ORM setup, query optimization, and data modeling for PostgreSQL — built to scale from day one.',
+    fullFeatures: ['PostgreSQL schema design', 'Prisma ORM setup & migrations', 'Data normalization & modeling', 'Indexing strategy', 'Query optimization', 'Seed data & test fixtures', 'Backup & recovery plan', 'Multi-environment configuration'],
+    pilotLow: 1500, pilotHigh: 3000,
+    fullLow: 3000, fullHigh: 15000, fullWeeks: 4,
+  },
+  devops: {
+    label: 'Cloud & DevOps',
+    pilotDeliverable: 'CI/CD pipeline or containerized deployment for one service — live, monitored, and documented.',
+    pilotExamples: ['GitHub Actions CI/CD pipeline for one service', 'Dockerized app deployment to Railway/Render', 'Vercel + preview deployment setup', 'Environment management (dev/staging/prod)'],
+    fullDescription: 'Modern cloud infrastructure: CI/CD pipelines, Docker containerization, managed deployments to AWS/Vercel/Railway, and environment management.',
+    fullFeatures: ['CI/CD pipeline (GitHub Actions)', 'Docker + docker-compose', 'AWS / Vercel / Railway deployment', 'Staging & production environments', 'SSL, domain, and DNS setup', 'Log aggregation & alerting', 'Automated database backups', 'Infrastructure as code'],
+    pilotLow: 1500, pilotHigh: 3000,
+    fullLow: 3000, fullHigh: 20000, fullWeeks: 4,
+  },
+  security: {
+    label: 'Security & Auth Systems',
+    pilotDeliverable: 'Auth system with RBAC for one app — login, roles, sessions, and security headers configured.',
+    pilotExamples: ['NextAuth / JWT auth for one app', 'Role-based access control (admin/user/client)', 'Invite-only registration system', 'OAuth2 provider integration (Google, GitHub)'],
+    fullDescription: 'Production-grade authentication, role-based access control, secure session management, and security hardening across your entire stack.',
+    fullFeatures: ['OAuth & credential auth', 'Role-based access control (RBAC)', 'JWT + session management', 'Invite-only user provisioning', 'Password policies & reset flows', 'CSRF, XSS & injection protection', 'Security headers (CSP, HSTS)', 'Audit logging & anomaly detection'],
+    pilotLow: 1500, pilotHigh: 3000,
+    fullLow: 4000, fullHigh: 15000, fullWeeks: 5,
+  },
+  consulting: {
+    label: 'Technology Consulting',
+    pilotDeliverable: '2-hour architecture or Salesforce org assessment — recorded session with written recommendations.',
+    pilotExamples: ['Architecture review + written recommendations', 'Salesforce org assessment (health, tech debt, roadmap)', 'Stack selection workshop', 'Code audit with prioritized findings'],
+    fullDescription: 'Strategic technical guidance: stack selection, Salesforce org assessments, code audits, and technical roadmapping to help you move faster with fewer mistakes.',
+    fullFeatures: ['Architecture design & review', 'Salesforce org health assessment', 'Code & system audits', 'Tech stack selection workshop', 'Technical roadmap development', 'Team training sessions', 'Security assessment', 'Ongoing advisory retainer'],
+    pilotLow: 300, pilotHigh: 500,
+    fullLow: 1500, fullHigh: 12500, fullWeeks: 2,
+  },
+};
+
 // ─── Pricing Engine ───────────────────────────────────────────────────────────
 
 const BASE_RATES: Record<string, { low: number; high: number; weeks: number }> = {
-  pilot:       { low: 1500,  high: 3000,  weeks: 2 },
-  salesforce:  { low: 5000,  high: 15000, weeks: 6 },
-  web:         { low: 4000,  high: 12000, weeks: 5 },
-  api:         { low: 3000,  high: 8000,  weeks: 4 },
-  consulting:  { low: 150,   high: 250,   weeks: 0 },
+  salesforce: { low: 8000,  high: 35000, weeks: 6 },
+  web:        { low: 8000,  high: 40000, weeks: 7 },
+  api:        { low: 5000,  high: 25000, weeks: 5 },
+  database:   { low: 3000,  high: 15000, weeks: 4 },
+  devops:     { low: 3000,  high: 20000, weeks: 4 },
+  security:   { low: 4000,  high: 15000, weeks: 5 },
+  consulting: { low: 1500,  high: 12500, weeks: 2 },
 };
 
 const COMPLEXITY_MULTIPLIER: Record<string, number> = {
@@ -88,6 +171,8 @@ const TIMELINE_MULTIPLIER: Record<string, number> = {
 
 function calculateEstimate(form: FormState) {
   if (form.projectType === 'pilot') {
+    const cfg = SERVICE_CONFIGS[form.serviceCategory];
+    if (cfg) return { low: cfg.pilotLow, high: cfg.pilotHigh, weeks: 2 };
     return { low: 1500, high: 3000, weeks: 2 };
   }
   if (form.serviceCategory === 'consulting') {
@@ -101,12 +186,12 @@ function calculateEstimate(form: FormState) {
 
   let addons = 0;
   let addWeeks = 0;
-  if (form.needsAuth)         { addons += 800;  addWeeks += 0.5; }
-  if (form.needsHosting)      { addons += 500;  addWeeks += 0.5; }
-  if (form.needsIntegrations) { addons += 1200; addWeeks += 1; }
-  if (!form.hasDesign)        { addons += 1000; addWeeks += 1; }
+  if (form.needsAuth)         { addons += 1200; addWeeks += 0.5; }
+  if (form.needsHosting)      { addons += 800;  addWeeks += 0.5; }
+  if (form.needsIntegrations) { addons += 1500; addWeeks += 1; }
+  if (!form.hasDesign)        { addons += 1200; addWeeks += 1; }
 
-  const featureAddon = form.features.length * 400;
+  const featureAddon = form.features.length * 500;
   const low   = Math.round((base.low  * compMult + addons + featureAddon) * timeMult / 100) * 100;
   const high  = Math.round((base.high * compMult + addons + featureAddon) * timeMult / 100) * 100;
   const weeks = Math.round(base.weeks * compMult + addWeeks);
@@ -156,6 +241,21 @@ const FEATURE_OPTIONS: Record<string, string[]> = {
     'CRUD Endpoints', 'Authentication Middleware', 'Rate Limiting',
     'Webhook System', 'Third-party OAuth', 'Caching Layer',
     'API Documentation', 'Batch Processing',
+  ],
+  database: [
+    'Schema Design & ERD', 'Prisma ORM Setup', 'Data Migrations',
+    'Query Optimization', 'Indexing Strategy', 'Seed Data & Fixtures',
+    'Multi-environment Config', 'Backup & Recovery Plan',
+  ],
+  devops: [
+    'CI/CD Pipeline', 'Docker Containerization', 'Staging Environment',
+    'Production Deployment', 'SSL & Domain Setup', 'Log Aggregation',
+    'Automated Backups', 'Infrastructure as Code',
+  ],
+  security: [
+    'OAuth / JWT Auth', 'Role-Based Access Control', 'Invite-Only Registration',
+    'Password Reset Flow', 'CSRF & XSS Protection', 'Security Headers',
+    'Session Management', 'Audit Logging',
   ],
   consulting: [
     'Architecture Review', 'Code Audit', 'Team Training Session',
@@ -286,14 +386,21 @@ function PricingInner() {
   const [result, setResult] = useState<{ low: number; high: number; weeks: number } | null>(null);
   const [blocked, setBlocked] = useState<{ type: 'industry' | 'country'; value: string } | null>(null);
   const [pipeline, setPipeline] = useState<{ activeProjects: number; weeksUntilAvailable: number; estimatedStartDate: string } | null>(null);
+  // Pre-selected service from ?service= param
+  const [preselectedService, setPreselectedService] = useState<string | null>(null);
 
   const [utm, setUtm] = useState({ utmSource: '', utmCampaign: '', utmMedium: '' });
   useEffect(() => {
+    const service = searchParams.get('service');
     setUtm({
       utmSource:   searchParams.get('utm_source')   || '',
       utmCampaign: searchParams.get('utm_campaign') || '',
       utmMedium:   searchParams.get('utm_medium')   || '',
     });
+    if (service && SERVICE_CONFIGS[service]) {
+      setPreselectedService(service);
+      setForm((prev) => ({ ...prev, serviceCategory: service }));
+    }
   }, [searchParams]);
 
   const update = (field: keyof FormState, value: any) =>
@@ -314,6 +421,7 @@ function PricingInner() {
     if (step === 0) return !!(form.name && form.email);
     if (step === 1) return !!(form.industry && form.country);
     if (step === 2) return !!form.projectType;
+    // Step 3: if pilot + preselected service, or full project with category chosen
     if (step === 3) return form.projectType === 'pilot' || !!form.serviceCategory;
     if (step === 4) return !!(form.title && form.description);
     return true;
@@ -515,11 +623,24 @@ function PricingInner() {
       <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-16">
         <div className="section-container text-center">
           <p className="text-teal-100 uppercase tracking-widest text-sm font-semibold mb-3">Project Estimator</p>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Get a Project Estimate</h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            Answer a few questions about your project and we&apos;ll generate an instant cost
-            and timeline estimate — no commitment required.
-          </p>
+          {preselectedService && SERVICE_CONFIGS[preselectedService] ? (
+            <>
+              <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+                {SERVICE_CONFIGS[preselectedService].label}
+              </h1>
+              <p className="text-teal-100 text-lg max-w-2xl mx-auto">
+                Get an instant cost and timeline estimate for your {SERVICE_CONFIGS[preselectedService].label.toLowerCase()} project — no commitment required.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl sm:text-5xl font-bold mb-4">Get a Project Estimate</h1>
+              <p className="text-teal-100 text-lg max-w-2xl mx-auto">
+                Answer a few questions about your project and we&apos;ll generate an instant cost
+                and timeline estimate — no commitment required.
+              </p>
+            </>
+          )}
         </div>
       </section>
 
@@ -623,56 +744,136 @@ function PricingInner() {
               </div>
             )}
 
-            {/* Step 2 — Project Type */}
-            {step === 2 && (
-              <div className="bg-white rounded-2xl shadow-sm p-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-1">What type of engagement?</h2>
-                <p className="text-gray-500 text-sm mb-6">Not sure yet? A pilot is a great low-risk way to start.</p>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {[
-                    {
-                      key: 'pilot', title: 'Pilot Project', price: '$1,500 – $3,000',
-                      desc: 'A small, scoped engagement to prove the concept and build confidence. Perfect for first-time clients.',
-                      features: ['2-week delivery', 'One focused feature or module', 'Full handoff & documentation', 'Low-risk commitment'],
-                    },
-                    {
-                      key: 'full', title: 'Full Project', price: 'Custom estimate',
-                      desc: 'A complete end-to-end build from architecture to production deployment.',
-                      features: ['Full scope & milestone plan', 'Regular progress updates', 'Client portal access', 'Post-launch support'],
-                    },
-                  ].map((opt) => (
-                    <button key={opt.key} onClick={() => update('projectType', opt.key)}
+            {/* Step 2 — Project Type (service-aware) */}
+            {step === 2 && (() => {
+              const cfg = SERVICE_CONFIGS[form.serviceCategory];
+              return (
+                <div className="bg-white rounded-2xl shadow-sm p-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-1">What type of engagement?</h2>
+                  <p className="text-gray-500 text-sm mb-6">
+                    {cfg
+                      ? `Choose how you'd like to start your ${cfg.label} project.`
+                      : 'Not sure yet? A pilot is a great low-risk way to start.'}
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {/* Pilot card */}
+                    <button
+                      onClick={() => update('projectType', 'pilot')}
                       className={`text-left p-6 rounded-xl border-2 transition-all ${
-                        form.projectType === opt.key ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                        form.projectType === 'pilot' ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <span className="font-bold text-gray-800 text-lg">{opt.title}</span>
-                        {form.projectType === opt.key && (
+                        <span className="font-bold text-gray-800 text-lg">Pilot Project</span>
+                        {form.projectType === 'pilot' && (
                           <span className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
                             <FiCheck size={12} className="text-white" />
                           </span>
                         )}
                       </div>
-                      <div className="text-brand font-semibold text-sm mb-2">{opt.price}</div>
-                      <p className="text-gray-500 text-sm mb-4 leading-relaxed">{opt.desc}</p>
-                      <ul className="space-y-1">
-                        {opt.features.map((f) => (
+                      <div className="text-brand font-semibold text-sm mb-2">
+                        ${(cfg?.pilotLow ?? 1500).toLocaleString()} – ${(cfg?.pilotHigh ?? 3000).toLocaleString()}
+                      </div>
+                      <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                        {cfg
+                          ? cfg.pilotDeliverable
+                          : 'A small, scoped engagement to prove the concept and build confidence.'}
+                      </p>
+                      {cfg && (
+                        <ul className="space-y-1 mb-2">
+                          {cfg.pilotExamples.map((ex) => (
+                            <li key={ex} className="flex items-start gap-2 text-xs text-gray-500">
+                              <span className="w-1 h-1 rounded-full bg-brand inline-block mt-1.5 flex-shrink-0" />{ex}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <ul className="space-y-1 mt-3 border-t border-gray-100 pt-3">
+                        {['2-week delivery', 'Full code ownership', 'Low-risk commitment'].map((f) => (
                           <li key={f} className="flex items-center gap-2 text-xs text-gray-500">
                             <span className="w-1 h-1 rounded-full bg-brand inline-block" />{f}
                           </li>
                         ))}
                       </ul>
                     </button>
-                  ))}
+
+                    {/* Full project card */}
+                    <button
+                      onClick={() => update('projectType', 'full')}
+                      className={`text-left p-6 rounded-xl border-2 transition-all ${
+                        form.projectType === 'full' ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <span className="font-bold text-gray-800 text-lg">Full Project</span>
+                        {form.projectType === 'full' && (
+                          <span className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
+                            <FiCheck size={12} className="text-white" />
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-brand font-semibold text-sm mb-2">
+                        {cfg
+                          ? `$${cfg.fullLow.toLocaleString()} – $${cfg.fullHigh.toLocaleString()}`
+                          : 'Custom estimate'}
+                      </div>
+                      <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                        {cfg ? cfg.fullDescription : 'A complete end-to-end build from architecture to production deployment.'}
+                      </p>
+                      {cfg && (
+                        <ul className="space-y-1">
+                          {cfg.fullFeatures.slice(0, 5).map((f) => (
+                            <li key={f} className="flex items-start gap-2 text-xs text-gray-500">
+                              <span className="w-1 h-1 rounded-full bg-brand inline-block mt-1.5 flex-shrink-0" />{f}
+                            </li>
+                          ))}
+                          {cfg.fullFeatures.length > 5 && (
+                            <li className="text-xs text-gray-400 pl-3">+ {cfg.fullFeatures.length - 5} more</li>
+                          )}
+                        </ul>
+                      )}
+                      {!cfg && (
+                        <ul className="space-y-1">
+                          {['Full scope & milestone plan', 'Regular progress updates', 'Client portal access', 'Post-launch support'].map((f) => (
+                            <li key={f} className="flex items-center gap-2 text-xs text-gray-500">
+                              <span className="w-1 h-1 rounded-full bg-brand inline-block" />{f}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Step 3 — Service Category */}
             {step === 3 && (
               <div className="bg-white rounded-2xl shadow-sm p-8">
-                {form.projectType === 'pilot' ? (
+                {form.projectType === 'pilot' && preselectedService && SERVICE_CONFIGS[preselectedService] ? (
+                  <>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                      {SERVICE_CONFIGS[preselectedService].label} Pilot
+                    </h2>
+                    <p className="text-gray-500 text-sm mb-6">
+                      Fixed-scope, 2-week engagement at ${SERVICE_CONFIGS[preselectedService].pilotLow.toLocaleString()}–${SERVICE_CONFIGS[preselectedService].pilotHigh.toLocaleString()}.
+                    </p>
+                    <div className="bg-teal-50 border border-brand/20 rounded-xl p-5 text-sm text-gray-600 leading-relaxed mb-4">
+                      <p className="font-semibold text-gray-800 mb-2">What&apos;s included:</p>
+                      <p className="mb-3">{SERVICE_CONFIGS[preselectedService].pilotDeliverable}</p>
+                      <ul className="space-y-1">
+                        {SERVICE_CONFIGS[preselectedService].pilotExamples.map((ex) => (
+                          <li key={ex} className="flex items-center gap-2 text-gray-600 text-sm">
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand inline-block flex-shrink-0" />{ex}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="bg-brand/5 border border-brand/20 rounded-xl p-4 text-sm text-gray-600">
+                      Pilots are low-risk by design. Full code ownership, clean documentation, and a clear path to a full project if you want to continue.
+                    </div>
+                  </>
+                ) : form.projectType === 'pilot' ? (
                   <>
                     <h2 className="text-2xl font-bold text-gray-800 mb-1">Pilot Project</h2>
                     <p className="text-gray-500 text-sm mb-6">
@@ -687,13 +888,16 @@ function PricingInner() {
                 ) : (
                   <>
                     <h2 className="text-2xl font-bold text-gray-800 mb-1">What&apos;s the focus?</h2>
-                    <p className="text-gray-500 text-sm mb-6">Select the primary service category.</p>
+                    <p className="text-gray-500 text-sm mb-6">Select the primary service category for your project.</p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       {[
-                        { key: 'salesforce', label: 'Salesforce Development', sub: 'LWC, Apex, Flows, integrations' },
-                        { key: 'web', label: 'Web Application', sub: 'React, Next.js, full-stack' },
-                        { key: 'api', label: 'API & Backend', sub: 'REST, GraphQL, integrations' },
-                        { key: 'consulting', label: 'Technology Consulting', sub: 'Architecture, audits, advisory' },
+                        { key: 'salesforce', label: 'Salesforce Development',   sub: 'LWC, Apex, Flows, integrations',         range: '$8k – $35k' },
+                        { key: 'web',        label: 'Web Application',           sub: 'React, Next.js, full-stack',             range: '$8k – $40k' },
+                        { key: 'api',        label: 'API & Backend',             sub: 'REST, GraphQL, integrations',            range: '$5k – $25k' },
+                        { key: 'database',   label: 'Database Architecture',     sub: 'PostgreSQL, Prisma, schema design',      range: '$3k – $15k' },
+                        { key: 'devops',     label: 'Cloud & DevOps',            sub: 'CI/CD, Docker, AWS/Vercel/Railway',      range: '$3k – $20k' },
+                        { key: 'security',   label: 'Security & Auth Systems',   sub: 'OAuth, RBAC, session management',        range: '$4k – $15k' },
+                        { key: 'consulting', label: 'Technology Consulting',     sub: 'Architecture, audits, advisory',         range: '$150–$250/hr' },
                       ].map((opt) => (
                         <button key={opt.key} onClick={() => update('serviceCategory', opt.key)}
                           className={`text-left p-4 rounded-xl border-2 transition-all ${
@@ -704,6 +908,7 @@ function PricingInner() {
                             <div>
                               <div className="font-semibold text-gray-800 text-sm">{opt.label}</div>
                               <div className="text-gray-400 text-xs mt-0.5">{opt.sub}</div>
+                              <div className="text-brand text-xs font-medium mt-1">{opt.range}</div>
                             </div>
                             {form.serviceCategory === opt.key && (
                               <span className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
@@ -788,10 +993,10 @@ function PricingInner() {
                 <div className="space-y-3">
                   <label className="block text-sm font-semibold text-gray-700">Additional requirements</label>
                   {[
-                    { key: 'needsAuth',        label: 'Authentication / user login system',   price: '+$800' },
-                    { key: 'needsHosting',      label: 'Cloud hosting & deployment setup',    price: '+$500' },
-                    { key: 'needsIntegrations', label: 'Third-party API integrations',        price: '+$1,200' },
-                    { key: 'hasDesign',         label: 'I have existing designs / mockups',   price: 'saves $1,000' },
+                    { key: 'needsAuth',        label: 'Authentication / user login system',   price: '+$1,200' },
+                    { key: 'needsHosting',      label: 'Cloud hosting & deployment setup',    price: '+$800' },
+                    { key: 'needsIntegrations', label: 'Third-party API integrations',        price: '+$1,500' },
+                    { key: 'hasDesign',         label: 'I have existing designs / mockups',   price: 'saves $1,200' },
                   ].map((item) => (
                     <button key={item.key}
                       onClick={() => update(item.key as keyof FormState, !form[item.key as keyof FormState])}

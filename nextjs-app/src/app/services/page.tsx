@@ -3,61 +3,7 @@ import { FiArrowRight, FiCode, FiServer, FiShield, FiUsers, FiDatabase, FiCloud,
 
 const services = [
   {
-    icon: <FiCode size={32} />,
-    title: 'Web & App Development',
-    desc: 'End-to-end development of web applications and client portals. We handle design, architecture, implementation, and deployment — delivering production-ready software.',
-    features: [
-      'React & Next.js applications',
-      'Responsive, accessible UI',
-      'SEO optimization',
-      'Performance-first engineering',
-    ],
-  },
-  {
-    icon: <FiServer size={32} />,
-    title: 'API & Backend Engineering',
-    desc: 'Robust server-side systems that power your product. We design APIs that are fast, secure, and easy to integrate with.',
-    features: [
-      'REST & GraphQL API design',
-      'Authentication & authorization',
-      'Salesforce Connected App integrations',
-      'Webhook & event systems',
-    ],
-  },
-  {
-    icon: <FiDatabase size={32} />,
-    title: 'Database Architecture',
-    desc: 'Thoughtful schema design and query optimization for PostgreSQL and other relational databases. Built for scale from day one.',
-    features: [
-      'PostgreSQL & Prisma ORM',
-      'Schema design & migrations',
-      'Query optimization',
-      'Data modeling & normalization',
-    ],
-  },
-  {
-    icon: <FiCloud size={32} />,
-    title: 'Cloud & DevOps',
-    desc: 'Modern cloud deployments with CI/CD pipelines, containerization, and managed infrastructure so your app stays fast and available.',
-    features: [
-      'AWS, Vercel, Railway deployments',
-      'Docker containerization',
-      'CI/CD pipeline setup',
-      'Environment management',
-    ],
-  },
-  {
-    icon: <FiShield size={32} />,
-    title: 'Security & Auth Systems',
-    desc: 'Authentication, role-based access control, and secure data handling — built correctly the first time.',
-    features: [
-      'OAuth & credential auth',
-      'Role-based access control',
-      'Invite-only user systems',
-      'Session & token management',
-    ],
-  },
-  {
+    key: 'salesforce',
     icon: <FiZap size={32} />,
     title: 'Salesforce Development',
     desc: 'Full-cycle Salesforce development from custom LWC components and Apex classes to complex automation, integrations, and org architecture.',
@@ -69,8 +15,81 @@ const services = [
       'Custom objects & schema design',
       'Salesforce org migrations & cleanup',
     ],
+    pilot: 'Custom LWC component or Apex trigger — scoped, tested, deployed.',
+    range: '$8,000 – $35,000',
   },
   {
+    key: 'web',
+    icon: <FiCode size={32} />,
+    title: 'Web & App Development',
+    desc: 'End-to-end development of web applications and client portals. We handle design, architecture, implementation, and deployment — delivering production-ready software.',
+    features: [
+      'React & Next.js applications',
+      'Responsive, accessible UI',
+      'SEO optimization',
+      'Performance-first engineering',
+    ],
+    pilot: 'One working page or feature module — built, deployed, and handed off.',
+    range: '$8,000 – $40,000',
+  },
+  {
+    key: 'api',
+    icon: <FiServer size={32} />,
+    title: 'API & Backend Engineering',
+    desc: 'Robust server-side systems that power your product. We design APIs that are fast, secure, and easy to integrate with.',
+    features: [
+      'REST & GraphQL API design',
+      'Authentication & authorization',
+      'Salesforce Connected App integrations',
+      'Webhook & event systems',
+    ],
+    pilot: 'One API endpoint or integration — authenticated, documented, tested.',
+    range: '$5,000 – $25,000',
+  },
+  {
+    key: 'database',
+    icon: <FiDatabase size={32} />,
+    title: 'Database Architecture',
+    desc: 'Thoughtful schema design and query optimization for PostgreSQL and other relational databases. Built for scale from day one.',
+    features: [
+      'PostgreSQL & Prisma ORM',
+      'Schema design & migrations',
+      'Query optimization',
+      'Data modeling & normalization',
+    ],
+    pilot: 'Schema design + migrations for one domain — reviewed, documented, deployed.',
+    range: '$3,000 – $15,000',
+  },
+  {
+    key: 'devops',
+    icon: <FiCloud size={32} />,
+    title: 'Cloud & DevOps',
+    desc: 'Modern cloud deployments with CI/CD pipelines, containerization, and managed infrastructure so your app stays fast and available.',
+    features: [
+      'AWS, Vercel, Railway deployments',
+      'Docker containerization',
+      'CI/CD pipeline setup',
+      'Environment management',
+    ],
+    pilot: 'CI/CD pipeline or containerized deployment for one service — live and documented.',
+    range: '$3,000 – $20,000',
+  },
+  {
+    key: 'security',
+    icon: <FiShield size={32} />,
+    title: 'Security & Auth Systems',
+    desc: 'Authentication, role-based access control, and secure data handling — built correctly the first time.',
+    features: [
+      'OAuth & credential auth',
+      'Role-based access control',
+      'Invite-only user systems',
+      'Session & token management',
+    ],
+    pilot: 'Auth system with RBAC for one app — login, roles, sessions, tested.',
+    range: '$4,000 – $15,000',
+  },
+  {
+    key: 'consulting',
     icon: <FiUsers size={32} />,
     title: 'Technology Consulting',
     desc: 'Strategic technical guidance to help you make the right decisions early — saving time, money, and rework down the road.',
@@ -80,6 +99,8 @@ const services = [
       'Code & system audits',
       'Technical roadmapping',
     ],
+    pilot: '2-hour architecture or org assessment session — recorded, with written recommendations.',
+    range: '$150 – $250 / hr',
   },
 ];
 
@@ -112,11 +133,15 @@ export default function ServicesPage() {
         <div className="section-container">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((s) => (
-              <div key={s.title} className="card p-8">
+              <Link
+                key={s.title}
+                href={`/pricing?service=${s.key}`}
+                className="card p-8 group hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer block"
+              >
                 <div className="text-brand mb-5">{s.icon}</div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">{s.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-5">{s.desc}</p>
-                <ul className="space-y-2">
+                <p className="text-gray-500 text-sm leading-relaxed mb-4">{s.desc}</p>
+                <ul className="space-y-2 mb-5">
                   {s.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-gray-600 text-sm">
                       <span className="w-1.5 h-1.5 rounded-full bg-brand inline-block flex-shrink-0" />
@@ -124,7 +149,18 @@ export default function ServicesPage() {
                     </li>
                   ))}
                 </ul>
-              </div>
+                <div className="border-t border-gray-100 pt-4 mt-auto">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Full Project</div>
+                      <div className="text-sm font-semibold text-gray-700">{s.range}</div>
+                    </div>
+                    <div className="flex items-center gap-1 text-brand text-sm font-semibold group-hover:gap-2 transition-all">
+                      Get a Quote <FiArrowRight size={14} />
+                    </div>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
