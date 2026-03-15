@@ -21,12 +21,12 @@ export default async function ProjectsPage() {
   const projects = await getProjects();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#1A2535]">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-20">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
         <div className="section-container text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Projects</h1>
-          <p className="text-teal-100 text-lg max-w-xl mx-auto">
+          <p className="text-brand/70 text-lg max-w-xl mx-auto">
             A selection of things I&apos;ve built.
           </p>
         </div>
@@ -36,7 +36,7 @@ export default async function ProjectsPage() {
       <section className="py-16">
         <div className="section-container">
           {projects.length === 0 ? (
-            <p className="text-center text-gray-500 py-20">Projects coming soon.</p>
+            <p className="text-center text-slate-500 py-20">Projects coming soon.</p>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {projects.map((project) => (
@@ -48,7 +48,7 @@ export default async function ProjectsPage() {
 
                   <div className="p-6 flex flex-col flex-1">
                     <h3 className="text-xl font-bold text-brand mb-3">{project.title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">
+                    <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-1">
                       {project.description}
                     </p>
 
@@ -57,7 +57,7 @@ export default async function ProjectsPage() {
                       {project.technologies.map((tech) => (
                         <span
                           key={tech}
-                          className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full"
+                          className="bg-[#1A2535] text-slate-400 text-xs px-2 py-1 rounded-full"
                         >
                           {tech}
                         </span>

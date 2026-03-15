@@ -33,17 +33,17 @@ const stack = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0F1923]">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-20">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
         <div className="section-container text-center">
-          <p className="text-teal-100 uppercase tracking-widest text-sm font-semibold mb-3">
+          <p className="text-brand/70 uppercase tracking-widest text-sm font-semibold mb-3">
             About STC
           </p>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             Built by Engineers, For Business
           </h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
+          <p className="text-brand/70 text-lg max-w-2xl mx-auto">
             Sherwood Technology Consulting LLC is a full-stack development and technology consulting
             firm focused on delivering reliable, modern software for businesses that take technology seriously.
           </p>
@@ -51,46 +51,46 @@ export default function AboutPage() {
       </section>
 
       {/* Founder */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-[#1A2535]">
         <div className="section-container grid md:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-brand font-semibold uppercase tracking-widest text-sm mb-3">
               Founder & Lead Engineer
             </p>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">Scott Sherwood</h2>
-            <p className="text-gray-600 mb-4 leading-relaxed">
+            <h2 className="text-3xl font-bold text-white mb-6">Scott Sherwood</h2>
+            <p className="text-slate-400 mb-4 leading-relaxed">
               Scott is a full-stack software engineer and certified Salesforce developer with deep
               expertise across the modern web stack and the Salesforce platform. He founded Sherwood
               Technology Consulting to bring senior-level engineering to businesses that need
               results — without the overhead of a large agency.
             </p>
-            <p className="text-gray-600 mb-4 leading-relaxed">
+            <p className="text-slate-400 mb-4 leading-relaxed">
               On the Salesforce side, Scott builds production-grade Lightning Web Components,
               complex Apex solutions, and end-to-end org automations. On the web side, he
               specializes in React, Next.js, Node.js, and PostgreSQL — designing and delivering
               full-stack systems from architecture to deployment.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-slate-400 leading-relaxed">
               Every client works directly with Scott. No hand-offs, no account managers — just
               clear communication, transparent progress tracking, and quality work delivered on time.
             </p>
           </div>
-          <div className="bg-gradient-to-br from-[#008080] to-[#0d7390] rounded-2xl flex items-center justify-center min-h-[300px] text-white text-lg font-medium">
+          <div className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] rounded-2xl flex items-center justify-center min-h-[300px] text-white text-lg font-medium">
             Scott Sherwood — STC
           </div>
         </div>
       </section>
 
       {/* Values */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-[#0F1923]">
         <div className="section-container">
           <h2 className="section-title">How We Work</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((v) => (
               <div key={v.title} className="card p-6">
                 <div className="text-brand mb-4">{v.icon}</div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">{v.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{v.desc}</p>
+                <h3 className="text-lg font-bold text-white mb-2">{v.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
@@ -98,7 +98,7 @@ export default function AboutPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-[#1A2535]">
         <div className="section-container">
           <h2 className="section-title">Our Technology Stack</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -107,7 +107,7 @@ export default function AboutPage() {
                 <h3 className="text-lg font-semibold text-brand mb-4">{category}</h3>
                 <ul className="space-y-2">
                   {items.map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-gray-600 text-sm">
+                    <li key={item} className="flex items-center gap-2 text-slate-400 text-sm">
                       <span className="w-1.5 h-1.5 rounded-full bg-brand inline-block" />
                       {item}
                     </li>
@@ -120,15 +120,15 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-gradient-to-br from-[#008080] to-[#0d7390] text-white text-center">
+      <section className="py-16 bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white text-center">
         <div className="section-container">
           <h2 className="text-3xl font-bold mb-4">Let&apos;s Build Something Together</h2>
-          <p className="text-teal-100 mb-8 max-w-xl mx-auto">
+          <p className="text-brand/70 mb-8 max-w-xl mx-auto">
             Have a project in mind? We&apos;d love to hear about it.
           </p>
           <Link
             href="/pricing"
-            className="bg-white text-brand font-semibold px-8 py-3 rounded-lg hover:bg-teal-50 transition-colors inline-flex items-center gap-2"
+            className="btn-primary inline-flex items-center gap-2"
           >
             Get a Quote <FiArrowRight />
           </Link>

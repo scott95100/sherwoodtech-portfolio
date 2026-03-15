@@ -42,12 +42,12 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0F1923]">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-20">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
         <div className="section-container text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h1>
-          <p className="text-teal-100 text-lg max-w-xl mx-auto">
+          <p className="text-brand/70 text-lg max-w-xl mx-auto">
             Let&apos;s discuss your project. We&apos;ll respond within 24 hours.
           </p>
         </div>
@@ -58,7 +58,7 @@ export default function ContactPage() {
           {/* Contact Info */}
           <div>
             <h2 className="text-2xl font-bold text-brand mb-6">Contact STC</h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-slate-400 mb-6 leading-relaxed">
               Have a question, a general inquiry, or just want to say hello? Fill out the form
               and we&apos;ll get back to you within 24 hours.
             </p>
@@ -91,7 +91,7 @@ export default function ContactPage() {
             <div className="space-y-4">
               <a
                 href="mailto:sherwoodtechconsulting@gmail.com"
-                className="flex items-center gap-3 text-gray-600 hover:text-brand transition-colors"
+                className="flex items-center gap-3 text-slate-400 hover:text-brand transition-colors"
               >
                 <FiMail size={20} className="text-brand" />
                 sherwoodtechconsulting@gmail.com
@@ -100,9 +100,9 @@ export default function ContactPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-md p-8 space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8 space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-semibold text-slate-200 mb-1">Name</label>
               <input
                 {...register('name', { required: 'Name is required' })}
                 className={`input ${errors.name ? 'input-error' : ''}`}
@@ -112,7 +112,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-semibold text-slate-200 mb-1">Email</label>
               <input
                 {...register('email', {
                   required: 'Email is required',
@@ -125,7 +125,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
+              <label className="block text-sm font-semibold text-slate-200 mb-1">Subject</label>
               <input
                 {...register('subject', { required: 'Subject is required' })}
                 className={`input ${errors.subject ? 'input-error' : ''}`}
@@ -137,7 +137,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Message</label>
+              <label className="block text-sm font-semibold text-slate-200 mb-1">Message</label>
               <textarea
                 {...register('message', {
                   required: 'Message is required',
@@ -151,7 +151,7 @@ export default function ContactPage() {
               )}
             </div>
 
-            <p className="text-xs text-gray-400 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               Starting a project?{' '}
               <Link href="/services" className="text-brand hover:underline font-medium">
                 Use the Project Estimator

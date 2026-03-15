@@ -48,16 +48,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
+    <div className="min-h-screen bg-[#0F1923] flex items-center justify-center px-4">
+      <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-brand mb-2 text-center">Client Login</h1>
-        <p className="text-gray-500 text-sm text-center mb-8">
+        <p className="text-slate-500 text-sm text-center mb-8">
           Sign in to access your STC client portal
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-semibold text-slate-200 mb-1">Email</label>
             <input
               {...register('email', {
                 required: 'Email is required',
@@ -72,7 +72,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-semibold text-slate-200 mb-1">Password</label>
             <input
               {...register('password', { required: 'Password is required' })}
               type="password"
@@ -90,7 +90,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-slate-500 mt-6">
           Have an invite code?{' '}
           <Link href="/register" className="text-brand font-semibold hover:underline">
             Create Account

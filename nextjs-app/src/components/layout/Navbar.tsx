@@ -21,10 +21,10 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+    <header className="sticky top-0 z-50 bg-[#0F1923]/95 backdrop-blur-sm border-b border-[#243044] shadow-lg shadow-black/20">
       <nav className="section-container flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-brand hover:opacity-80 transition-opacity">
+        <Link href="/" className="text-xl font-bold text-brand hover:text-brand-light transition-colors">
           STC
         </Link>
 
@@ -35,7 +35,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className={`font-medium transition-colors duration-200 hover:text-brand ${
-                pathname === link.href ? 'text-brand' : 'text-gray-600'
+                pathname === link.href ? 'text-brand' : 'text-slate-400'
               }`}
             >
               {link.label}
@@ -45,12 +45,12 @@ export default function Navbar() {
           {session ? (
             <div className="flex items-center gap-3">
               {session.user?.role === 'ADMIN' && (
-                <Link href="/admin" className="font-medium text-gray-600 hover:text-brand">
+                <Link href="/admin" className="font-medium text-slate-400 hover:text-brand">
                   Admin
                 </Link>
               )}
               {session.user?.role === 'CLIENT' && (
-                <Link href="/client-portal" className="font-medium text-gray-600 hover:text-brand">
+                <Link href="/client-portal" className="font-medium text-slate-400 hover:text-brand">
                   My Projects
                 </Link>
               )}
@@ -70,7 +70,7 @@ export default function Navbar() {
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden text-gray-600 hover:text-brand"
+          className="md:hidden text-slate-400 hover:text-brand"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -85,7 +85,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-100 bg-white"
+            className="md:hidden border-t border-[#243044] bg-[#0F1923]"
           >
             <div className="section-container py-4 flex flex-col gap-3">
               {navLinks.map((link) => (
@@ -94,7 +94,7 @@ export default function Navbar() {
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
                   className={`font-medium py-2 transition-colors hover:text-brand ${
-                    pathname === link.href ? 'text-brand' : 'text-gray-600'
+                    pathname === link.href ? 'text-brand' : 'text-slate-400'
                   }`}
                 >
                   {link.label}
@@ -103,12 +103,12 @@ export default function Navbar() {
               {session ? (
                 <>
                   {session.user?.role === 'ADMIN' && (
-                    <Link href="/admin" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-gray-600">
+                    <Link href="/admin" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-slate-400">
                       Admin
                     </Link>
                   )}
                   {session.user?.role === 'CLIENT' && (
-                    <Link href="/client-portal" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-gray-600">
+                    <Link href="/client-portal" onClick={() => setMenuOpen(false)} className="font-medium py-2 text-slate-400">
                       My Projects
                     </Link>
                   )}

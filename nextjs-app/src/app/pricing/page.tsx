@@ -286,7 +286,7 @@ function StepDots({ current, total }: { current: number; total: number }) {
 
 function BlockedScreen({ type, value }: { type: 'industry' | 'country'; value: string }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0F1923]">
       <section className="bg-gradient-to-br from-gray-700 to-gray-900 text-white py-20">
         <div className="section-container text-center">
           <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -304,7 +304,7 @@ function BlockedScreen({ type, value }: { type: 'industry' | 'country'; value: s
       </section>
 
       <div className="section-container py-16 max-w-2xl">
-        <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
+        <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8 mb-6">
           {type === 'industry' ? (
             <>
               <div className="flex items-start gap-4 mb-6">
@@ -312,8 +312,8 @@ function BlockedScreen({ type, value }: { type: 'industry' | 'country'; value: s
                   <FiAlertCircle size={20} className="text-amber-600" />
                 </div>
                 <div>
-                  <h2 className="font-bold text-gray-800 text-lg mb-2">Conflict of Interest Disclosure</h2>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <h2 className="font-bold text-white text-lg mb-2">Conflict of Interest Disclosure</h2>
+                  <p className="text-slate-400 text-sm leading-relaxed">
                     Due to existing professional commitments, Sherwood Technology Consulting LLC
                     is <strong>not accepting projects</strong> in the following industries:
                   </p>
@@ -321,13 +321,13 @@ function BlockedScreen({ type, value }: { type: 'industry' | 'country'; value: s
               </div>
               <ul className="space-y-2 mb-6 ml-14">
                 {Object.values(RESTRICTED_INDUSTRY_LABELS).map((label) => (
-                  <li key={label} className="flex items-center gap-2 text-sm text-gray-700">
+                  <li key={label} className="flex items-center gap-2 text-sm text-slate-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
                     {label}
                   </li>
                 ))}
               </ul>
-              <p className="text-gray-500 text-sm leading-relaxed ml-14">
+              <p className="text-slate-500 text-sm leading-relaxed ml-14">
                 This restriction is in place to avoid any conflict of interest with current
                 professional obligations. We apologize for the inconvenience and hope to
                 be able to serve these industries in the future.
@@ -340,8 +340,8 @@ function BlockedScreen({ type, value }: { type: 'industry' | 'country'; value: s
                   <FiAlertTriangle size={20} className="text-red-500" />
                 </div>
                 <div>
-                  <h2 className="font-bold text-gray-800 text-lg mb-2">Region Restriction</h2>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <h2 className="font-bold text-white text-lg mb-2">Region Restriction</h2>
+                  <p className="text-slate-400 text-sm leading-relaxed">
                     Sherwood Technology Consulting LLC is a US-based company and is legally
                     required to comply with <strong>OFAC (Office of Foreign Assets Control)</strong> sanctions
                     regulations. We are unable to provide services to clients located in
@@ -353,7 +353,7 @@ function BlockedScreen({ type, value }: { type: 'industry' | 'country'; value: s
                 <p className="text-sm text-red-700 font-medium mb-2">Currently Restricted Regions:</p>
                 <p className="text-sm text-red-600">{SANCTIONED_COUNTRIES.join(', ')}</p>
               </div>
-              <p className="text-gray-500 text-xs leading-relaxed ml-14">
+              <p className="text-slate-500 text-xs leading-relaxed ml-14">
                 This is not a business decision — it is a legal requirement under US federal law (31 CFR Chapter V).
                 Violations of OFAC regulations carry significant civil and criminal penalties.
                 If you believe this restriction has been applied in error, please contact us directly.
@@ -478,14 +478,14 @@ function PricingInner() {
     const weeksOut = pipeline?.weeksUntilAvailable ?? 0;
 
     return (
-      <div className="min-h-screen bg-gray-50">
-        <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-20">
+      <div className="min-h-screen bg-[#0F1923]">
+        <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
           <div className="section-container text-center">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 bg-[#1A2535]/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <FiCheck size={32} />
             </div>
             <h1 className="text-4xl font-bold mb-3">Your Estimate is Ready</h1>
-            <p className="text-teal-100 text-lg max-w-xl mx-auto">
+            <p className="text-brand/70 text-lg max-w-xl mx-auto">
               We&apos;ve received your project details. Here&apos;s your estimated scope.
             </p>
           </div>
@@ -494,24 +494,24 @@ function PricingInner() {
         <div className="section-container py-16 max-w-2xl">
           {/* Estimate cards */}
           <div className="grid sm:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
+            <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-6 text-center">
               <FiDollarSign size={24} className="text-brand mx-auto mb-2" />
-              <div className="text-sm text-gray-500 mb-1">Estimated Range</div>
-              <div className="text-2xl font-bold text-gray-800">
+              <div className="text-sm text-slate-500 mb-1">Estimated Range</div>
+              <div className="text-2xl font-bold text-white">
                 ${result.low.toLocaleString()} – ${result.high.toLocaleString()}
               </div>
             </div>
-            <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
+            <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-6 text-center">
               <FiClock size={24} className="text-brand mx-auto mb-2" />
-              <div className="text-sm text-gray-500 mb-1">Build Timeline</div>
-              <div className="text-2xl font-bold text-gray-800">
+              <div className="text-sm text-slate-500 mb-1">Build Timeline</div>
+              <div className="text-2xl font-bold text-white">
                 {result.weeks} {result.weeks === 1 ? 'week' : 'weeks'}
               </div>
             </div>
-            <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
+            <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-6 text-center">
               <FiCheck size={24} className="text-brand mx-auto mb-2" />
-              <div className="text-sm text-gray-500 mb-1">Project Type</div>
-              <div className="text-2xl font-bold text-gray-800 capitalize">
+              <div className="text-sm text-slate-500 mb-1">Project Type</div>
+              <div className="text-2xl font-bold text-white capitalize">
                 {form.projectType === 'pilot' ? 'Pilot' : 'Full Project'}
               </div>
             </div>
@@ -564,30 +564,30 @@ function PricingInner() {
           </div>
 
           {/* Summary */}
-          <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Project Summary</h2>
+          <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8 mb-6">
+            <h2 className="text-xl font-bold text-white mb-4">Project Summary</h2>
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-gray-500">Project</dt>
-                <dd className="font-medium text-gray-800">{form.title}</dd>
+                <dt className="text-slate-500">Project</dt>
+                <dd className="font-medium text-white">{form.title}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-500">Category</dt>
-                <dd className="font-medium text-gray-800 capitalize">{form.serviceCategory || 'Pilot'}</dd>
+                <dt className="text-slate-500">Category</dt>
+                <dd className="font-medium text-white capitalize">{form.serviceCategory || 'Pilot'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-500">Industry</dt>
-                <dd className="font-medium text-gray-800">
+                <dt className="text-slate-500">Industry</dt>
+                <dd className="font-medium text-white">
                   {INDUSTRY_OPTIONS.find((i) => i.value === form.industry)?.label || form.industry}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-500">Complexity</dt>
-                <dd className="font-medium text-gray-800 capitalize">{form.complexity}</dd>
+                <dt className="text-slate-500">Complexity</dt>
+                <dd className="font-medium text-white capitalize">{form.complexity}</dd>
               </div>
               {form.features.length > 0 && (
                 <div>
-                  <dt className="text-gray-500 mb-2">Selected Features</dt>
+                  <dt className="text-slate-500 mb-2">Selected Features</dt>
                   <dd className="flex flex-wrap gap-1">
                     {form.features.map((f) => (
                       <span key={f} className="bg-brand/10 text-brand text-xs px-2 py-1 rounded-full">{f}</span>
@@ -598,8 +598,8 @@ function PricingInner() {
             </dl>
           </div>
 
-          <div className="bg-teal-50 border border-brand/20 rounded-2xl p-6 mb-8 text-sm text-gray-600 leading-relaxed">
-            <p className="font-semibold text-gray-800 mb-1">What happens next?</p>
+          <div className="bg-brand/10 border border-brand/20 rounded-2xl p-6 mb-8 text-sm text-slate-400 leading-relaxed">
+            <p className="font-semibold text-white mb-1">What happens next?</p>
             Scott will review your submission and reach out within <strong>24 hours</strong> with
             a formal proposal, any clarifying questions, and a confirmed start date. This estimate
             is a starting point — the final proposal will reflect your exact requirements.
@@ -619,23 +619,23 @@ function PricingInner() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-16">
+    <div className="min-h-screen bg-[#0F1923]">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-16">
         <div className="section-container text-center">
-          <p className="text-teal-100 uppercase tracking-widest text-sm font-semibold mb-3">Project Estimator</p>
+          <p className="text-brand/70 uppercase tracking-widest text-sm font-semibold mb-3">Project Estimator</p>
           {preselectedService && SERVICE_CONFIGS[preselectedService] ? (
             <>
               <h1 className="text-4xl sm:text-5xl font-bold mb-4">
                 {SERVICE_CONFIGS[preselectedService].label}
               </h1>
-              <p className="text-teal-100 text-lg max-w-2xl mx-auto">
+              <p className="text-brand/70 text-lg max-w-2xl mx-auto">
                 Get an instant cost and timeline estimate for your {SERVICE_CONFIGS[preselectedService].label.toLowerCase()} project — no commitment required.
               </p>
             </>
           ) : (
             <>
               <h1 className="text-4xl sm:text-5xl font-bold mb-4">Get a Project Estimate</h1>
-              <p className="text-teal-100 text-lg max-w-2xl mx-auto">
+              <p className="text-brand/70 text-lg max-w-2xl mx-auto">
                 Answer a few questions about your project and we&apos;ll generate an instant cost
                 and timeline estimate — no commitment required.
               </p>
@@ -658,27 +658,27 @@ function PricingInner() {
 
             {/* Step 0 — Contact Info */}
             {step === 0 && (
-              <div className="bg-white rounded-2xl shadow-sm p-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-1">Let&apos;s start with you</h2>
-                <p className="text-gray-500 text-sm mb-6">We&apos;ll send your estimate and proposal to this email.</p>
+              <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8">
+                <h2 className="text-2xl font-bold text-white mb-1">Let&apos;s start with you</h2>
+                <p className="text-slate-500 text-sm mb-6">We&apos;ll send your estimate and proposal to this email.</p>
                 <div className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">Name *</label>
+                      <label className="block text-sm font-semibold text-slate-200 mb-1">Name *</label>
                       <input className="input" placeholder="Your name" value={form.name} onChange={(e) => update('name', e.target.value)} />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">Email *</label>
+                      <label className="block text-sm font-semibold text-slate-200 mb-1">Email *</label>
                       <input className="input" type="email" placeholder="your@email.com" value={form.email} onChange={(e) => update('email', e.target.value)} />
                     </div>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">Company</label>
+                      <label className="block text-sm font-semibold text-slate-200 mb-1">Company</label>
                       <input className="input" placeholder="Company name (optional)" value={form.company} onChange={(e) => update('company', e.target.value)} />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+                      <label className="block text-sm font-semibold text-slate-200 mb-1">Phone</label>
                       <input className="input" placeholder="Phone (optional)" value={form.phone} onChange={(e) => update('phone', e.target.value)} />
                     </div>
                   </div>
@@ -688,14 +688,14 @@ function PricingInner() {
 
             {/* Step 1 — Industry + Country (compliance gate) */}
             {step === 1 && (
-              <div className="bg-white rounded-2xl shadow-sm p-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-1">About your business</h2>
-                <p className="text-gray-500 text-sm mb-6">
+              <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8">
+                <h2 className="text-2xl font-bold text-white mb-1">About your business</h2>
+                <p className="text-slate-500 text-sm mb-6">
                   We need this to confirm we can serve your project.
                 </p>
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Your Industry *</label>
+                    <label className="block text-sm font-semibold text-slate-200 mb-1">Your Industry *</label>
                     <select
                       className="input w-full"
                       value={form.industry}
@@ -718,7 +718,7 @@ function PricingInner() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Your Country *</label>
+                    <label className="block text-sm font-semibold text-slate-200 mb-1">Your Country *</label>
                     <select
                       className="input w-full"
                       value={form.country}
@@ -748,9 +748,9 @@ function PricingInner() {
             {step === 2 && (() => {
               const cfg = SERVICE_CONFIGS[form.serviceCategory];
               return (
-                <div className="bg-white rounded-2xl shadow-sm p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-1">What type of engagement?</h2>
-                  <p className="text-gray-500 text-sm mb-6">
+                <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8">
+                  <h2 className="text-2xl font-bold text-white mb-1">What type of engagement?</h2>
+                  <p className="text-slate-500 text-sm mb-6">
                     {cfg
                       ? `Choose how you'd like to start your ${cfg.label} project.`
                       : 'Not sure yet? A pilot is a great low-risk way to start.'}
@@ -760,11 +760,11 @@ function PricingInner() {
                     <button
                       onClick={() => update('projectType', 'pilot')}
                       className={`text-left p-6 rounded-xl border-2 transition-all ${
-                        form.projectType === 'pilot' ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                        form.projectType === 'pilot' ? 'border-brand bg-brand/5' : 'border-[#243044] hover:border-brand/40'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <span className="font-bold text-gray-800 text-lg">Pilot Project</span>
+                        <span className="font-bold text-white text-lg">Pilot Project</span>
                         {form.projectType === 'pilot' && (
                           <span className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
                             <FiCheck size={12} className="text-white" />
@@ -774,7 +774,7 @@ function PricingInner() {
                       <div className="text-brand font-semibold text-sm mb-2">
                         ${(cfg?.pilotLow ?? 1500).toLocaleString()} – ${(cfg?.pilotHigh ?? 3000).toLocaleString()}
                       </div>
-                      <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                      <p className="text-slate-500 text-sm mb-4 leading-relaxed">
                         {cfg
                           ? cfg.pilotDeliverable
                           : 'A small, scoped engagement to prove the concept and build confidence.'}
@@ -782,15 +782,15 @@ function PricingInner() {
                       {cfg && (
                         <ul className="space-y-1 mb-2">
                           {cfg.pilotExamples.map((ex) => (
-                            <li key={ex} className="flex items-start gap-2 text-xs text-gray-500">
+                            <li key={ex} className="flex items-start gap-2 text-xs text-slate-500">
                               <span className="w-1 h-1 rounded-full bg-brand inline-block mt-1.5 flex-shrink-0" />{ex}
                             </li>
                           ))}
                         </ul>
                       )}
-                      <ul className="space-y-1 mt-3 border-t border-gray-100 pt-3">
+                      <ul className="space-y-1 mt-3 border-t border-[#243044] pt-3">
                         {['2-week delivery', 'Full code ownership', 'Low-risk commitment'].map((f) => (
-                          <li key={f} className="flex items-center gap-2 text-xs text-gray-500">
+                          <li key={f} className="flex items-center gap-2 text-xs text-slate-500">
                             <span className="w-1 h-1 rounded-full bg-brand inline-block" />{f}
                           </li>
                         ))}
@@ -801,11 +801,11 @@ function PricingInner() {
                     <button
                       onClick={() => update('projectType', 'full')}
                       className={`text-left p-6 rounded-xl border-2 transition-all ${
-                        form.projectType === 'full' ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                        form.projectType === 'full' ? 'border-brand bg-brand/5' : 'border-[#243044] hover:border-brand/40'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <span className="font-bold text-gray-800 text-lg">Full Project</span>
+                        <span className="font-bold text-white text-lg">Full Project</span>
                         {form.projectType === 'full' && (
                           <span className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
                             <FiCheck size={12} className="text-white" />
@@ -817,25 +817,25 @@ function PricingInner() {
                           ? `$${cfg.fullLow.toLocaleString()} – $${cfg.fullHigh.toLocaleString()}`
                           : 'Custom estimate'}
                       </div>
-                      <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                      <p className="text-slate-500 text-sm mb-4 leading-relaxed">
                         {cfg ? cfg.fullDescription : 'A complete end-to-end build from architecture to production deployment.'}
                       </p>
                       {cfg && (
                         <ul className="space-y-1">
                           {cfg.fullFeatures.slice(0, 5).map((f) => (
-                            <li key={f} className="flex items-start gap-2 text-xs text-gray-500">
+                            <li key={f} className="flex items-start gap-2 text-xs text-slate-500">
                               <span className="w-1 h-1 rounded-full bg-brand inline-block mt-1.5 flex-shrink-0" />{f}
                             </li>
                           ))}
                           {cfg.fullFeatures.length > 5 && (
-                            <li className="text-xs text-gray-400 pl-3">+ {cfg.fullFeatures.length - 5} more</li>
+                            <li className="text-xs text-slate-600 pl-3">+ {cfg.fullFeatures.length - 5} more</li>
                           )}
                         </ul>
                       )}
                       {!cfg && (
                         <ul className="space-y-1">
                           {['Full scope & milestone plan', 'Regular progress updates', 'Client portal access', 'Post-launch support'].map((f) => (
-                            <li key={f} className="flex items-center gap-2 text-xs text-gray-500">
+                            <li key={f} className="flex items-center gap-2 text-xs text-slate-500">
                               <span className="w-1 h-1 rounded-full bg-brand inline-block" />{f}
                             </li>
                           ))}
@@ -849,46 +849,46 @@ function PricingInner() {
 
             {/* Step 3 — Service Category */}
             {step === 3 && (
-              <div className="bg-white rounded-2xl shadow-sm p-8">
+              <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8">
                 {form.projectType === 'pilot' && preselectedService && SERVICE_CONFIGS[preselectedService] ? (
                   <>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                    <h2 className="text-2xl font-bold text-white mb-1">
                       {SERVICE_CONFIGS[preselectedService].label} Pilot
                     </h2>
-                    <p className="text-gray-500 text-sm mb-6">
+                    <p className="text-slate-500 text-sm mb-6">
                       Fixed-scope, 2-week engagement at ${SERVICE_CONFIGS[preselectedService].pilotLow.toLocaleString()}–${SERVICE_CONFIGS[preselectedService].pilotHigh.toLocaleString()}.
                     </p>
-                    <div className="bg-teal-50 border border-brand/20 rounded-xl p-5 text-sm text-gray-600 leading-relaxed mb-4">
-                      <p className="font-semibold text-gray-800 mb-2">What&apos;s included:</p>
+                    <div className="bg-brand/10 border border-brand/20 rounded-xl p-5 text-sm text-slate-400 leading-relaxed mb-4">
+                      <p className="font-semibold text-white mb-2">What&apos;s included:</p>
                       <p className="mb-3">{SERVICE_CONFIGS[preselectedService].pilotDeliverable}</p>
                       <ul className="space-y-1">
                         {SERVICE_CONFIGS[preselectedService].pilotExamples.map((ex) => (
-                          <li key={ex} className="flex items-center gap-2 text-gray-600 text-sm">
+                          <li key={ex} className="flex items-center gap-2 text-slate-400 text-sm">
                             <span className="w-1.5 h-1.5 rounded-full bg-brand inline-block flex-shrink-0" />{ex}
                           </li>
                         ))}
                       </ul>
                     </div>
-                    <div className="bg-brand/5 border border-brand/20 rounded-xl p-4 text-sm text-gray-600">
+                    <div className="bg-brand/5 border border-brand/20 rounded-xl p-4 text-sm text-slate-400">
                       Pilots are low-risk by design. Full code ownership, clean documentation, and a clear path to a full project if you want to continue.
                     </div>
                   </>
                 ) : form.projectType === 'pilot' ? (
                   <>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-1">Pilot Project</h2>
-                    <p className="text-gray-500 text-sm mb-6">
+                    <h2 className="text-2xl font-bold text-white mb-1">Pilot Project</h2>
+                    <p className="text-slate-500 text-sm mb-6">
                       A 2-week, fixed-scope engagement at $1,500–$3,000. Tell us what you want to build
                       in the next step and we&apos;ll scope it out.
                     </p>
-                    <div className="bg-teal-50 border border-brand/20 rounded-xl p-5 text-sm text-gray-600 leading-relaxed">
+                    <div className="bg-brand/10 border border-brand/20 rounded-xl p-5 text-sm text-slate-400 leading-relaxed">
                       Pilots are designed to be a low-risk starting point. We&apos;ll scope one
                       focused feature or module, deliver it in 2 weeks, and you get full ownership of the code.
                     </div>
                   </>
                 ) : (
                   <>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-1">What&apos;s the focus?</h2>
-                    <p className="text-gray-500 text-sm mb-6">Select the primary service category for your project.</p>
+                    <h2 className="text-2xl font-bold text-white mb-1">What&apos;s the focus?</h2>
+                    <p className="text-slate-500 text-sm mb-6">Select the primary service category for your project.</p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       {[
                         { key: 'salesforce', label: 'Salesforce Development',   sub: 'LWC, Apex, Flows, integrations',         range: '$8k – $35k' },
@@ -901,13 +901,13 @@ function PricingInner() {
                       ].map((opt) => (
                         <button key={opt.key} onClick={() => update('serviceCategory', opt.key)}
                           className={`text-left p-4 rounded-xl border-2 transition-all ${
-                            form.serviceCategory === opt.key ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                            form.serviceCategory === opt.key ? 'border-brand bg-brand/5' : 'border-[#243044] hover:border-brand/40'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <div className="font-semibold text-gray-800 text-sm">{opt.label}</div>
-                              <div className="text-gray-400 text-xs mt-0.5">{opt.sub}</div>
+                              <div className="font-semibold text-white text-sm">{opt.label}</div>
+                              <div className="text-slate-600 text-xs mt-0.5">{opt.sub}</div>
                               <div className="text-brand text-xs font-medium mt-1">{opt.range}</div>
                             </div>
                             {form.serviceCategory === opt.key && (
@@ -926,16 +926,16 @@ function PricingInner() {
 
             {/* Step 4 — Scope */}
             {step === 4 && (
-              <div className="bg-white rounded-2xl shadow-sm p-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-1">Tell us about your project</h2>
-                <p className="text-gray-500 text-sm mb-6">The more detail, the more accurate the estimate.</p>
+              <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8">
+                <h2 className="text-2xl font-bold text-white mb-1">Tell us about your project</h2>
+                <p className="text-slate-500 text-sm mb-6">The more detail, the more accurate the estimate.</p>
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Project Title *</label>
+                    <label className="block text-sm font-semibold text-slate-200 mb-1">Project Title *</label>
                     <input className="input" placeholder="e.g. Customer Portal, LWC Component Suite" value={form.title} onChange={(e) => update('title', e.target.value)} />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Description *</label>
+                    <label className="block text-sm font-semibold text-slate-200 mb-1">Description *</label>
                     <textarea
                       className="input min-h-[100px] resize-y"
                       placeholder="Describe what you want to build, what problem it solves, and any key requirements..."
@@ -944,7 +944,7 @@ function PricingInner() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">Complexity</label>
+                    <label className="block text-sm font-semibold text-slate-200 mb-3">Complexity</label>
                     <div className="grid grid-cols-3 gap-3">
                       {[
                         { key: 'simple', label: 'Simple', sub: 'Single feature, minimal logic' },
@@ -953,11 +953,11 @@ function PricingInner() {
                       ].map((opt) => (
                         <button key={opt.key} onClick={() => update('complexity', opt.key)}
                           className={`text-left p-3 rounded-xl border-2 transition-all ${
-                            form.complexity === opt.key ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                            form.complexity === opt.key ? 'border-brand bg-brand/5' : 'border-[#243044] hover:border-brand/40'
                           }`}
                         >
-                          <div className="font-semibold text-sm text-gray-800">{opt.label}</div>
-                          <div className="text-xs text-gray-400 mt-0.5 leading-tight">{opt.sub}</div>
+                          <div className="font-semibold text-sm text-white">{opt.label}</div>
+                          <div className="text-xs text-slate-600 mt-0.5 leading-tight">{opt.sub}</div>
                         </button>
                       ))}
                     </div>
@@ -968,20 +968,20 @@ function PricingInner() {
 
             {/* Step 5 — Features & Add-ons */}
             {step === 5 && (
-              <div className="bg-white rounded-2xl shadow-sm p-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-1">Features & Requirements</h2>
-                <p className="text-gray-500 text-sm mb-6">Select all that apply — each adds to the estimate.</p>
+              <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8">
+                <h2 className="text-2xl font-bold text-white mb-1">Features & Requirements</h2>
+                <p className="text-slate-500 text-sm mb-6">Select all that apply — each adds to the estimate.</p>
                 <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">Features needed</label>
+                  <label className="block text-sm font-semibold text-slate-200 mb-3">Features needed</label>
                   <div className="grid sm:grid-cols-2 gap-2">
                     {(FEATURE_OPTIONS[form.serviceCategory] || FEATURE_OPTIONS.pilot).map((f) => (
                       <button key={f} onClick={() => toggleFeature(f)}
                         className={`flex items-center gap-2 text-left p-3 rounded-lg border transition-all text-sm ${
-                          form.features.includes(f) ? 'border-brand bg-brand/5 text-brand font-medium' : 'border-gray-200 text-gray-600 hover:border-brand/40'
+                          form.features.includes(f) ? 'border-brand bg-brand/5 text-brand font-medium' : 'border-[#243044] text-slate-400 hover:border-brand/40'
                         }`}
                       >
                         <span className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${
-                          form.features.includes(f) ? 'bg-brand border-brand' : 'border-gray-300'
+                          form.features.includes(f) ? 'bg-brand border-brand' : 'border-[#243044]'
                         }`}>
                           {form.features.includes(f) && <FiCheck size={10} className="text-white" />}
                         </span>
@@ -991,7 +991,7 @@ function PricingInner() {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-gray-700">Additional requirements</label>
+                  <label className="block text-sm font-semibold text-slate-200">Additional requirements</label>
                   {[
                     { key: 'needsAuth',        label: 'Authentication / user login system',   price: '+$1,200' },
                     { key: 'needsHosting',      label: 'Cloud hosting & deployment setup',    price: '+$800' },
@@ -1001,16 +1001,16 @@ function PricingInner() {
                     <button key={item.key}
                       onClick={() => update(item.key as keyof FormState, !form[item.key as keyof FormState])}
                       className={`w-full flex items-center justify-between p-3 rounded-lg border transition-all text-sm ${
-                        form[item.key as keyof FormState] ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                        form[item.key as keyof FormState] ? 'border-brand bg-brand/5' : 'border-[#243044] hover:border-brand/40'
                       }`}
                     >
                       <div className="flex items-center gap-2">
                         <span className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${
-                          form[item.key as keyof FormState] ? 'bg-brand border-brand' : 'border-gray-300'
+                          form[item.key as keyof FormState] ? 'bg-brand border-brand' : 'border-[#243044]'
                         }`}>
                           {form[item.key as keyof FormState] && <FiCheck size={10} className="text-white" />}
                         </span>
-                        <span className="text-gray-700">{item.label}</span>
+                        <span className="text-slate-200">{item.label}</span>
                       </div>
                       <span className="text-xs text-brand font-medium">{item.price}</span>
                     </button>
@@ -1018,7 +1018,7 @@ function PricingInner() {
                 </div>
                 {form.needsIntegrations && (
                   <div className="mt-4">
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Which integrations?</label>
+                    <label className="block text-sm font-semibold text-slate-200 mb-1">Which integrations?</label>
                     <input className="input" placeholder="e.g. Stripe, Salesforce, Twilio..." value={form.integrationNotes} onChange={(e) => update('integrationNotes', e.target.value)} />
                   </div>
                 )}
@@ -1028,9 +1028,9 @@ function PricingInner() {
             {/* Step 6 — Timeline + Live Estimate */}
             {step === 6 && (
               <div className="space-y-5">
-                <div className="bg-white rounded-2xl shadow-sm p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-1">Timeline preference</h2>
-                  <p className="text-gray-500 text-sm mb-6">Rush timelines carry a premium.</p>
+                <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8">
+                  <h2 className="text-2xl font-bold text-white mb-1">Timeline preference</h2>
+                  <p className="text-slate-500 text-sm mb-6">Rush timelines carry a premium.</p>
                   <div className="grid sm:grid-cols-2 gap-3">
                     {[
                       { key: 'asap',     label: 'As soon as possible', sub: 'Rush — 25% premium' },
@@ -1040,13 +1040,13 @@ function PricingInner() {
                     ].map((opt) => (
                       <button key={opt.key} onClick={() => update('desiredTimeline', opt.key)}
                         className={`text-left p-4 rounded-xl border-2 transition-all ${
-                          form.desiredTimeline === opt.key ? 'border-brand bg-brand/5' : 'border-gray-200 hover:border-brand/40'
+                          form.desiredTimeline === opt.key ? 'border-brand bg-brand/5' : 'border-[#243044] hover:border-brand/40'
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-semibold text-sm text-gray-800">{opt.label}</div>
-                            <div className="text-xs text-gray-400 mt-0.5">{opt.sub}</div>
+                            <div className="font-semibold text-sm text-white">{opt.label}</div>
+                            <div className="text-xs text-slate-600 mt-0.5">{opt.sub}</div>
                           </div>
                           {form.desiredTimeline === opt.key && (
                             <span className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
@@ -1058,23 +1058,23 @@ function PricingInner() {
                     ))}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white rounded-2xl p-8">
-                  <h3 className="font-bold text-teal-100 uppercase tracking-wide text-sm mb-4">Live Estimate</h3>
+                <div className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white rounded-2xl p-8">
+                  <h3 className="font-bold text-brand/70 uppercase tracking-wide text-sm mb-4">Live Estimate</h3>
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                      <div className="text-teal-100 text-sm mb-1">Estimated Cost</div>
+                      <div className="text-brand/70 text-sm mb-1">Estimated Cost</div>
                       <div className="text-3xl font-bold">
                         ${estimate.low.toLocaleString()} – ${estimate.high.toLocaleString()}
                       </div>
                     </div>
                     <div>
-                      <div className="text-teal-100 text-sm mb-1">Estimated Timeline</div>
+                      <div className="text-brand/70 text-sm mb-1">Estimated Timeline</div>
                       <div className="text-3xl font-bold">
                         {estimate.weeks} {estimate.weeks === 1 ? 'week' : 'weeks'}
                       </div>
                     </div>
                   </div>
-                  <p className="text-teal-100 text-xs leading-relaxed">
+                  <p className="text-brand/70 text-xs leading-relaxed">
                     This is a preliminary estimate. A formal proposal with exact pricing will follow after submission.
                   </p>
                 </div>
@@ -1118,7 +1118,7 @@ function PricingInner() {
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-gray-400">Loading...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-slate-600">Loading...</div></div>}>
       <PricingInner />
     </Suspense>
   );

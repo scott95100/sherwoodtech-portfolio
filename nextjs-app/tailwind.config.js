@@ -9,11 +9,18 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#008080',
-          dark: '#006666',
-          light: '#00a0a0',
-          50: '#f0fafa',
-          100: '#cceeee',
+          DEFAULT: '#00D4FF',
+          dark: '#009EBF',
+          light: '#33DDFF',
+          50: '#f0fbff',
+          100: '#ccf4ff',
+        },
+        surface: {
+          DEFAULT: '#1A2535',
+          dark: '#0F1923',
+          darker: '#0A1018',
+          border: '#243044',
+          hover: '#1E2D40',
         },
         rackley: '#5d8aa8',
       },

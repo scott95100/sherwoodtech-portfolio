@@ -88,20 +88,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0F1923]">
       {/* Header */}
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-12">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-12">
         <div className="section-container">
           <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
-          <p className="text-teal-100">Welcome back, {session?.user?.name}</p>
+          <p className="text-brand/70">Welcome back, {session?.user?.name}</p>
         </div>
       </section>
 
       <div className="section-container py-10">
         {/* Projects Panel */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
+        <div className="bg-[#1A2535] rounded-2xl shadow-md p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-800">My Projects</h2>
+            <h2 className="text-xl font-bold text-white">My Projects</h2>
             <button onClick={() => setShowForm(!showForm)} className="btn-primary flex items-center gap-2 text-sm px-4 py-2">
               <FiPlus size={16} /> Add Project
             </button>
@@ -109,11 +109,11 @@ export default function DashboardPage() {
 
           {/* Add Project Form */}
           {showForm && (
-            <form onSubmit={handleCreate} className="bg-gray-50 rounded-xl p-6 mb-6 space-y-4">
-              <h3 className="font-semibold text-gray-700">New Project</h3>
+            <form onSubmit={handleCreate} className="bg-[#0F1923] rounded-xl p-6 mb-6 space-y-4">
+              <h3 className="font-semibold text-slate-200">New Project</h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+                  <label className="block text-sm font-medium text-slate-200 mb-1">Title *</label>
                   <input
                     className="input"
                     value={form.title}
@@ -122,7 +122,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Technologies (comma-separated)</label>
+                  <label className="block text-sm font-medium text-slate-200 mb-1">Technologies (comma-separated)</label>
                   <input
                     className="input"
                     value={form.technologies}
@@ -131,7 +131,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                  <label className="block text-sm font-medium text-slate-200 mb-1">Description *</label>
                   <textarea
                     className="input min-h-[80px]"
                     value={form.description}
@@ -140,7 +140,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">GitHub URL</label>
+                  <label className="block text-sm font-medium text-slate-200 mb-1">GitHub URL</label>
                   <input
                     className="input"
                     value={form.githubUrl}
@@ -149,7 +149,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Live URL</label>
+                  <label className="block text-sm font-medium text-slate-200 mb-1">Live URL</label>
                   <input
                     className="input"
                     value={form.liveUrl}
@@ -158,7 +158,7 @@ export default function DashboardPage() {
                   />
                 </div>
               </div>
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.featured}
@@ -176,22 +176,22 @@ export default function DashboardPage() {
 
           {/* Project List */}
           {projects.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No projects yet. Add your first one!</p>
+            <p className="text-slate-500 text-center py-8">No projects yet. Add your first one!</p>
           ) : (
             <div className="space-y-4">
               {projects.map((p) => (
-                <div key={p.id} className="border border-gray-100 rounded-xl p-4 flex items-start justify-between gap-4">
+                <div key={p.id} className="border border-[#243044] rounded-xl p-4 flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-800">{p.title}</h3>
+                      <h3 className="font-semibold text-white">{p.title}</h3>
                       {p.featured && (
                         <span className="text-xs bg-brand text-white px-2 py-0.5 rounded-full">Featured</span>
                       )}
                     </div>
-                    <p className="text-gray-500 text-sm mb-2 line-clamp-2">{p.description}</p>
+                    <p className="text-slate-500 text-sm mb-2 line-clamp-2">{p.description}</p>
                     <div className="flex flex-wrap gap-1 mb-2">
                       {p.technologies.map((t) => (
-                        <span key={t} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{t}</span>
+                        <span key={t} className="text-xs bg-[#1A2535] text-slate-400 px-2 py-0.5 rounded-full">{t}</span>
                       ))}
                     </div>
                     <div className="flex gap-3">

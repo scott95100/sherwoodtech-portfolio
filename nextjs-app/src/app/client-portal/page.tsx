@@ -26,7 +26,7 @@ const statusColors: Record<string, string> = {
   IN_PROGRESS: 'bg-yellow-100 text-yellow-700',
   REVIEW: 'bg-orange-100 text-orange-700',
   COMPLETE: 'bg-green-100 text-green-700',
-  ON_HOLD: 'bg-gray-100 text-gray-600',
+  ON_HOLD: 'bg-[#1A2535] text-slate-400',
 };
 
 const statusLabel: Record<string, string> = {
@@ -86,15 +86,15 @@ export default function ClientPortalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0F1923]">
       {/* Header */}
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-16">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-16">
         <div className="section-container">
-          <p className="text-teal-100 text-sm uppercase tracking-widest mb-2">Client Portal</p>
+          <p className="text-brand/70 text-sm uppercase tracking-widest mb-2">Client Portal</p>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">
             Welcome back, {session?.user?.name?.split(' ')[0]}
           </h1>
-          <p className="text-teal-100">Track the status of your projects with STC.</p>
+          <p className="text-brand/70">Track the status of your projects with STC.</p>
         </div>
       </section>
 
@@ -108,8 +108,8 @@ export default function ClientPortalPage() {
         {projects.length === 0 ? (
           <div className="text-center py-20">
             <FiClock size={48} className="text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-500 mb-2">No projects yet</h2>
-            <p className="text-gray-400">
+            <h2 className="text-xl font-semibold text-slate-500 mb-2">No projects yet</h2>
+            <p className="text-slate-600">
               Your projects will appear here once STC has set them up.
             </p>
           </div>
@@ -125,14 +125,14 @@ export default function ClientPortalPage() {
               >
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-800">{project.title}</h2>
+                    <h2 className="text-xl font-bold text-white">{project.title}</h2>
                     {project.description && (
-                      <p className="text-gray-500 text-sm mt-1">{project.description}</p>
+                      <p className="text-slate-500 text-sm mt-1">{project.description}</p>
                     )}
                   </div>
                   <span
                     className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                      statusColors[project.status] || 'bg-gray-100 text-gray-600'
+                      statusColors[project.status] || 'bg-[#1A2535] text-slate-400'
                     }`}
                   >
                     {statusLabel[project.status] || project.status}
@@ -140,7 +140,7 @@ export default function ClientPortalPage() {
                 </div>
 
                 {/* Meta */}
-                <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                <div className="flex flex-wrap gap-4 text-sm text-slate-500 mb-4">
                   {project.startDate && (
                     <span>Started: {new Date(project.startDate).toLocaleDateString()}</span>
                   )}
@@ -150,7 +150,7 @@ export default function ClientPortalPage() {
                   {project.technologies.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {project.technologies.map((t) => (
-                        <span key={t} className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">
+                        <span key={t} className="bg-[#1A2535] text-slate-400 px-2 py-0.5 rounded text-xs">
                           {t}
                         </span>
                       ))}
@@ -186,15 +186,15 @@ export default function ClientPortalPage() {
 
                 {/* Notes */}
                 {project.notes.length > 0 && (
-                  <div className="border-t border-gray-100 pt-4 mt-4">
-                    <h3 className="text-sm font-semibold text-gray-600 flex items-center gap-1 mb-3">
+                  <div className="border-t border-[#243044] pt-4 mt-4">
+                    <h3 className="text-sm font-semibold text-slate-400 flex items-center gap-1 mb-3">
                       <FiMessageSquare size={14} /> Updates
                     </h3>
                     <div className="space-y-2">
                       {project.notes.map((note) => (
-                        <div key={note.id} className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-gray-700 text-sm">{note.content}</p>
-                          <p className="text-gray-400 text-xs mt-1">
+                        <div key={note.id} className="bg-[#0F1923] rounded-lg p-3">
+                          <p className="text-slate-200 text-sm">{note.content}</p>
+                          <p className="text-slate-600 text-xs mt-1">
                             {new Date(note.createdAt).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',

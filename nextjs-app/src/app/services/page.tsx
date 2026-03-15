@@ -113,15 +113,15 @@ const process = [
 
 export default function ServicesPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0F1923]">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-20">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
         <div className="section-container text-center">
-          <p className="text-teal-100 uppercase tracking-widest text-sm font-semibold mb-3">
+          <p className="text-brand/70 uppercase tracking-widest text-sm font-semibold mb-3">
             What We Offer
           </p>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Our Services</h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
+          <p className="text-brand/70 text-lg max-w-2xl mx-auto">
             From Salesforce LWC and Apex to full-stack web apps and cloud infrastructure — STC
             covers your entire technology stack with senior-level expertise.
           </p>
@@ -139,21 +139,21 @@ export default function ServicesPage() {
                 className="card p-8 group hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer block"
               >
                 <div className="text-brand mb-5">{s.icon}</div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">{s.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-4">{s.desc}</p>
+                <h3 className="text-xl font-bold text-white mb-3">{s.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed mb-4">{s.desc}</p>
                 <ul className="space-y-2 mb-5">
                   {s.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-gray-600 text-sm">
+                    <li key={f} className="flex items-center gap-2 text-slate-400 text-sm">
                       <span className="w-1.5 h-1.5 rounded-full bg-brand inline-block flex-shrink-0" />
                       {f}
                     </li>
                   ))}
                 </ul>
-                <div className="border-t border-gray-100 pt-4 mt-auto">
+                <div className="border-t border-[#243044] pt-4 mt-auto">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Full Project</div>
-                      <div className="text-sm font-semibold text-gray-700">{s.range}</div>
+                      <div className="text-xs text-slate-600 uppercase tracking-wide mb-0.5">Full Project</div>
+                      <div className="text-sm font-semibold text-slate-200">{s.range}</div>
                     </div>
                     <div className="flex items-center gap-1 text-brand text-sm font-semibold group-hover:gap-2 transition-all">
                       Get a Quote <FiArrowRight size={14} />
@@ -167,15 +167,15 @@ export default function ServicesPage() {
       </section>
 
       {/* Process */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#1A2535]">
         <div className="section-container">
           <h2 className="section-title">Our Process</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {process.map((p) => (
               <div key={p.step} className="text-center p-6">
                 <div className="text-5xl font-bold text-brand opacity-30 mb-3">{p.step}</div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">{p.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{p.desc}</p>
+                <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -183,15 +183,15 @@ export default function ServicesPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-[#008080] to-[#0d7390] text-white text-center">
+      <section className="py-20 bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white text-center">
         <div className="section-container">
           <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-teal-100 text-lg mb-8 max-w-xl mx-auto">
+          <p className="text-brand/70 text-lg mb-8 max-w-xl mx-auto">
             Schedule a free 30-minute consultation to discuss your project.
           </p>
           <Link
             href="/pricing"
-            className="bg-white text-brand font-semibold px-10 py-4 rounded-lg hover:bg-teal-50 transition-colors inline-flex items-center gap-2 text-lg"
+            className="btn-primary inline-flex items-center gap-2 text-lg px-10 py-4"
           >
             Get a Free Quote <FiArrowRight />
           </Link>

@@ -41,7 +41,7 @@ const statusColors: Record<string, string> = {
   IN_PROGRESS: 'bg-yellow-100 text-yellow-700',
   REVIEW: 'bg-orange-100 text-orange-700',
   COMPLETE: 'bg-green-100 text-green-700',
-  ON_HOLD: 'bg-gray-100 text-gray-600',
+  ON_HOLD: 'bg-[#1A2535] text-slate-400',
 };
 
 export default function AdminClient({
@@ -386,39 +386,39 @@ export default function AdminClient({
   ] as const;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0F1923]">
       {/* Header */}
-      <section className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white py-12">
+      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-12">
         <div className="section-container">
           <h1 className="text-3xl font-bold mb-1">Admin Dashboard</h1>
-          <p className="text-teal-100">Sherwood Technology Consulting — Admin Panel</p>
+          <p className="text-brand/70">Sherwood Technology Consulting — Admin Panel</p>
         </div>
       </section>
 
       <div className="section-container py-8">
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-5 text-center">
+          <div className="bg-[#1A2535] rounded-xl shadow-sm p-5 text-center">
             <div className="text-3xl font-bold text-brand mb-1">{users.length}</div>
-            <div className="text-gray-500 text-sm">Users</div>
+            <div className="text-slate-500 text-sm">Users</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5 text-center">
+          <div className="bg-[#1A2535] rounded-xl shadow-sm p-5 text-center">
             <div className="text-3xl font-bold text-brand mb-1">{msgList.filter((m) => m.status === 'UNREAD').length}</div>
-            <div className="text-gray-500 text-sm">Unread Messages</div>
+            <div className="text-slate-500 text-sm">Unread Messages</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5 text-center">
+          <div className="bg-[#1A2535] rounded-xl shadow-sm p-5 text-center">
             <div className="text-3xl font-bold text-brand mb-1">{inquiries.filter((i) => i.status === 'NEW').length}</div>
-            <div className="text-gray-500 text-sm">New Leads</div>
+            <div className="text-slate-500 text-sm">New Leads</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5 text-center">
+          <div className="bg-[#1A2535] rounded-xl shadow-sm p-5 text-center">
             <div className="text-3xl font-bold text-brand mb-1">{invitations.filter((i) => !i.used).length}</div>
-            <div className="text-gray-500 text-sm">Pending Invites</div>
+            <div className="text-slate-500 text-sm">Pending Invites</div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-          <div className="flex border-b border-gray-100 overflow-x-auto">
+        <div className="bg-[#1A2535] rounded-2xl shadow-md overflow-hidden">
+          <div className="flex border-b border-[#243044] overflow-x-auto">
             {tabs.map((t) => (
               <button
                 key={t.key}
@@ -431,7 +431,7 @@ export default function AdminClient({
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
                   tab === t.key
                     ? 'text-brand border-b-2 border-brand'
-                    : 'text-gray-500 hover:text-gray-700'
+                    : 'text-slate-500 hover:text-slate-200'
                 }`}
               >
                 {t.icon} {t.label}
@@ -450,7 +450,7 @@ export default function AdminClient({
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-left text-gray-500 border-b border-gray-100">
+                    <tr className="text-left text-slate-500 border-b border-[#243044]">
                       <th className="pb-3 font-medium">Name</th>
                       <th className="pb-3 font-medium">Email</th>
                       <th className="pb-3 font-medium">Role</th>
@@ -461,13 +461,13 @@ export default function AdminClient({
                   <tbody className="divide-y divide-gray-50">
                     {users.map((u) => (
                       <tr key={u.id}>
-                        <td className="py-3 font-medium text-gray-800">{u.name}</td>
-                        <td className="py-3 text-gray-500">{u.email}</td>
+                        <td className="py-3 font-medium text-white">{u.name}</td>
+                        <td className="py-3 text-slate-500">{u.email}</td>
                         <td className="py-3">
                           <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                            u.role === 'ADMIN' ? 'bg-teal-50 text-brand' :
+                            u.role === 'ADMIN' ? 'bg-brand/10 text-brand' :
                             u.role === 'CLIENT' ? 'bg-blue-50 text-blue-600' :
-                            'bg-gray-100 text-gray-600'
+                            'bg-[#1A2535] text-slate-400'
                           }`}>
                             {u.role}
                           </span>
@@ -479,7 +479,7 @@ export default function AdminClient({
                             {u.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
-                        <td className="py-3 text-gray-400">
+                        <td className="py-3 text-slate-600">
                           {new Date(u.createdAt).toLocaleDateString()}
                         </td>
                       </tr>
@@ -493,27 +493,27 @@ export default function AdminClient({
             {tab === 'messages' && (
               <div className="space-y-4">
                 {msgList.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No messages yet.</p>
+                  <p className="text-slate-500 text-center py-8">No messages yet.</p>
                 ) : (
                   msgList.map((m) => (
                     <div
                       key={m.id}
                       className={`border rounded-xl p-4 ${
-                        m.status === 'UNREAD' ? 'border-teal-200 bg-teal-50/30' : 'border-gray-100'
+                        m.status === 'UNREAD' ? 'border-teal-200 bg-brand/10/30' : 'border-[#243044]'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-gray-800">{m.name}</span>
-                            <span className="text-gray-400 text-sm">{m.email}</span>
+                            <span className="font-semibold text-white">{m.name}</span>
+                            <span className="text-slate-600 text-sm">{m.email}</span>
                             {m.status === 'UNREAD' && (
                               <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">New</span>
                             )}
                           </div>
-                          <p className="text-sm font-medium text-gray-700 mb-1">{m.subject}</p>
-                          <p className="text-sm text-gray-500">{m.message}</p>
-                          <p className="text-xs text-gray-400 mt-2">
+                          <p className="text-sm font-medium text-slate-200 mb-1">{m.subject}</p>
+                          <p className="text-sm text-slate-500">{m.message}</p>
+                          <p className="text-xs text-slate-600 mt-2">
                             {new Date(m.createdAt).toLocaleString()}
                           </p>
                         </div>
@@ -533,7 +533,7 @@ export default function AdminClient({
             {tab === 'clients' && (
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-lg font-bold text-gray-800">Client Projects</h2>
+                  <h2 className="text-lg font-bold text-white">Client Projects</h2>
                   <button
                     onClick={() => setShowCpForm(!showCpForm)}
                     className="btn-primary text-sm flex items-center gap-1"
@@ -543,11 +543,11 @@ export default function AdminClient({
                 </div>
 
                 {showCpForm && (
-                  <div className="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-100">
-                    <h3 className="font-semibold text-gray-700 mb-4">New Client Project</h3>
+                  <div className="bg-[#0F1923] rounded-xl p-5 mb-6 border border-[#243044]">
+                    <h3 className="font-semibold text-slate-200 mb-4">New Client Project</h3>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Client User ID *</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Client User ID *</label>
                         <input
                           value={cpForm.clientId}
                           onChange={(e) => setCpForm({ ...cpForm, clientId: e.target.value })}
@@ -556,7 +556,7 @@ export default function AdminClient({
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Title *</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Title *</label>
                         <input
                           value={cpForm.title}
                           onChange={(e) => setCpForm({ ...cpForm, title: e.target.value })}
@@ -565,7 +565,7 @@ export default function AdminClient({
                         />
                       </div>
                       <div className="sm:col-span-2">
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Description</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Description</label>
                         <textarea
                           value={cpForm.description}
                           onChange={(e) => setCpForm({ ...cpForm, description: e.target.value })}
@@ -575,7 +575,7 @@ export default function AdminClient({
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Status</label>
                         <select
                           value={cpForm.status}
                           onChange={(e) => setCpForm({ ...cpForm, status: e.target.value })}
@@ -587,7 +587,7 @@ export default function AdminClient({
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Technologies (comma-separated)</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Technologies (comma-separated)</label>
                         <input
                           value={cpForm.technologies}
                           onChange={(e) => setCpForm({ ...cpForm, technologies: e.target.value })}
@@ -596,11 +596,11 @@ export default function AdminClient({
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Start Date</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Start Date</label>
                         <input type="date" value={cpForm.startDate} onChange={(e) => setCpForm({ ...cpForm, startDate: e.target.value })} className="input text-sm" />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Deadline</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Deadline</label>
                         <input type="date" value={cpForm.deadline} onChange={(e) => setCpForm({ ...cpForm, deadline: e.target.value })} className="input text-sm" />
                       </div>
                     </div>
@@ -615,18 +615,18 @@ export default function AdminClient({
 
                 <div className="space-y-3">
                   {clientProjects.length === 0 && (
-                    <p className="text-gray-400 text-center py-8">No client projects yet.</p>
+                    <p className="text-slate-600 text-center py-8">No client projects yet.</p>
                   )}
                   {clientProjects.map((p) => (
-                    <div key={p.id} className="border border-gray-100 rounded-xl p-4">
+                    <div key={p.id} className="border border-[#243044] rounded-xl p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <span className="font-semibold text-gray-800">{p.title}</span>
-                          <p className="text-xs text-gray-400 mt-0.5">{p.client.name} — {p.client.email}</p>
+                          <span className="font-semibold text-white">{p.title}</span>
+                          <p className="text-xs text-slate-600 mt-0.5">{p.client.name} — {p.client.email}</p>
                           {p.technologies.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {p.technologies.map((t) => (
-                                <span key={t} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{t}</span>
+                                <span key={t} className="text-xs bg-[#1A2535] text-slate-500 px-2 py-0.5 rounded-full">{t}</span>
                               ))}
                             </div>
                           )}
@@ -635,7 +635,7 @@ export default function AdminClient({
                           <select
                             value={p.status}
                             onChange={(e) => updateProjectStatus(p.id, e.target.value)}
-                            className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer ${statusColors[p.status] || 'bg-gray-100 text-gray-600'}`}
+                            className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer ${statusColors[p.status] || 'bg-[#1A2535] text-slate-400'}`}
                           >
                             {['DISCOVERY','PROPOSAL','IN_PROGRESS','REVIEW','COMPLETE','ON_HOLD'].map((s) => (
                               <option key={s} value={s}>{s}</option>
@@ -644,7 +644,7 @@ export default function AdminClient({
                         </div>
                       </div>
                       {p.deadline && (
-                        <p className="text-xs text-gray-400 mt-2">Deadline: {new Date(p.deadline).toLocaleDateString()}</p>
+                        <p className="text-xs text-slate-600 mt-2">Deadline: {new Date(p.deadline).toLocaleDateString()}</p>
                       )}
                     </div>
                   ))}
@@ -655,7 +655,7 @@ export default function AdminClient({
             {/* ── Invitations Tab ── */}
             {tab === 'invitations' && (
               <div>
-                <h2 className="text-lg font-bold text-gray-800 mb-4">Send Invitation</h2>
+                <h2 className="text-lg font-bold text-white mb-4">Send Invitation</h2>
                 <div className="flex flex-wrap gap-3 mb-6">
                   <input
                     type="email"
@@ -677,21 +677,21 @@ export default function AdminClient({
                   </button>
                 </div>
 
-                <h3 className="text-sm font-semibold text-gray-600 mb-3">All Invitations</h3>
+                <h3 className="text-sm font-semibold text-slate-400 mb-3">All Invitations</h3>
                 <div className="space-y-2">
                   {invitations.length === 0 && (
-                    <p className="text-gray-400 text-center py-6">No invitations yet.</p>
+                    <p className="text-slate-600 text-center py-6">No invitations yet.</p>
                   )}
                   {invitations.map((inv) => (
-                    <div key={inv.id} className="flex flex-wrap items-center justify-between gap-3 border border-gray-100 rounded-xl p-4">
+                    <div key={inv.id} className="flex flex-wrap items-center justify-between gap-3 border border-[#243044] rounded-xl p-4">
                       <div>
-                        <span className="font-medium text-gray-800 text-sm">{inv.email}</span>
+                        <span className="font-medium text-white text-sm">{inv.email}</span>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{inv.role}</span>
                           <span className={`text-xs px-2 py-0.5 rounded-full ${inv.used ? 'bg-green-50 text-green-600' : new Date(inv.expiresAt) < new Date() ? 'bg-red-50 text-red-500' : 'bg-yellow-50 text-yellow-600'}`}>
                             {inv.used ? 'Used' : new Date(inv.expiresAt) < new Date() ? 'Expired' : 'Pending'}
                           </span>
-                          <span className="text-xs text-gray-400">Expires {new Date(inv.expiresAt).toLocaleDateString()}</span>
+                          <span className="text-xs text-slate-600">Expires {new Date(inv.expiresAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -723,11 +723,11 @@ export default function AdminClient({
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Lead list */}
                 <div>
-                  <h2 className="text-lg font-bold text-gray-800 mb-4">
+                  <h2 className="text-lg font-bold text-white mb-4">
                     Project Inquiries ({inquiries.length})
                   </h2>
                   {inquiries.length === 0 ? (
-                    <p className="text-gray-400 text-center py-8">No inquiries yet.</p>
+                    <p className="text-slate-600 text-center py-8">No inquiries yet.</p>
                   ) : (
                     <div className="space-y-2">
                       {inquiries.map((inq) => (
@@ -737,14 +737,14 @@ export default function AdminClient({
                           className={`w-full text-left border rounded-xl p-4 transition-all ${
                             selectedInquiry?.id === inq.id
                               ? 'border-brand bg-brand/5'
-                              : 'border-gray-100 hover:border-brand/30'
+                              : 'border-[#243044] hover:border-brand/30'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-gray-800 text-sm truncate">{inq.title}</p>
-                              <p className="text-xs text-gray-500">{inq.name} — {inq.email}</p>
-                              {inq.company && <p className="text-xs text-gray-400">{inq.company}</p>}
+                              <p className="font-semibold text-white text-sm truncate">{inq.title}</p>
+                              <p className="text-xs text-slate-500">{inq.name} — {inq.email}</p>
+                              {inq.company && <p className="text-xs text-slate-600">{inq.company}</p>}
                             </div>
                             <div className="flex flex-col items-end gap-1 flex-shrink-0">
                               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
@@ -752,16 +752,16 @@ export default function AdminClient({
                                 inq.status === 'REVIEWED' ? 'bg-yellow-50 text-yellow-600' :
                                 inq.status === 'PROPOSAL_SENT' ? 'bg-blue-50 text-blue-600' :
                                 inq.status === 'CONVERTED' ? 'bg-green-50 text-green-600' :
-                                'bg-gray-100 text-gray-500'
+                                'bg-[#1A2535] text-slate-500'
                               }`}>
                                 {inq.status.replace('_', ' ')}
                               </span>
-                              <span className="text-xs text-gray-400">
+                              <span className="text-xs text-slate-600">
                                 ${inq.estimatedLow.toLocaleString()}–${inq.estimatedHigh.toLocaleString()}
                               </span>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                          <div className="flex items-center gap-3 mt-2 text-xs text-slate-600">
                             <span className="capitalize">{inq.projectType}</span>
                             <span>·</span>
                             <span className="capitalize">{inq.serviceCategory || 'pilot'}</span>
@@ -779,16 +779,16 @@ export default function AdminClient({
                 {/* Lead detail / proposal */}
                 <div>
                   {!selectedInquiry ? (
-                    <div className="border border-dashed border-gray-200 rounded-xl p-8 text-center text-gray-400 text-sm h-full flex items-center justify-center">
+                    <div className="border border-dashed border-[#243044] rounded-xl p-8 text-center text-slate-600 text-sm h-full flex items-center justify-center">
                       Select a lead to view the full proposal
                     </div>
                   ) : (
-                    <div className="border border-gray-100 rounded-xl p-6 space-y-5">
+                    <div className="border border-[#243044] rounded-xl p-6 space-y-5">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h3 className="font-bold text-gray-800 text-lg">{selectedInquiry.title}</h3>
-                          <p className="text-sm text-gray-500">{selectedInquiry.name} · {selectedInquiry.email}</p>
-                          {selectedInquiry.company && <p className="text-xs text-gray-400">{selectedInquiry.company}</p>}
+                          <h3 className="font-bold text-white text-lg">{selectedInquiry.title}</h3>
+                          <p className="text-sm text-slate-500">{selectedInquiry.name} · {selectedInquiry.email}</p>
+                          {selectedInquiry.company && <p className="text-xs text-slate-600">{selectedInquiry.company}</p>}
                         </div>
                         <button onClick={() => deleteInquiry(selectedInquiry.id)} className="text-red-400 hover:text-red-600">
                           <FiTrash2 size={16} />
@@ -796,17 +796,17 @@ export default function AdminClient({
                       </div>
 
                       {/* Estimate highlight */}
-                      <div className="bg-gradient-to-br from-[#008080] to-[#0d7390] text-white rounded-xl p-4 grid grid-cols-3 gap-3 text-center">
+                      <div className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white rounded-xl p-4 grid grid-cols-3 gap-3 text-center">
                         <div>
-                          <div className="text-teal-100 text-xs mb-0.5">Estimate</div>
+                          <div className="text-brand/70 text-xs mb-0.5">Estimate</div>
                           <div className="font-bold text-sm">${selectedInquiry.estimatedLow.toLocaleString()}–${selectedInquiry.estimatedHigh.toLocaleString()}</div>
                         </div>
                         <div>
-                          <div className="text-teal-100 text-xs mb-0.5">Timeline</div>
+                          <div className="text-brand/70 text-xs mb-0.5">Timeline</div>
                           <div className="font-bold text-sm">{selectedInquiry.estimatedWeeks} weeks</div>
                         </div>
                         <div>
-                          <div className="text-teal-100 text-xs mb-0.5">Type</div>
+                          <div className="text-brand/70 text-xs mb-0.5">Type</div>
                           <div className="font-bold text-sm capitalize">{selectedInquiry.projectType}</div>
                         </div>
                       </div>
@@ -814,27 +814,27 @@ export default function AdminClient({
                       {/* Details */}
                       <dl className="text-sm space-y-2">
                         <div className="flex justify-between">
-                          <dt className="text-gray-500">Category</dt>
+                          <dt className="text-slate-500">Category</dt>
                           <dd className="font-medium capitalize">{selectedInquiry.serviceCategory || 'Pilot'}</dd>
                         </div>
                         <div className="flex justify-between">
-                          <dt className="text-gray-500">Complexity</dt>
+                          <dt className="text-slate-500">Complexity</dt>
                           <dd className="font-medium capitalize">{selectedInquiry.complexity}</dd>
                         </div>
                         <div className="flex justify-between">
-                          <dt className="text-gray-500">Timeline preference</dt>
+                          <dt className="text-slate-500">Timeline preference</dt>
                           <dd className="font-medium capitalize">{selectedInquiry.desiredTimeline.replace('month', ' month')}</dd>
                         </div>
                       </dl>
 
                       <div>
-                        <p className="text-xs font-semibold text-gray-500 mb-1">Description</p>
-                        <p className="text-sm text-gray-700 leading-relaxed">{selectedInquiry.description}</p>
+                        <p className="text-xs font-semibold text-slate-500 mb-1">Description</p>
+                        <p className="text-sm text-slate-200 leading-relaxed">{selectedInquiry.description}</p>
                       </div>
 
                       {selectedInquiry.features.length > 0 && (
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 mb-2">Selected Features</p>
+                          <p className="text-xs font-semibold text-slate-500 mb-2">Selected Features</p>
                           <div className="flex flex-wrap gap-1">
                             {selectedInquiry.features.map((f) => (
                               <span key={f} className="text-xs bg-brand/10 text-brand px-2 py-0.5 rounded-full">{f}</span>
@@ -844,9 +844,9 @@ export default function AdminClient({
                       )}
 
                       {/* Admin controls */}
-                      <div className="border-t border-gray-100 pt-4 space-y-3">
+                      <div className="border-t border-[#243044] pt-4 space-y-3">
                         <div>
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Update Status</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Update Status</label>
                           <select
                             value={selectedInquiry.status}
                             onChange={(e) => updateInquiryStatus(selectedInquiry.id, e.target.value)}
@@ -860,7 +860,7 @@ export default function AdminClient({
                           </select>
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Internal Notes</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Internal Notes</label>
                           <textarea
                             className="input text-sm w-full"
                             rows={3}
@@ -890,7 +890,7 @@ export default function AdminClient({
             {tab === 'campaigns' && (
               <div className="flex gap-6 min-h-[500px]">
                 {/* Left — Campaign List */}
-                <div className="w-72 shrink-0 border-r border-gray-100 pr-4 space-y-2">
+                <div className="w-72 shrink-0 border-r border-[#243044] pr-4 space-y-2">
                   <button
                     onClick={() => { setShowCampaignForm(true); setShowPostForm(false); setSelectedCampaign(null); }}
                     className="btn-primary w-full text-sm flex items-center justify-center gap-2 mb-3"
@@ -898,7 +898,7 @@ export default function AdminClient({
                     <FiPlus size={14} /> New Campaign
                   </button>
                   {campaigns.length === 0 && (
-                    <p className="text-gray-400 text-sm text-center py-8">No campaigns yet</p>
+                    <p className="text-slate-600 text-sm text-center py-8">No campaigns yet</p>
                   )}
                   {campaigns.map((c) => (
                     <button
@@ -912,20 +912,20 @@ export default function AdminClient({
                       className={`w-full text-left rounded-xl p-3 border transition-colors ${
                         selectedCampaign?.id === c.id
                           ? 'border-brand bg-brand/5'
-                          : 'border-gray-100 hover:border-gray-300 bg-white'
+                          : 'border-[#243044] hover:border-[#243044] bg-[#1A2535]'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-1">
-                        <span className="font-medium text-sm text-gray-800 leading-snug">{c.name}</span>
+                        <span className="font-medium text-sm text-white leading-snug">{c.name}</span>
                         <span className={`text-xs px-1.5 py-0.5 rounded-full shrink-0 ${
                           c.status === 'ACTIVE' ? 'bg-green-100 text-green-700' :
-                          c.status === 'DRAFT' ? 'bg-gray-100 text-gray-500' :
+                          c.status === 'DRAFT' ? 'bg-[#1A2535] text-slate-500' :
                           c.status === 'PAUSED' ? 'bg-yellow-100 text-yellow-700' :
                           c.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700' :
                           'bg-red-100 text-red-600'
                         }`}>{c.status}</span>
                       </div>
-                      <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                      <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-600">
                         <span>{c.posts.length} posts</span>
                         <span>{c.leadCount} leads</span>
                         <span>{c.platforms.join(', ')}</span>
@@ -940,32 +940,32 @@ export default function AdminClient({
                   {showCampaignForm && (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-bold text-gray-800">New Campaign</h3>
-                        <button onClick={() => setShowCampaignForm(false)}><FiX size={18} className="text-gray-400" /></button>
+                        <h3 className="font-bold text-white">New Campaign</h3>
+                        <button onClick={() => setShowCampaignForm(false)}><FiX size={18} className="text-slate-600" /></button>
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3">
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Campaign Name *</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Campaign Name *</label>
                           <input className="input w-full" placeholder="e.g. Salesforce Pilot Launch Q2"
                             value={campaignForm.name} onChange={(e) => setCampaignForm((p) => ({ ...p, name: e.target.value }))} />
                         </div>
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">UTM Slug * <span className="text-gray-400 font-normal">(lowercase, hyphens only)</span></label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">UTM Slug * <span className="text-slate-600 font-normal">(lowercase, hyphens only)</span></label>
                           <input className="input w-full font-mono" placeholder="e.g. sf-pilot-q2-2026"
                             value={campaignForm.utmSlug} onChange={(e) => setCampaignForm((p) => ({ ...p, utmSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }))} />
                           {campaignForm.utmSlug && (
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-slate-600 mt-1">
                               Link: <span className="font-mono">/pricing?utm_source=linkedin&utm_campaign={campaignForm.utmSlug}</span>
                             </p>
                           )}
                         </div>
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Goal</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Goal</label>
                           <input className="input w-full" placeholder="e.g. Generate 5 Salesforce pilot leads"
                             value={campaignForm.goal} onChange={(e) => setCampaignForm((p) => ({ ...p, goal: e.target.value }))} />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Platforms</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Platforms</label>
                           <div className="flex flex-wrap gap-2">
                             {['linkedin', 'twitter', 'email', 'other'].map((p) => (
                               <button key={p} onClick={() => setCampaignForm((prev) => ({
@@ -973,14 +973,14 @@ export default function AdminClient({
                                 platforms: prev.platforms.includes(p) ? prev.platforms.filter((x) => x !== p) : [...prev.platforms, p],
                               }))}
                                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                                  campaignForm.platforms.includes(p) ? 'bg-brand text-white border-brand' : 'bg-white text-gray-600 border-gray-200'
+                                  campaignForm.platforms.includes(p) ? 'bg-brand text-white border-brand' : 'bg-[#1A2535] text-slate-400 border-[#243044]'
                                 }`}
                               >{p}</button>
                             ))}
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Status</label>
                           <select className="input w-full" value={campaignForm.status}
                             onChange={(e) => setCampaignForm((p) => ({ ...p, status: e.target.value }))}>
                             <option value="DRAFT">Draft</option>
@@ -990,17 +990,17 @@ export default function AdminClient({
                           </select>
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Start Date</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Start Date</label>
                           <input type="date" className="input w-full" value={campaignForm.startDate}
                             onChange={(e) => setCampaignForm((p) => ({ ...p, startDate: e.target.value }))} />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">End Date</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">End Date</label>
                           <input type="date" className="input w-full" value={campaignForm.endDate}
                             onChange={(e) => setCampaignForm((p) => ({ ...p, endDate: e.target.value }))} />
                         </div>
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-semibold text-gray-600 mb-1">Notes</label>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Notes</label>
                           <textarea className="input w-full" rows={2} placeholder="What's the strategy for this campaign?"
                             value={campaignForm.notes} onChange={(e) => setCampaignForm((p) => ({ ...p, notes: e.target.value }))} />
                         </div>
@@ -1017,8 +1017,8 @@ export default function AdminClient({
                       {/* Header */}
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h3 className="font-bold text-gray-800 text-lg">{selectedCampaign.name}</h3>
-                          {selectedCampaign.goal && <p className="text-gray-500 text-sm mt-0.5">{selectedCampaign.goal}</p>}
+                          <h3 className="font-bold text-white text-lg">{selectedCampaign.name}</h3>
+                          {selectedCampaign.goal && <p className="text-slate-500 text-sm mt-0.5">{selectedCampaign.goal}</p>}
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <select
@@ -1040,19 +1040,19 @@ export default function AdminClient({
 
                       {/* Stats row */}
                       <div className="grid grid-cols-3 gap-3">
-                        <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <div className="bg-[#0F1923] rounded-xl p-3 text-center">
                           <div className="text-xl font-bold text-brand">{selectedCampaign.leadCount}</div>
-                          <div className="text-xs text-gray-500">Leads Attributed</div>
+                          <div className="text-xs text-slate-500">Leads Attributed</div>
                         </div>
-                        <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <div className="bg-[#0F1923] rounded-xl p-3 text-center">
                           <div className="text-xl font-bold text-brand">{campaignPosts.length}</div>
-                          <div className="text-xs text-gray-500">Posts</div>
+                          <div className="text-xs text-slate-500">Posts</div>
                         </div>
-                        <div className="bg-gray-50 rounded-xl p-3 text-center">
+                        <div className="bg-[#0F1923] rounded-xl p-3 text-center">
                           <div className="text-xl font-bold text-brand">
                             {campaignPosts.filter((p) => p.status === 'PUBLISHED').length}
                           </div>
-                          <div className="text-xs text-gray-500">Published</div>
+                          <div className="text-xs text-slate-500">Published</div>
                         </div>
                       </div>
 
@@ -1060,8 +1060,8 @@ export default function AdminClient({
                       <div className="bg-brand/5 border border-brand/20 rounded-xl p-3">
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0">
-                            <div className="text-xs font-semibold text-gray-600 mb-0.5">Campaign UTM Link</div>
-                            <div className="font-mono text-xs text-gray-700 truncate">
+                            <div className="text-xs font-semibold text-slate-400 mb-0.5">Campaign UTM Link</div>
+                            <div className="font-mono text-xs text-slate-200 truncate">
                               /pricing?utm_source=linkedin&utm_medium=social&utm_campaign={selectedCampaign.utmSlug}
                             </div>
                           </div>
@@ -1075,7 +1075,7 @@ export default function AdminClient({
                       {/* Posts */}
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-semibold text-gray-700 text-sm">Posts</h4>
+                          <h4 className="font-semibold text-slate-200 text-sm">Posts</h4>
                           <button
                             onClick={() => {
                               setEditingPost(null);
@@ -1090,14 +1090,14 @@ export default function AdminClient({
 
                         {/* Post form */}
                         {showPostForm && (
-                          <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-3 border border-gray-200">
+                          <div className="bg-[#0F1923] rounded-xl p-4 mb-4 space-y-3 border border-[#243044]">
                             <div className="flex items-center justify-between">
-                              <span className="text-sm font-semibold text-gray-700">{editingPost ? 'Edit Post' : 'New Post'}</span>
-                              <button onClick={() => { setShowPostForm(false); setEditingPost(null); }}><FiX size={16} className="text-gray-400" /></button>
+                              <span className="text-sm font-semibold text-slate-200">{editingPost ? 'Edit Post' : 'New Post'}</span>
+                              <button onClick={() => { setShowPostForm(false); setEditingPost(null); }}><FiX size={16} className="text-slate-600" /></button>
                             </div>
                             <div className="grid sm:grid-cols-2 gap-3">
                               <div>
-                                <label className="block text-xs font-semibold text-gray-600 mb-1">Platform</label>
+                                <label className="block text-xs font-semibold text-slate-400 mb-1">Platform</label>
                                 <select className="input w-full text-sm" value={postForm.platform}
                                   onChange={(e) => setPostForm((p) => ({ ...p, platform: e.target.value }))}>
                                   <option value="linkedin">LinkedIn</option>
@@ -1107,7 +1107,7 @@ export default function AdminClient({
                                 </select>
                               </div>
                               <div>
-                                <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+                                <label className="block text-xs font-semibold text-slate-400 mb-1">Status</label>
                                 <select className="input w-full text-sm" value={postForm.status}
                                   onChange={(e) => setPostForm((p) => ({ ...p, status: e.target.value }))}>
                                   <option value="DRAFT">Draft</option>
@@ -1117,11 +1117,11 @@ export default function AdminClient({
                               </div>
                               <div className="sm:col-span-2">
                                 <div className="flex items-center justify-between mb-1">
-                                  <label className="block text-xs font-semibold text-gray-600">Content *</label>
+                                  <label className="block text-xs font-semibold text-slate-400">Content *</label>
                                   <span className={`text-xs ${
                                     postForm.platform === 'twitter' && postForm.content.length > 260 ? 'text-red-500' :
                                     postForm.platform === 'twitter' && postForm.content.length > 230 ? 'text-yellow-500' :
-                                    'text-gray-400'
+                                    'text-slate-600'
                                   }`}>
                                     {postForm.content.length}
                                     {postForm.platform === 'twitter' && ' / 280'}
@@ -1141,12 +1141,12 @@ export default function AdminClient({
                                 />
                               </div>
                               <div>
-                                <label className="block text-xs font-semibold text-gray-600 mb-1">Scheduled Date</label>
+                                <label className="block text-xs font-semibold text-slate-400 mb-1">Scheduled Date</label>
                                 <input type="datetime-local" className="input w-full text-sm" value={postForm.scheduledAt}
                                   onChange={(e) => setPostForm((p) => ({ ...p, scheduledAt: e.target.value }))} />
                               </div>
                               <div>
-                                <label className="block text-xs font-semibold text-gray-600 mb-1">Notes</label>
+                                <label className="block text-xs font-semibold text-slate-400 mb-1">Notes</label>
                                 <input className="input w-full text-sm" placeholder="Hashtags, target audience..."
                                   value={postForm.notes} onChange={(e) => setPostForm((p) => ({ ...p, notes: e.target.value }))} />
                               </div>
@@ -1175,23 +1175,23 @@ export default function AdminClient({
                         )}
 
                         {/* Posts list */}
-                        {!postsLoaded && <p className="text-gray-400 text-sm">Loading posts...</p>}
+                        {!postsLoaded && <p className="text-slate-600 text-sm">Loading posts...</p>}
                         {postsLoaded && campaignPosts.length === 0 && (
-                          <p className="text-gray-400 text-sm text-center py-6">No posts yet — add your first one above</p>
+                          <p className="text-slate-600 text-sm text-center py-6">No posts yet — add your first one above</p>
                         )}
                         <div className="space-y-3">
                           {campaignPosts.map((post) => (
-                            <div key={post.id} className="border border-gray-100 rounded-xl p-4 bg-white">
+                            <div key={post.id} className="border border-[#243044] rounded-xl p-4 bg-[#1A2535]">
                               <div className="flex items-start justify-between gap-2 mb-2">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full capitalize">{post.platform}</span>
+                                  <span className="text-xs bg-[#1A2535] text-slate-400 px-2 py-0.5 rounded-full capitalize">{post.platform}</span>
                                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                                     post.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' :
                                     post.status === 'READY' ? 'bg-blue-100 text-blue-700' :
-                                    'bg-gray-100 text-gray-500'
+                                    'bg-[#1A2535] text-slate-500'
                                   }`}>{post.status}</span>
                                   {post.scheduledAt && (
-                                    <span className="text-xs text-gray-400">
+                                    <span className="text-xs text-slate-600">
                                       📅 {new Date(post.scheduledAt).toLocaleDateString()}
                                     </span>
                                   )}
@@ -1204,7 +1204,7 @@ export default function AdminClient({
                                       );
                                       toast.success('Copied!');
                                     }}
-                                    className="text-gray-400 hover:text-brand p-1"
+                                    className="text-slate-600 hover:text-brand p-1"
                                     title="Copy post + link"
                                   ><FiCopy size={14} /></button>
                                   <button
@@ -1213,15 +1213,15 @@ export default function AdminClient({
                                       setPostForm({ platform: post.platform, content: post.content, status: post.status, scheduledAt: post.scheduledAt ? post.scheduledAt.slice(0, 16) : '', notes: post.notes || '' });
                                       setShowPostForm(true);
                                     }}
-                                    className="text-gray-400 hover:text-brand p-1"
+                                    className="text-slate-600 hover:text-brand p-1"
                                   ><FiEdit2 size={14} /></button>
-                                  <button onClick={() => deletePost(post.id)} className="text-gray-400 hover:text-red-500 p-1">
+                                  <button onClick={() => deletePost(post.id)} className="text-slate-600 hover:text-red-500 p-1">
                                     <FiTrash2 size={14} />
                                   </button>
                                 </div>
                               </div>
-                              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed line-clamp-4">{post.content}</p>
-                              {post.notes && <p className="text-xs text-gray-400 mt-2 italic">{post.notes}</p>}
+                              <p className="text-sm text-slate-200 whitespace-pre-wrap leading-relaxed line-clamp-4">{post.content}</p>
+                              {post.notes && <p className="text-xs text-slate-600 mt-2 italic">{post.notes}</p>}
                             </div>
                           ))}
                         </div>
@@ -1230,7 +1230,7 @@ export default function AdminClient({
                   )}
 
                   {!selectedCampaign && !showCampaignForm && (
-                    <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                    <div className="flex items-center justify-center h-full text-slate-600 text-sm">
                       ← Select a campaign or create a new one
                     </div>
                   )}
@@ -1242,17 +1242,17 @@ export default function AdminClient({
             {tab === 'projects' && (
               <div className="space-y-3">
                 {projects.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between border border-gray-100 rounded-xl p-4">
+                  <div key={p.id} className="flex items-center justify-between border border-[#243044] rounded-xl p-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-gray-800">{p.title}</span>
+                        <span className="font-semibold text-white">{p.title}</span>
                         {p.featured && (
                           <span className="text-xs bg-brand text-white px-2 py-0.5 rounded-full">Featured</span>
                         )}
                       </div>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {p.technologies.map((t) => (
-                          <span key={t} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{t}</span>
+                          <span key={t} className="text-xs bg-[#1A2535] text-slate-500 px-2 py-0.5 rounded-full">{t}</span>
                         ))}
                       </div>
                     </div>
