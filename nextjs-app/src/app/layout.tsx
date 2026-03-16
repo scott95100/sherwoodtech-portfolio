@@ -23,6 +23,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={inter.className}>
         <Providers>
+          {/* Global background — fixed so it doesn't scroll with content */}
+          <div
+            className="fixed inset-0 -z-10 bg-[#0F1923] bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: "url('/hero-bg.png')" }}
+          />
+          {/* Persistent dark overlay to keep bg subtle on all pages */}
+          <div className="fixed inset-0 -z-10 bg-[#0F1923]/82" />
           <div className="flex min-h-screen flex-col">
             <Navbar />
             <main className="flex-1">{children}</main>
