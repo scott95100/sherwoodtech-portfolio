@@ -286,7 +286,7 @@ function StepDots({ current, total }: { current: number; total: number }) {
 
 function BlockedScreen({ type, value }: { type: 'industry' | 'country'; value: string }) {
   return (
-    <div className="min-h-screen bg-[#0F1923]">
+    <div className="min-h-screen bg-transparent">
       <section className="bg-gradient-to-br from-gray-700 to-gray-900 text-white py-20">
         <div className="section-container text-center">
           <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -478,7 +478,7 @@ function PricingInner() {
     const weeksOut = pipeline?.weeksUntilAvailable ?? 0;
 
     return (
-      <div className="min-h-screen bg-[#0F1923]">
+      <div className="min-h-screen bg-transparent">
         <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
           <div className="section-container text-center">
             <div className="w-16 h-16 bg-[#1A2535]/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -619,7 +619,7 @@ function PricingInner() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F1923]">
+    <div className="min-h-screen bg-transparent">
       <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-16">
         <div className="section-container text-center">
           <p className="text-brand/70 uppercase tracking-widest text-sm font-semibold mb-3">Project Estimator</p>

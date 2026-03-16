@@ -47,7 +47,7 @@ function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F1923] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
       <div className="bg-[#1A2535] rounded-2xl shadow-lg shadow-black/20 p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-brand mb-2 text-center">Create Account</h1>
         <p className="text-slate-500 text-sm text-center mb-8">

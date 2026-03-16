@@ -33,7 +33,7 @@ const stack = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#0F1923]">
+    <div className="min-h-screen bg-transparent">
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
         <div className="section-container text-center">
@@ -51,7 +51,7 @@ export default function AboutPage() {
       </section>
 
       {/* Founder */}
-      <section className="py-16 bg-[#1A2535]">
+      <section className="py-16 bg-[#1A2535]/60">
         <div className="section-container grid md:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-brand font-semibold uppercase tracking-widest text-sm mb-3">
@@ -82,7 +82,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-16 bg-[#0F1923]">
+      <section className="py-16 bg-transparent">
         <div className="section-container">
           <h2 className="section-title">How We Work</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -98,7 +98,7 @@ export default function AboutPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="py-16 bg-[#1A2535]">
+      <section className="py-16 bg-[#1A2535]/60">
         <div className="section-container">
           <h2 className="section-title">Our Technology Stack</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

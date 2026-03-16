@@ -90,7 +90,7 @@ export default function HomePage() {
       </section>
 
       {/* Services Overview */}
-      <section className="py-20 bg-[#0F1923]">
+      <section className="py-20 bg-transparent">
         <div className="section-container">
           <h2 className="section-title">What We Do</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -113,7 +113,7 @@ export default function HomePage() {
       </section>
 
       {/* Why STC */}
-      <section className="py-20 bg-[#1A2535]">
+      <section className="py-20 bg-[#1A2535]/60">
         <div className="section-container grid md:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-brand font-semibold uppercase tracking-widest text-sm mb-3">Why STC</p>

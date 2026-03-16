@@ -113,7 +113,7 @@ const process = [
 
 export default function ServicesPage() {
   return (
-    <div className="min-h-screen bg-[#0F1923]">
+    <div className="min-h-screen bg-transparent">
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
         <div className="section-container text-center">
@@ -167,7 +167,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Process */}
-      <section className="py-20 bg-[#1A2535]">
+      <section className="py-20 bg-[#1A2535]/60">
         <div className="section-container">
           <h2 className="section-title">Our Process</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

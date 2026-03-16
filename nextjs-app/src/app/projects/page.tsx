@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
   const projects = await getProjects();
 
   return (
-    <div className="min-h-screen bg-[#1A2535]">
+    <div className="min-h-screen bg-transparent">
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
         <div className="section-container text-center">

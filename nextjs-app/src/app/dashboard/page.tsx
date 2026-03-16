@@ -88,7 +88,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F1923]">
+    <div className="min-h-screen bg-transparent">
       {/* Header */}
       <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-12">
         <div className="section-container">
