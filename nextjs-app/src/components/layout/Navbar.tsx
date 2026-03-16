@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,8 +25,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-[#0F1923]/95 backdrop-blur-sm border-b border-[#243044] shadow-lg shadow-black/20">
       <nav className="section-container flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-brand hover:text-brand-light transition-colors">
-          STC
+        <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+          <Image src="/logo.svg" alt="STC Logo" width={120} height={36} priority />
         </Link>
 
         {/* Desktop Nav */}

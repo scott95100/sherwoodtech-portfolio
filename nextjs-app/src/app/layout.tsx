@@ -9,10 +9,13 @@ import { Toaster } from 'react-hot-toast';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Scott Sherwood | Full Stack Engineer',
+  title: 'Sherwood Technology Consulting | Salesforce & Full Stack Development',
   description:
-    'Portfolio of Scott Sherwood — Full Stack Software Engineer specializing in React, Node.js, and cloud technologies.',
-  keywords: ['portfolio', 'software engineer', 'full stack', 'react', 'next.js'],
+    'Salesforce development, full stack engineering, and technology consulting by Sherwood Technology Consulting LLC.',
+  keywords: ['salesforce', 'full stack', 'software engineer', 'react', 'next.js', 'consulting'],
+  icons: {
+    icon: '/logo.svg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -31,8 +31,17 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-28">
-        <div className="section-container text-center">
+      <section className="relative text-white py-28 overflow-hidden">
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/hero-bg.png')" }}
+        />
+        {/* Dark overlay so text stays readable */}
+        <div className="absolute inset-0 bg-[#0F1923]/75" />
+        {/* Edge fade to blend with page bg */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F1923]/40 via-transparent to-[#0F1923]" />
+        <div className="section-container text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}

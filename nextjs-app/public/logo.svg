@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <g fill="#00D4FF">
+    <text x="10" y="42" font-family="monospace, 'Courier New', monospace" font-size="40" font-weight="700" letter-spacing="2">
+      STC
+    </text>
+  </g>
+
+  <!-- Circuit trace accent -->
+  <g stroke="#00D4FF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 38 L170 38 L170 18" />
+  </g>
+
+  <!-- Node -->
+  <circle cx="170" cy="18" r="3" fill="#00D4FF"/>
+</svg>
