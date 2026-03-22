@@ -1,7 +1,8 @@
 # STC Platform Expansion — Product Roadmap
 
 > Status: Planning  
-> Last updated: March 2026
+> Last updated: March 2026  
+> SaaS Product Name: **Omnis DevOps** *(an STC product)*
 
 ---
 
@@ -10,9 +11,9 @@
 STC is expanding from a consulting portfolio site into a **two-product platform**:
 
 1. **STC Portfolio Site** (current) — consulting services, client portal, project pipeline
-2. **STC DevOps Platform** (new SaaS) — separate codebase, B2B product for small teams and solo DevOps engineers
+2. **Omnis DevOps** (new SaaS) — separate codebase, B2B DevOps platform for small teams and solo engineers
 
-The portfolio site will serve as the **marketing funnel and customer portal** for the SaaS product — with a dedicated client-facing DevOps board view and a product landing section advertising the SaaS.
+The portfolio site will serve as the **marketing funnel and customer portal** for Omnis DevOps — with a dedicated client-facing DevOps board view embedded in the client portal, and a public `/platform` marketing page advertising the product.
 
 ---
 
@@ -39,21 +40,21 @@ A new section of the client portal where clients can see live insight into their
 
 ---
 
-#### B. SaaS Product Landing Section
-A new marketing section on the public site to advertise the DevOps SaaS platform.
+#### B. Omnis DevOps Marketing Page
+A new public marketing page to advertise **Omnis DevOps** to site visitors.
 
-**New route:** `/platform` (or sub-section of `/services`)
+**New route:** `/platform`
 
 **Content:**
-- Hero: product name + tagline
-- What it is: solo/small team DevOps platform
-- Key features list (pipeline visibility, alerting, incident tracking, cost dashboard)
-- Who it's for: 1-engineer DevOps shops, small startups, agencies
-- Pricing tiers (free / pro / team)
-- CTA: "Join the waitlist" → email capture form stored in DB
-- Link to external SaaS product URL (once live)
+- Hero: "Omnis DevOps — Built for the 1-Engineer Shop" + tagline
+- What it is: solo/small team DevOps observability platform (an STC product)
+- Key features list (pipeline visibility, alerting, incident tracking, uptime, cost dashboard)
+- Who it's for: 1-engineer DevOps shops, small startups, agencies managing client infra
+- Pricing tiers preview (free / pro / team)
+- CTA: "Join the waitlist" → email capture form stored in local DB
+- Link to `omnis.sherwoodtech.dev` once live
 
-**DB addition needed:** `Waitlist` model (email, name, company, createdAt)
+**DB addition needed:** `Waitlist` model (email, name, company, source, createdAt)
 
 ---
 
@@ -64,17 +65,21 @@ A new marketing section on the public site to advertise the DevOps SaaS platform
 
 ---
 
-## Product 2: STC DevOps Platform (separate codebase)
+## Product 2: Omnis DevOps *(an STC product — separate codebase)*
 
-> **Repo:** TBD (new GitHub repo)  
-> **Stack:** TBD — likely Next.js + Node.js + PostgreSQL, or Go backend
+> **Repo:** TBD (new GitHub repo — `scott95100/omnis-devops`)  
+> **Domain:** `omnis.sherwoodtech.dev` (planned)  
+> **Stack:** Next.js + Node.js + PostgreSQL, or Go backend (TBD)  
+> **Tagline:** *"Full visibility. Zero complexity. Built for one."*
 
 ### Product Vision
 
-A **lightweight DevOps observability and operations platform** built specifically for:
+**Omnis DevOps** is a **lightweight DevOps observability and operations platform** built specifically for:
 - Solo DevOps engineers managing multiple client environments
 - Small engineering teams (1–5 people) with no dedicated platform team
 - Freelance/agency engineers who need client-facing visibility without enterprise tooling complexity
+
+The name *Omnis* (Latin: "all / everything") reflects the goal: **one place for all your DevOps signal**.
 
 ### Core Feature Set (v1)
 
@@ -96,7 +101,7 @@ A **lightweight DevOps observability and operations platform** built specificall
 
 ### Integration Points with Portfolio Site
 ```
-SaaS Platform API
+Omnis DevOps API
   POST /api/clients/{token}/deployments    → log new deployment
   GET  /api/clients/{token}/summary        → portfolio site fetches for client board
   GET  /api/clients/{token}/pipelines      → CI/CD status
@@ -108,11 +113,11 @@ SaaS Platform API
 ## Integration Architecture
 
 ```
-[STC Portfolio Site]                    [SaaS DevOps Platform]
+[STC Portfolio Site]                    [Omnis DevOps Platform]
   /client-portal/devops  ──── REST ──→   GET /api/clients/{token}/summary
   Admin: token manager   ──── REST ──→   POST /api/tokens (create/revoke)
-  /platform (marketing)  ─────────────→  Link to saas.sherwoodtech.dev
-  Waitlist form          → local DB only (no SaaS dependency)
+  /platform (marketing)  ─────────────→  Link to omnis.sherwoodtech.dev
+  Waitlist form          → local DB only (no Omnis dependency)
 ```
 
 ---
@@ -125,12 +130,13 @@ SaaS Platform API
 - [ ] Admin waitlist tab
 - [ ] `/client-portal/devops` page scaffold (mock data first)
 
-### Phase 2 — SaaS MVP (new repo)
-- [ ] Auth + workspace model
-- [ ] Deployment logger (manual + webhook)
+### Phase 2 — Omnis DevOps MVP (new repo: `scott95100/omnis-devops`)
+- [ ] Auth + workspace + multi-tenant model
+- [ ] Deployment logger (manual entry + webhook receiver)
 - [ ] Health check engine (cron-based HTTP pings)
-- [ ] Client read-only board API
-- [ ] Basic incident manager
+- [ ] Client read-only board API (`GET /api/clients/{token}/summary`)
+- [ ] Basic incident manager (create, resolve, severity, notes)
+- [ ] Simple web UI for the DevOps engineer dashboard
 
 ### Phase 3 — Integration
 - [ ] Portfolio client portal fetches live data from SaaS API
@@ -138,25 +144,27 @@ SaaS Platform API
 - [ ] CI/CD integrations (GitHub Actions webhook receiver)
 
 ### Phase 4 — Growth
-- [ ] Pricing tiers + Stripe billing in SaaS
+- [ ] Pricing tiers + Stripe billing in Omnis DevOps
 - [ ] Cost dashboard (AWS Cost Explorer API)
 - [ ] LinkedIn/email campaign for waitlist nurture (using existing campaign manager)
+- [ ] `omnis.sherwoodtech.dev` subdomain live
 
 ---
 
-## Naming (TBD)
+## Naming
 
-Working names for the SaaS product:
-- **STC Ops** 
-- **ShipBoard**
-- **StackWatch**
-- **OpsLane**
+**Confirmed:** `Omnis DevOps` *(an STC product)*
+
+- *Omnis* — Latin for "all / everything" → one platform for all DevOps signal
+- Branding: same dark steel + electric blue (`#00D4FF`) palette as STC site
+- Logo: separate mark from STC logo — TBD
 
 ---
 
 ## Notes
 
-- The SaaS product should be designed to work **standalone** (not dependent on the portfolio site)
-- The portfolio site integration is a **read-only consumer** of the SaaS API — no write access from portal
-- Keep the two repos completely separate; share only the API contract (documented here)
-- Client tokens are scoped to read-only `summary` endpoints — no sensitive data exposed
+- **Omnis DevOps** is designed to work **standalone** (not dependent on the portfolio site)
+- The portfolio site integration is a **read-only consumer** of the Omnis API — no write access from portal
+- Keep the two repos completely separate; share only the API contract (documented in `docs/OMNIS_API_CONTRACT.md` once defined)
+- Client tokens are scoped to read-only `summary` endpoints — no sensitive DevOps data exposed to clients
+- The `/platform` marketing page on the portfolio site should be buildable **before** Omnis is live (waitlist-only mode)
