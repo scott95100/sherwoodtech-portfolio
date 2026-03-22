@@ -11,6 +11,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
+  { href: '/platform', label: 'Products' },
   { href: '/pricing', label: 'Get a Quote' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },

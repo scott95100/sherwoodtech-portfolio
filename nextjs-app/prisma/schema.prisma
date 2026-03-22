@@ -397,3 +397,14 @@ enum PostStatus {
   READY
   PUBLISHED
 }
+
+// ─── Omnis DevOps Waitlist ───────────────────────────────────────────────────
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  company   String?
+  source    String?  @default("platform-page")
+  createdAt DateTime @default(now())
+}
