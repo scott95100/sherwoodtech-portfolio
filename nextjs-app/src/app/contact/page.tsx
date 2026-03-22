@@ -44,8 +44,10 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
-        <div className="section-container text-center">
+      <section className="relative text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-[#0F1923]/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0F1923]" />
+        <div className="section-container text-center relative z-10">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Get In Touch</h1>
           <p className="text-brand/70 text-lg max-w-xl mx-auto">
             Let&apos;s discuss your project. We&apos;ll respond within 24 hours.

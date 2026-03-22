@@ -115,8 +115,10 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-20">
-        <div className="section-container text-center">
+      <section className="relative text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-[#0F1923]/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0F1923]" />
+        <div className="section-container text-center relative z-10">
           <p className="text-brand/70 uppercase tracking-widest text-sm font-semibold mb-3">
             What We Offer
           </p>

@@ -88,8 +88,10 @@ export default function ClientPortalPage() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-16">
-        <div className="section-container">
+      <section className="relative text-white py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[#0F1923]/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0F1923]" />
+        <div className="section-container relative z-10">
           <p className="text-brand/70 text-sm uppercase tracking-widest mb-2">Client Portal</p>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">
             Welcome back, {session?.user?.name?.split(' ')[0]}

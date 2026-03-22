@@ -90,8 +90,10 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <section className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white py-12">
-        <div className="section-container">
+      <section className="relative text-white py-12 overflow-hidden">
+        <div className="absolute inset-0 bg-[#0F1923]/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0F1923]" />
+        <div className="section-container relative z-10">
           <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
           <p className="text-brand/70">Welcome back, {session?.user?.name}</p>
         </div>
