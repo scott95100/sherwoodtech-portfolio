@@ -152,8 +152,9 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white text-center">
-        <div className="section-container">
+      <section className="py-20 relative text-white text-center overflow-hidden">
+        <div className="absolute inset-0 bg-[#0F1923]/70" />
+        <div className="section-container relative z-10">
           <h2 className="text-4xl font-bold mb-4">Ready to build something great?</h2>
           <p className="text-brand/70 text-lg mb-8 max-w-xl mx-auto">
             Tell us about your project and we&apos;ll get back to you within 24 hours.

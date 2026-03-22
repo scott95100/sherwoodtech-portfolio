@@ -122,8 +122,9 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white text-center">
-        <div className="section-container">
+      <section className="py-16 relative text-white text-center overflow-hidden">
+        <div className="absolute inset-0 bg-[#0F1923]/70" />
+        <div className="section-container relative z-10">
           <h2 className="text-3xl font-bold mb-4">Let&apos;s Build Something Together</h2>
           <p className="text-brand/70 mb-8 max-w-xl mx-auto">
             Have a project in mind? We&apos;d love to hear about it.
