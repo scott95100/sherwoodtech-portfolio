@@ -52,7 +52,7 @@ A new public marketing page to advertise **Omnis DevOps** to site visitors.
 - Who it's for: 1-engineer DevOps shops, small startups, agencies managing client infra
 - Pricing tiers preview (free / pro / team)
 - CTA: "Join the waitlist" → email capture form stored in local DB
-- Link to `omnis.sherwoodtech.dev` once live
+- Link to `omnis.sherwoodtech.it.com` once live
 
 **DB addition needed:** `Waitlist` model (email, name, company, source, createdAt)
 
@@ -68,7 +68,7 @@ A new public marketing page to advertise **Omnis DevOps** to site visitors.
 ## Product 2: Omnis DevOps *(an STC product — separate codebase)*
 
 > **Repo:** TBD (new GitHub repo — `scott95100/omnis-devops`)  
-> **Domain:** `omnis.sherwoodtech.dev` (planned)  
+> **Domain:** `omnis.sherwoodtech.it.com` (planned)  
 > **Stack:** Next.js + Node.js + PostgreSQL, or Go backend (TBD)  
 > **Tagline:** *"Full visibility. Zero complexity. Built for one."*
 
@@ -116,7 +116,7 @@ Omnis DevOps API
 [STC Portfolio Site]                    [Omnis DevOps Platform]
   /client-portal/devops  ──── REST ──→   GET /api/clients/{token}/summary
   Admin: token manager   ──── REST ──→   POST /api/tokens (create/revoke)
-  /platform (marketing)  ─────────────→  Link to omnis.sherwoodtech.dev
+  /platform (marketing)  ─────────────→  Link to omnis.sherwoodtech.it.com
   Waitlist form          → local DB only (no Omnis dependency)
 ```
 
@@ -147,7 +147,7 @@ Omnis DevOps API
 - [ ] Pricing tiers + Stripe billing in Omnis DevOps
 - [ ] Cost dashboard (AWS Cost Explorer API)
 - [ ] LinkedIn/email campaign for waitlist nurture (using existing campaign manager)
-- [ ] `omnis.sherwoodtech.dev` subdomain live
+- [ ] `omnis.sherwoodtech.it.com` subdomain live
 
 ---
 

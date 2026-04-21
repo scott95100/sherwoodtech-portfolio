@@ -39,7 +39,7 @@ Fill in `.env.local`:
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/portfolio"
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="run: openssl rand -base64 32"
-ADMIN_EMAIL="scott@sherwoodtech.dev"
+ADMIN_EMAIL="scott@sherwoodtech.it.com"
 ADMIN_PASSWORD="your-secure-password"
 ADMIN_NAME="Scott Sherwood"
 ```

@@ -44,17 +44,17 @@
 ### Environment Variables to Add in Azure Portal
 After creation → Settings → Environment Variables:
 ```
-DATABASE_URL=<your Neon connection string>
-NEXTAUTH_URL=https://sherwoodtech.dev
+DATABASE_URL=<your Azure PostgreSQL connection string>
+NEXTAUTH_URL=https://sherwoodtech.it.com
 NEXTAUTH_SECRET=<generate new strong secret for production>
-ADMIN_EMAIL=scott@sherwoodtech.dev
+ADMIN_EMAIL=scott@sherwoodtech.it.com
 ADMIN_NAME=Scott Sherwood
 AZURE_COMMUNICATION_CONNECTION_STRING=<from step 3>
-AZURE_EMAIL_SENDER=noreply@sherwoodtech.dev
+AZURE_EMAIL_SENDER=noreply@sherwoodtech.it.com
 ```
 
 ### Custom Domain
-1. Static Web App → **Custom domains** → Add `sherwoodtech.dev`
+1. Static Web App → **Custom domains** → Add `sherwoodtech.it.com`
 2. Add a CNAME record at your domain registrar pointing to the Azure-generated URL
 3. Azure handles SSL certificate automatically (Let's Encrypt)
 
@@ -63,7 +63,7 @@ AZURE_EMAIL_SENDER=noreply@sherwoodtech.dev
 ## 3. Azure Communication Services (Email)
 
 ### Purpose
-Sends all transactional emails from `noreply@sherwoodtech.dev`:
+Sends all transactional emails from `noreply@sherwoodtech.it.com`:
 - Client invite emails with signup link
 - Welcome email after client registers
 - Password reset emails
@@ -86,13 +86,13 @@ Sends all transactional emails from `noreply@sherwoodtech.dev`:
 #### Add Email Domain
 1. In ACS resource → **Email** → **Domains** → **Add domain**
 2. Choose **Custom domain**
-3. Enter: `sherwoodtech.dev`
+3. Enter: `sherwoodtech.it.com`
 4. Azure gives you **3 DNS records** to add at your registrar:
    - TXT record (domain verification)
    - SPF record (spam prevention)
    - DKIM records (email authentication)
 5. Add all records at your registrar, click **Verify**
-6. Once verified → sender address `noreply@sherwoodtech.dev` is active
+6. Once verified → sender address `noreply@sherwoodtech.it.com` is active
 
 #### Connect Email Domain to ACS
 1. ACS resource → **Email** → **Connected domains** → link your verified domain
@@ -102,7 +102,7 @@ Sends all transactional emails from `noreply@sherwoodtech.dev`:
 ## 4. Microsoft 365 Business Basic (Optional — Business Inbox)
 
 ### Purpose
-Gives you a real `scott@sherwoodtech.dev` inbox instead of Gmail.
+Gives you a real `scott@sherwoodtech.it.com` inbox instead of Gmail.
 Not required for the app to function — purely for professionalism.
 
 ### Cost
@@ -113,13 +113,13 @@ Not required for the app to function — purely for professionalism.
 1. Go to [microsoft.com/microsoft-365/business](https://www.microsoft.com/microsoft-365/business)
 2. Buy **Business Basic** plan
 3. Sign in with Microsoft account
-4. Add domain `sherwoodtech.dev` → verify with TXT record at registrar
-5. Create user: `scott@sherwoodtech.dev`
+4. Add domain `sherwoodtech.it.com` → verify with TXT record at registrar
+5. Create user: `scott@sherwoodtech.it.com`
 6. Update MX records at registrar to point to Microsoft mail servers
-7. Update `ADMIN_EMAIL` env var to `scott@sherwoodtech.dev`
+7. Update `ADMIN_EMAIL` env var to `scott@sherwoodtech.it.com`
 
-> **Note:** If you set up M365, ACS email can still send FROM `noreply@sherwoodtech.dev` 
-> while you receive replies at `scott@sherwoodtech.dev`. These are separate.
+> **Note:** If you set up M365, ACS email can still send FROM `noreply@sherwoodtech.it.com` 
+> while you receive replies at `scott@sherwoodtech.it.com`. These are separate.
 
 ---
 
@@ -170,7 +170,7 @@ model PasswordReset {
 
 ## 6. DNS Records Summary
 
-All records to add at your domain registrar (`sherwoodtech.dev`):
+All records to add at your domain registrar (`sherwoodtech.it.com`):
 
 | Type | Host | Value | Purpose |
 |---|---|---|---|
@@ -186,12 +186,14 @@ All records to add at your domain registrar (`sherwoodtech.dev`):
 
 ## 7. Decision Checklist
 
+- [x] Register domain `sherwoodtech.it.com` at Namecheap ✅
 - [ ] Create Azure subscription at portal.azure.com
 - [ ] Decide on M365 Business Basic — yes or skip (keep Gmail)?
 - [ ] Create `stc-production` resource group
+- [ ] Set up Azure PostgreSQL Flexible Server
 - [ ] Set up Azure Static Web Apps (Standard)
 - [ ] Set up Azure Communication Services
-- [ ] Verify `sherwoodtech.dev` domain in ACS
+- [x] Verify `sherwoodtech.it.com` domain in Microsoft 365 ✅
 - [ ] Add DNS records at registrar
 - [ ] Add all env vars to Azure Static Web App settings
 - [ ] Wire ACS email SDK into invite/register/contact API routes

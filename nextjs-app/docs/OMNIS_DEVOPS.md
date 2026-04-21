@@ -78,7 +78,7 @@ The killer feature — a shareable, read-only view for clients.
 
 - Each project generates a **client token**
 - Client accesses their board via:
-  - Direct Omnis link: `omnis.sherwoodtech.dev/board/{token}`
+  - Direct Omnis link: `omnis.sherwoodtech.it.com/board/{token}`
   - **Embedded in STC portfolio client portal** `/client-portal/devops`
 - Board shows: deployment history, environment health, open incidents, pipeline status
 - No login required for clients — token-authenticated read-only
@@ -129,7 +129,7 @@ Workspace (DevOps Engineer account)
 The STC portfolio site's `/client-portal/devops` page fetches data from Omnis via these read-only endpoints:
 
 ```
-Base URL: https://api.omnis.sherwoodtech.dev
+Base URL: https://api.omnis.sherwoodtech.it.com
 
 GET  /v1/board/{clientToken}/summary
   → { project, environments[], lastDeploy, openIncidents, uptime30d }
@@ -185,7 +185,7 @@ The token is a signed JWT or UUID scoped to a single project's read-only data.
 - **Full attribution:** *Omnis DevOps — an STC product*
 - **Color palette:** Same dark steel + electric blue as STC site (`#0F1923`, `#00D4FF`)
 - **Logo:** Separate mark from STC logo (TBD — circuit trace style consistent with STC brand)
-- **Domain:** `omnis.sherwoodtech.dev` (planned subdomain)
+- **Domain:** `omnis.sherwoodtech.it.com` (planned subdomain)
 - **Repo:** `scott95100/omnis-devops` (new GitHub repo — not yet created)
 
 ---

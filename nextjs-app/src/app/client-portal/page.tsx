@@ -4,7 +4,18 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { FiClock, FiExternalLink, FiGithub, FiMessageSquare } from 'react-icons/fi';
+import { FiClock, FiExternalLink, FiGithub, FiMessageSquare, FiFileText, FiDollarSign } from 'react-icons/fi';
+import Link from 'next/link';
+
+type Invoice = {
+  id: string;
+  invoiceNumber: string;
+  title: string;
+  amount: number;
+  status: string;
+  dueDate: string | null;
+  paidAt: string | null;
+};
 
 type Note = { id: string; content: string; createdAt: string; isInternal: boolean };
 type Project = {
@@ -42,6 +53,7 @@ export default function ClientPortalPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -61,6 +73,7 @@ export default function ClientPortalPage() {
         return;
       }
       fetchProjects();
+      fetchInvoices();
     }
   }, [status, session, router]);
 
@@ -74,6 +87,18 @@ export default function ClientPortalPage() {
       setError(e.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchInvoices = async () => {
+    try {
+      const res = await fetch('/api/invoices');
+      if (res.ok) {
+        const data = await res.json();
+        setInvoices(data.invoices || []);
+      }
+    } catch {
+      // Invoices are supplementary; don't block the portal on failure
     }
   };
 
@@ -104,6 +129,61 @@ export default function ClientPortalPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
             {error}
+          </div>
+        )}
+
+        {/* Invoices Section */}
+        {invoices.length > 0 && (
+          <div className="mb-10">
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <FiFileText className="text-brand" /> Invoices
+            </h2>
+            <div className="space-y-3">
+              {invoices.map((inv) => {
+                const invStatusColors: Record<string, string> = {
+                  DRAFT: 'bg-[#1A2535] text-slate-400',
+                  SENT: 'bg-blue-100 text-blue-700',
+                  PAID: 'bg-green-100 text-green-700',
+                  VOID: 'bg-gray-100 text-gray-500',
+                  OVERDUE: 'bg-red-100 text-red-700',
+                };
+                return (
+                  <motion.div
+                    key={inv.id}
+                    className="card p-5 flex flex-wrap items-center justify-between gap-4"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-mono text-xs text-slate-500">{inv.invoiceNumber}</span>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          invStatusColors[inv.status] ?? invStatusColors.DRAFT
+                        }`}>{inv.status}</span>
+                      </div>
+                      <p className="font-semibold text-white">{inv.title}</p>
+                      {inv.dueDate && inv.status !== 'PAID' && (
+                        <p className="text-xs text-slate-500 mt-0.5">Due {new Date(inv.dueDate).toLocaleDateString()}</p>
+                      )}
+                      {inv.paidAt && (
+                        <p className="text-xs text-green-400 mt-0.5">Paid {new Date(inv.paidAt).toLocaleDateString()}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-2xl font-bold text-brand">${(inv.amount / 100).toFixed(2)}</span>
+                      {(inv.status === 'SENT' || inv.status === 'OVERDUE') && (
+                        <Link
+                          href={`/pay/${inv.id}`}
+                          className="btn-primary flex items-center gap-1.5 text-sm"
+                        >
+                          <FiDollarSign size={14} /> Pay Now
+                        </Link>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         )}
 

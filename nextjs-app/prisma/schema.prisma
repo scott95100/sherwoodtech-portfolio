@@ -2,7 +2,8 @@
 // Run: npx prisma migrate dev --name init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -34,6 +35,7 @@ model User {
   portfolio              Portfolio?
   contactMessages        ContactMessage[]
   clientProjects         ClientProject[]
+  invoices               Invoice[]
   accounts               Account[]
   sessions               Session[]
 
@@ -396,6 +398,47 @@ enum PostStatus {
   DRAFT
   READY
   PUBLISHED
+}
+
+// ─── Invoices & Payments ──────────────────────────────────────────────────────
+
+model Invoice {
+  id                    String        @id @default(cuid())
+  clientId              String
+  clientProjectId       String?
+  projectInquiryId      String?
+  // Stripe references
+  stripeInvoiceId       String?       @unique
+  stripePaymentIntentId String?       @unique
+  stripeCustomerId      String?
+  // Invoice details
+  invoiceNumber         String        @unique // e.g. "INV-0001"
+  title                 String
+  description           String?
+  lineItems             Json          // [{ description: string, amount: number }]
+  amount                Int           // total in cents
+  currency              String        @default("usd")
+  // Status
+  status                InvoiceStatus @default(DRAFT)
+  dueDate               DateTime?
+  paidAt                DateTime?
+  // Notes
+  adminNotes            String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  client User @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
+  @@index([status])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  VOID
+  OVERDUE
 }
 
 // ─── Omnis DevOps Waitlist ───────────────────────────────────────────────────

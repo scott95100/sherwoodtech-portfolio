@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp, FiRadio, FiCopy, FiEdit2, FiX } from 'react-icons/fi';
+import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp, FiRadio, FiCopy, FiEdit2, FiX, FiDollarSign, FiSend, FiExternalLink } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 type User = { id: string; name: string; email: string; role: string; createdAt: Date; isActive: boolean };
@@ -19,6 +19,23 @@ type Inquiry = {
   estimatedLow: number; estimatedHigh: number; estimatedWeeks: number;
   desiredTimeline: string; status: string; adminNotes: string | null;
   utmSource: string | null; utmCampaign: string | null; utmMedium: string | null;
+  createdAt: string;
+};
+
+type InvoiceLineItem = { description: string; amount: number };
+type Invoice = {
+  id: string;
+  invoiceNumber: string;
+  title: string;
+  description: string | null;
+  lineItems: InvoiceLineItem[];
+  amount: number;
+  currency: string;
+  status: string;
+  dueDate: string | null;
+  paidAt: string | null;
+  adminNotes: string | null;
+  client: { id: string; name: string; email: string };
   createdAt: string;
 };
 
@@ -55,7 +72,7 @@ export default function AdminClient({
   projects: Project[];
   inquiries: Inquiry[];
 }) {
-  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'campaigns'>('users');
+  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'campaigns' | 'invoices'>('users');
   const [msgList, setMsgList] = useState(messages);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [clientProjects, setClientProjects] = useState<ClientProject[]>([]);
@@ -84,6 +101,19 @@ export default function AdminClient({
     platform: 'linkedin', content: '', status: 'DRAFT', scheduledAt: '', notes: '',
   });
   const [campaignLoading, setCampaignLoading] = useState(false);
+
+  // ── Invoice state ───────────────────────────────────────────────────────────
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [invoicesLoaded, setInvoicesLoaded] = useState(false);
+  const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+  const [invoiceLoading, setInvoiceLoading] = useState(false);
+  const [invoiceForm, setInvoiceForm] = useState({
+    clientId: '',
+    title: '',
+    description: '',
+    dueDate: '',
+    lineItems: [{ description: '', amount: '' }] as { description: string; amount: string }[],
+  });
 
   // New Client Project form state
   const [cpForm, setCpForm] = useState({
@@ -369,6 +399,67 @@ export default function AdminClient({
     }
   };
 
+  // ── Invoice functions ─────────────────────────────────────────────────────
+  const loadInvoices = async () => {
+    if (invoicesLoaded) return;
+    try {
+      const res = await fetch('/api/invoices');
+      const data = await res.json();
+      setInvoices(data.invoices || []);
+      setInvoicesLoaded(true);
+    } catch {
+      toast.error('Failed to load invoices');
+    }
+  };
+
+  const createInvoice = async () => {
+    if (!invoiceForm.clientId || !invoiceForm.title) return toast.error('Client and title required');
+    const lineItems = invoiceForm.lineItems
+      .filter((li) => li.description && li.amount)
+      .map((li) => ({ description: li.description, amount: Math.round(parseFloat(li.amount) * 100) }));
+    if (lineItems.length === 0) return toast.error('At least one line item required');
+    setInvoiceLoading(true);
+    try {
+      const res = await fetch('/api/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...invoiceForm, lineItems }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setInvoices((prev) => [data.invoice, ...prev]);
+      setInvoiceForm({ clientId: '', title: '', description: '', dueDate: '', lineItems: [{ description: '', amount: '' }] });
+      setShowInvoiceForm(false);
+      toast.success(`Invoice ${data.invoice.invoiceNumber} created`);
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setInvoiceLoading(false);
+    }
+  };
+
+  const updateInvoiceStatus = async (id: string, status: string) => {
+    try {
+      const res = await fetch(`/api/invoices/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setInvoices((prev) => prev.map((inv) => inv.id === id ? { ...inv, status } : inv));
+      toast.success('Invoice updated');
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  const copyPayLink = (invoiceId: string) => {
+    const url = `${window.location.origin}/pay/${invoiceId}`;
+    navigator.clipboard.writeText(url);
+    toast.success('Payment link copied!');
+  };
+
   const copyUtmLink = (slug: string) => {
     const url = `${window.location.origin}/pricing?utm_source=linkedin&utm_medium=social&utm_campaign=${slug}`;
     navigator.clipboard.writeText(url);
@@ -382,6 +473,7 @@ export default function AdminClient({
     { key: 'campaigns',   label: 'Campaigns',        icon: <FiRadio size={16} />,      count: campaigns.filter((c) => c.status === 'ACTIVE').length },
     { key: 'clients',     label: 'Client Projects',  icon: <FiFolder size={16} />,     count: null },
     { key: 'invitations', label: 'Invitations',      icon: <FiLink size={16} />,       count: null },
+    { key: 'invoices',    label: 'Invoices',         icon: <FiDollarSign size={16} />, count: invoices.filter((i) => i.status === 'SENT').length },
     { key: 'projects',    label: 'Portfolio',        icon: <FiFolder size={16} />,     count: projects.length },
   ] as const;
 
@@ -429,6 +521,7 @@ export default function AdminClient({
                   if (t.key === 'invitations') loadInvitations();
                   if (t.key === 'clients') loadClientProjects();
                   if (t.key === 'campaigns') loadCampaigns();
+                  if (t.key === 'invoices') loadInvoices();
                 }}
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
                   tab === t.key
@@ -1236,6 +1329,205 @@ export default function AdminClient({
                       ← Select a campaign or create a new one
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* ── Invoices Tab ── */}
+            {tab === 'invoices' && (
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-bold text-white">Invoices</h2>
+                  <button
+                    onClick={() => setShowInvoiceForm(!showInvoiceForm)}
+                    className="btn-primary text-sm flex items-center gap-1"
+                  >
+                    <FiPlus size={14} /> New Invoice
+                  </button>
+                </div>
+
+                {showInvoiceForm && (
+                  <div className="bg-[#0F1923] rounded-xl p-5 mb-6 border border-[#243044] space-y-4">
+                    <h3 className="font-semibold text-slate-200">New Invoice</h3>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Client User ID *</label>
+                        <input
+                          value={invoiceForm.clientId}
+                          onChange={(e) => setInvoiceForm({ ...invoiceForm, clientId: e.target.value })}
+                          className="input text-sm"
+                          placeholder="Paste User ID from Users tab"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Invoice Title *</label>
+                        <input
+                          value={invoiceForm.title}
+                          onChange={(e) => setInvoiceForm({ ...invoiceForm, title: e.target.value })}
+                          className="input text-sm"
+                          placeholder="e.g. Salesforce Pilot — Deposit"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Description</label>
+                        <input
+                          value={invoiceForm.description}
+                          onChange={(e) => setInvoiceForm({ ...invoiceForm, description: e.target.value })}
+                          className="input text-sm"
+                          placeholder="Optional description shown to client"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">Due Date</label>
+                        <input
+                          type="date"
+                          value={invoiceForm.dueDate}
+                          onChange={(e) => setInvoiceForm({ ...invoiceForm, dueDate: e.target.value })}
+                          className="input text-sm"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Line Items */}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 mb-2">Line Items *</label>
+                      <div className="space-y-2">
+                        {invoiceForm.lineItems.map((li, idx) => (
+                          <div key={idx} className="flex gap-2 items-center">
+                            <input
+                              className="input text-sm flex-1"
+                              placeholder="Description (e.g. Project deposit)"
+                              value={li.description}
+                              onChange={(e) => {
+                                const updated = [...invoiceForm.lineItems];
+                                updated[idx] = { ...updated[idx], description: e.target.value };
+                                setInvoiceForm({ ...invoiceForm, lineItems: updated });
+                              }}
+                            />
+                            <div className="relative w-32">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+                              <input
+                                className="input text-sm pl-6 w-full"
+                                placeholder="0.00"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={li.amount}
+                                onChange={(e) => {
+                                  const updated = [...invoiceForm.lineItems];
+                                  updated[idx] = { ...updated[idx], amount: e.target.value };
+                                  setInvoiceForm({ ...invoiceForm, lineItems: updated });
+                                }}
+                              />
+                            </div>
+                            {invoiceForm.lineItems.length > 1 && (
+                              <button
+                                onClick={() => setInvoiceForm({ ...invoiceForm, lineItems: invoiceForm.lineItems.filter((_, i) => i !== idx) })}
+                                className="text-red-400 hover:text-red-600"
+                              >
+                                <FiX size={16} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => setInvoiceForm({ ...invoiceForm, lineItems: [...invoiceForm.lineItems, { description: '', amount: '' }] })}
+                        className="mt-2 text-brand text-sm flex items-center gap-1 hover:underline"
+                      >
+                        <FiPlus size={14} /> Add Line Item
+                      </button>
+                      <div className="mt-3 text-right text-sm font-bold text-brand">
+                        Total: ${invoiceForm.lineItems.reduce((sum, li) => sum + (parseFloat(li.amount) || 0), 0).toFixed(2)}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button onClick={createInvoice} disabled={invoiceLoading} className="btn-primary text-sm">
+                        {invoiceLoading ? 'Creating...' : 'Create Invoice'}
+                      </button>
+                      <button onClick={() => setShowInvoiceForm(false)} className="btn-secondary text-sm">Cancel</button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {invoices.length === 0 && (
+                    <p className="text-slate-600 text-center py-8">No invoices yet.</p>
+                  )}
+                  {invoices.map((inv) => {
+                    const invoiceStatusColors: Record<string, string> = {
+                      DRAFT: 'bg-[#1A2535] text-slate-400',
+                      SENT: 'bg-blue-100 text-blue-700',
+                      PAID: 'bg-green-100 text-green-700',
+                      VOID: 'bg-gray-100 text-gray-500',
+                      OVERDUE: 'bg-red-100 text-red-700',
+                    };
+                    return (
+                      <div key={inv.id} className="border border-[#243044] rounded-xl p-4">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs text-slate-500">{inv.invoiceNumber}</span>
+                              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                invoiceStatusColors[inv.status] ?? invoiceStatusColors.DRAFT
+                              }`}>{inv.status}</span>
+                            </div>
+                            <p className="font-semibold text-white mt-0.5">{inv.title}</p>
+                            <p className="text-xs text-slate-500">{inv.client.name} — {inv.client.email}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-brand">${(inv.amount / 100).toFixed(2)}</p>
+                            {inv.dueDate && (
+                              <p className="text-xs text-slate-500">Due {new Date(inv.dueDate).toLocaleDateString()}</p>
+                            )}
+                            {inv.paidAt && (
+                              <p className="text-xs text-green-500">Paid {new Date(inv.paidAt).toLocaleDateString()}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 mt-3">
+                          {inv.status !== 'PAID' && inv.status !== 'VOID' && (
+                            <select
+                              value={inv.status}
+                              onChange={(e) => updateInvoiceStatus(inv.id, e.target.value)}
+                              className="input text-xs py-1 w-auto"
+                            >
+                              <option value="DRAFT">DRAFT</option>
+                              <option value="SENT">SENT</option>
+                              <option value="OVERDUE">OVERDUE</option>
+                              <option value="VOID">VOID</option>
+                            </select>
+                          )}
+                          {(inv.status === 'SENT' || inv.status === 'OVERDUE') && (
+                            <button
+                              onClick={() => copyPayLink(inv.id)}
+                              className="flex items-center gap-1.5 text-brand text-xs font-semibold hover:underline"
+                            >
+                              <FiCopy size={13} /> Copy Pay Link
+                            </button>
+                          )}
+                          <a
+                            href={`/pay/${inv.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-slate-400 text-xs hover:text-brand"
+                          >
+                            <FiExternalLink size={13} /> Preview
+                          </a>
+                          {inv.status === 'DRAFT' && (
+                            <button
+                              onClick={() => updateInvoiceStatus(inv.id, 'SENT')}
+                              className="flex items-center gap-1.5 text-xs btn-primary py-1 px-3"
+                            >
+                              <FiSend size={12} /> Send to Client
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
