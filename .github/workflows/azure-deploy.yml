@@ -30,16 +30,6 @@ jobs:
           resourceGroup: stc-production
           targetPort: 3000
           ingress: external
-          buildArguments: >
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-            ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
-            ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
-            ADMIN_NAME=${{ secrets.ADMIN_NAME }}
-            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
-            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
-            STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
           environmentVariables: >
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
