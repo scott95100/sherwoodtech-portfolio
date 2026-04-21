@@ -22,7 +22,7 @@ jobs:
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: ${{ github.workspace }}
+          appSourcePath: ${{ github.workspace }}/nextjs-app
           dockerfilePath: Dockerfile
           acrName: stcprodacr2026
           containerAppName: stc-webapp
