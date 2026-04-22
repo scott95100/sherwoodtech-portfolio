@@ -33,6 +33,18 @@ jobs:
           targetPort: 3000
           ingress: external
 
+      - name: Run database seed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          ADMIN_NAME: ${{ secrets.ADMIN_NAME }}
+        working-directory: nextjs-app
+        run: |
+          npm ci --prefix . 2>/dev/null || true
+          npx prisma generate
+          node prisma/seed.js
+
       - name: Configure Container App environment
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
