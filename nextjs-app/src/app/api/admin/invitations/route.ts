@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { sendInviteEmail } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
 
 // GET /api/admin/invitations - list all invitations
@@ -58,7 +59,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ invitation }, { status: 201 });
+    const emailDelivery = await sendInviteEmail(invitation.email, invitation.token, invitation.role);
+
+    return NextResponse.json({ invitation, emailDelivery }, { status: 201 });
   } catch (error) {
     console.error('Invitation POST error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

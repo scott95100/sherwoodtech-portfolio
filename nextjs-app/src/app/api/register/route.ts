@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { sendWelcomeEmail } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
@@ -49,7 +50,9 @@ export async function POST(req: NextRequest) {
       data: { used: true },
     });
 
-    return NextResponse.json({ success: true, userId: user.id }, { status: 201 });
+    const emailDelivery = await sendWelcomeEmail(user.email, user.name);
+
+    return NextResponse.json({ success: true, userId: user.id, emailDelivery }, { status: 201 });
   } catch (error) {
     console.error('Register error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sendContactNotification } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
@@ -23,7 +24,9 @@ export async function POST(req: NextRequest) {
       data: { name, email, subject, message },
     });
 
-    return NextResponse.json({ success: true, id: contactMessage.id }, { status: 201 });
+    const emailDelivery = await sendContactNotification(name, email, subject, message);
+
+    return NextResponse.json({ success: true, id: contactMessage.id, emailDelivery }, { status: 201 });
   } catch (error) {
     console.error('Contact API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

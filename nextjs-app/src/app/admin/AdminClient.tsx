@@ -173,7 +173,15 @@ export default function AdminClient({
       if (!res.ok) throw new Error(data.error);
       setInvitations((prev) => [data.invitation, ...prev]);
       setInviteEmail('');
-      toast.success(`Invitation created for ${data.invitation.email}`);
+      if (data.emailDelivery?.status === 'sent') {
+        toast.success(`Invitation created and emailed to ${data.invitation.email}`);
+      } else if (data.emailDelivery?.status === 'failed') {
+        toast.error(`Invitation created, but email delivery failed: ${data.emailDelivery.reason || 'Unknown error'}`);
+      } else if (data.emailDelivery?.status === 'skipped') {
+        toast.error(`Invitation created, but email delivery is not configured: ${data.emailDelivery.reason || 'Missing email settings'}`);
+      } else {
+        toast.success(`Invitation created for ${data.invitation.email}`);
+      }
     } catch (e: any) {
       toast.error(e.message);
     } finally {

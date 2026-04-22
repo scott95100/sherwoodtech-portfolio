@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { FiSend, FiMail, FiZap, FiArrowRight } from 'react-icons/fi';
+import { CONTACT_EMAIL, CONTACT_EMAIL_MAILTO } from '@/lib/site';
 
 type FormData = {
   name: string;
@@ -92,11 +93,11 @@ export default function ContactPage() {
 
             <div className="space-y-4">
               <a
-                href="mailto:sherwoodtechconsulting@gmail.com"
+                href={CONTACT_EMAIL_MAILTO}
                 className="flex items-center gap-3 text-slate-400 hover:text-brand transition-colors"
               >
                 <FiMail size={20} className="text-brand" />
-                sherwoodtechconsulting@gmail.com
+                {CONTACT_EMAIL}
               </a>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FiMail } from 'react-icons/fi';
+import { CONTACT_EMAIL, CONTACT_EMAIL_MAILTO } from '@/lib/site';
 
 export default function Footer() {
   return (
@@ -13,10 +14,10 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <FiMail size={16} className="text-brand" />
           <a
-            href="mailto:sherwoodtechconsulting@gmail.com"
+            href={CONTACT_EMAIL_MAILTO}
             className="text-sm hover:text-brand transition-colors"
           >
-            sherwoodtechconsulting@gmail.com
+            {CONTACT_EMAIL}
           </a>
         </div>
 
