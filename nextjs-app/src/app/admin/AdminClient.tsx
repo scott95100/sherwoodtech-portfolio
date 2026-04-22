@@ -73,6 +73,7 @@ export default function AdminClient({
   inquiries: Inquiry[];
 }) {
   const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'campaigns' | 'invoices'>('users');
+  const [userList, setUserList] = useState(users);
   const [msgList, setMsgList] = useState(messages);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [clientProjects, setClientProjects] = useState<ClientProject[]>([]);
@@ -559,31 +560,74 @@ export default function AdminClient({
                       <th className="pb-3 font-medium">Role</th>
                       <th className="pb-3 font-medium">Status</th>
                       <th className="pb-3 font-medium">Joined</th>
+                      <th className="pb-3 font-medium">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {users.map((u) => (
+                    {userList.map((u) => (
                       <tr key={u.id}>
                         <td className="py-3 font-medium text-white">{u.name}</td>
                         <td className="py-3 text-slate-500">{u.email}</td>
                         <td className="py-3">
-                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                            u.role === 'ADMIN' ? 'bg-brand/10 text-brand' :
-                            u.role === 'CLIENT' ? 'bg-blue-50 text-blue-600' :
-                            'bg-[#1A2535] text-slate-400'
-                          }`}>
-                            {u.role}
-                          </span>
+                          <select
+                            value={u.role}
+                            onChange={async (e) => {
+                              const role = e.target.value;
+                              await fetch(`/api/admin/users/${u.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ role }),
+                              });
+                              setUserList((prev) => prev.map((x) => x.id === u.id ? { ...x, role } : x));
+                              toast.success('Role updated');
+                            }}
+                            className="text-xs px-2 py-1 rounded-full font-medium bg-[#1A2535] text-slate-200 border border-[#334155] focus:outline-none"
+                          >
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="CLIENT">CLIENT</option>
+                            <option value="USER">USER</option>
+                          </select>
                         </td>
                         <td className="py-3">
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            u.isActive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'
-                          }`}>
+                          <button
+                            onClick={async () => {
+                              const isActive = !u.isActive;
+                              await fetch(`/api/admin/users/${u.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ isActive }),
+                              });
+                              setUserList((prev) => prev.map((x) => x.id === u.id ? { ...x, isActive } : x));
+                              toast.success(isActive ? 'User activated' : 'User deactivated');
+                            }}
+                            className={`text-xs px-2 py-1 rounded-full ${
+                              u.isActive ? 'bg-green-50 text-green-600 hover:bg-red-50 hover:text-red-500' : 'bg-red-50 text-red-500 hover:bg-green-50 hover:text-green-600'
+                            }`}
+                          >
                             {u.isActive ? 'Active' : 'Inactive'}
-                          </span>
+                          </button>
                         </td>
                         <td className="py-3 text-slate-600">
                           {new Date(u.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="py-3">
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Delete ${u.name}? This cannot be undone.`)) return;
+                              const res = await fetch(`/api/admin/users/${u.id}`, { method: 'DELETE' });
+                              if (res.ok) {
+                                setUserList((prev) => prev.filter((x) => x.id !== u.id));
+                                toast.success('User deleted');
+                              } else {
+                                const d = await res.json();
+                                toast.error(d.error || 'Failed to delete user');
+                              }
+                            }}
+                            className="text-red-400 hover:text-red-600 p-1"
+                            title="Delete user"
+                          >
+                            <FiTrash2 size={15} />
+                          </button>
                         </td>
                       </tr>
                     ))}

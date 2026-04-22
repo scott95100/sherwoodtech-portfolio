@@ -150,3 +150,27 @@ export async function sendContactNotification(name: string, email: string, subje
     `,
   });
 }
+
+export async function sendPasswordResetEmail(to: string, token: string) {
+  const resetUrl = `${getBaseUrl()}/reset-password?token=${encodeURIComponent(token)}`;
+
+  return sendEmail({
+    to,
+    subject: 'Reset your Sherwood Technology Consulting password',
+    plainText: [
+      'You requested a password reset.',
+      '',
+      `Reset your password here: ${resetUrl}`,
+      '',
+      'This link expires in 1 hour. If you did not request this, ignore this email.',
+    ].join('\n'),
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a; max-width: 520px;">
+        <h2 style="color: #0f766e;">Reset your password</h2>
+        <p>Click the button below to set a new password. This link expires in <strong>1 hour</strong>.</p>
+        <a href="${resetUrl}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#0f766e;color:#fff;text-decoration:none;border-radius:6px;font-weight:600;">Reset Password</a>
+        <p style="color:#64748b;font-size:13px;">If you didn't request this, you can safely ignore this email.</p>
+      </div>
+    `,
+  });
+}
