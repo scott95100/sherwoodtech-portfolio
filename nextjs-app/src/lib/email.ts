@@ -56,7 +56,35 @@ async function sendEmail({ to, subject, html, plainText, replyTo }: SendEmailInp
       replyTo: replyTo ? [{ address: replyTo }] : undefined,
     });
 
-    await poller.pollUntilDone();
+    const result = await poller.pollUntilDone();
+
+    if (result.status !== 'Succeeded') {
+      const reason = [
+        `ACS email send did not succeed`,
+        `status=${result.status}`,
+        result.error?.message ? `message=${result.error.message}` : null,
+        result.error?.code ? `code=${result.error.code}` : null,
+      ]
+        .filter(Boolean)
+        .join(', ');
+
+      console.error('Email delivery error:', reason, {
+        operationId: result.id,
+        senderAddress,
+        recipients,
+        subject,
+      });
+
+      return { status: 'failed', reason };
+    }
+
+    console.info('Email sent successfully', {
+      operationId: result.id,
+      senderAddress,
+      recipients,
+      subject,
+    });
+
     return { status: 'sent' };
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'Unknown email delivery error';
