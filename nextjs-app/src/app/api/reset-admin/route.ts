@@ -15,18 +15,21 @@ export async function GET(request: Request) {
   const password = 'Admin2026STC';
   const hash = await bcrypt.hash(password, 12);
 
-  const user = await prisma.user.upsert({
-    where: { email },
-    update: { password: hash, isActive: true, emailVerified: true, role: 'ADMIN' },
-    create: {
-      name: process.env.ADMIN_NAME || 'Scott Sherwood',
-      email,
-      password: hash,
-      role: 'ADMIN',
-      isActive: true,
-      emailVerified: true,
-    },
-  });
-
-  return NextResponse.json({ ok: true, email: user.email, role: user.role });
+  try {
+    const user = await prisma.user.upsert({
+      where: { email },
+      update: { password: hash, isActive: true, emailVerified: true, role: 'ADMIN' },
+      create: {
+        name: process.env.ADMIN_NAME || 'Scott Sherwood',
+        email,
+        password: hash,
+        role: 'ADMIN',
+        isActive: true,
+        emailVerified: true,
+      },
+    });
+    return NextResponse.json({ ok: true, email: user.email, role: user.role });
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: err.message, code: err.code }, { status: 500 });
+  }
 }
