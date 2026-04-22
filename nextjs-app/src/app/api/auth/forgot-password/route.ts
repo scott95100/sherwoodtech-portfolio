@@ -29,7 +29,17 @@ export async function POST(request: Request) {
     data: { email: email.toLowerCase(), token, expires },
   });
 
-  await sendPasswordResetEmail(email, token);
+  const deliveryResult = await sendPasswordResetEmail(email, token);
+
+  if (deliveryResult.status !== 'sent') {
+    console.error('Password reset email delivery failed', {
+      email: email.toLowerCase(),
+      status: deliveryResult.status,
+      reason: deliveryResult.reason,
+    });
+  } else {
+    console.info('Password reset email sent', { email: email.toLowerCase() });
+  }
 
   return NextResponse.json({ ok: true });
 }

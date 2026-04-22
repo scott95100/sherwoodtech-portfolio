@@ -54,7 +54,6 @@ jobs:
           AZURE_EMAIL_SENDER: ${{ secrets.AZURE_EMAIL_SENDER }}
           CONTACT_NOTIFICATION_EMAIL: ${{ secrets.CONTACT_NOTIFICATION_EMAIL }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           ADMIN_NAME: ${{ secrets.ADMIN_NAME }}
         run: |
           az containerapp update \
@@ -68,5 +67,4 @@ jobs:
             "AZURE_EMAIL_SENDER=$AZURE_EMAIL_SENDER" \
             "CONTACT_NOTIFICATION_EMAIL=$CONTACT_NOTIFICATION_EMAIL" \
             "ADMIN_EMAIL=$ADMIN_EMAIL" \
-            "ADMIN_PASSWORD=$ADMIN_PASSWORD" \
             "ADMIN_NAME=$ADMIN_NAME"

@@ -6,10 +6,17 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Create admin user
-  const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'admin123', 12);
   const adminEmail = process.env.ADMIN_EMAIL || 'scott@sherwoodtech.it.com';
   const adminName = process.env.ADMIN_NAME || 'Scott Sherwood';
+  const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
+
+  if (!existingAdmin && !process.env.ADMIN_PASSWORD) {
+    throw new Error('ADMIN_PASSWORD is required to create the initial admin user');
+  }
+
+  const hashedPassword = process.env.ADMIN_PASSWORD
+    ? await bcrypt.hash(process.env.ADMIN_PASSWORD, 12)
+    : null;
 
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
