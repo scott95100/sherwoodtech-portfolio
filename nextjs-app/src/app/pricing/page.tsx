@@ -405,6 +405,29 @@ function PricingInner() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (!utm.utmCampaign) return;
+
+    const trackingKey = `campaign-landing:${utm.utmCampaign}:${utm.utmSource}:${utm.utmMedium}`;
+    if (window.sessionStorage.getItem(trackingKey)) return;
+
+    window.sessionStorage.setItem(trackingKey, '1');
+
+    fetch('/api/campaigns/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        utmCampaign: utm.utmCampaign,
+        utmSource: utm.utmSource,
+        utmMedium: utm.utmMedium,
+        path: `${window.location.pathname}${window.location.search}`,
+        referrer: document.referrer || null,
+      }),
+    }).catch(() => {
+      window.sessionStorage.removeItem(trackingKey);
+    });
+  }, [utm]);
+
   const update = (field: keyof FormState, value: any) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 

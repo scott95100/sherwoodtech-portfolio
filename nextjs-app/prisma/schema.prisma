@@ -374,6 +374,7 @@ model Campaign {
   updatedAt   DateTime         @updatedAt
 
   posts       CampaignPost[]
+  events      CampaignEvent[]
 
   @@index([status])
 }
@@ -395,6 +396,23 @@ model CampaignPost {
   @@index([campaignId])
 }
 
+model CampaignEvent {
+  id         String            @id @default(cuid())
+  campaignId String
+  eventType  CampaignEventType
+  source     String?
+  medium     String?
+  path       String?
+  referrer   String?
+  userAgent  String?
+  createdAt  DateTime          @default(now())
+
+  campaign   Campaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, eventType])
+  @@index([createdAt])
+}
+
 enum CampaignStatus {
   DRAFT
   ACTIVE
@@ -407,6 +425,11 @@ enum PostStatus {
   DRAFT
   READY
   PUBLISHED
+}
+
+enum CampaignEventType {
+  CLICK
+  LANDING
 }
 
 // ─── Invoices & Payments ──────────────────────────────────────────────────────

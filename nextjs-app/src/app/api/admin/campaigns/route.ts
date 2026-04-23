@@ -22,10 +22,19 @@ export async function GET(req: NextRequest) {
   // For each campaign, count leads attributed to it via utm_campaign = utmSlug
   const campaignsWithLeads = await Promise.all(
     campaigns.map(async (c: any) => {
-      const leadCount = await (prisma as any).projectInquiry.count({
-        where: { utmCampaign: c.utmSlug },
-      });
-      return { ...c, leadCount };
+      const [leadCount, clickCount, landingCount] = await Promise.all([
+        (prisma as any).projectInquiry.count({
+          where: { utmCampaign: c.utmSlug },
+        }),
+        (prisma as any).campaignEvent.count({
+          where: { campaignId: c.id, eventType: 'CLICK' },
+        }),
+        (prisma as any).campaignEvent.count({
+          where: { campaignId: c.id, eventType: 'LANDING' },
+        }),
+      ]);
+
+      return { ...c, leadCount, clickCount, landingCount };
     })
   );
 

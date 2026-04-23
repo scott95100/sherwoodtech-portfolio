@@ -49,6 +49,8 @@ type Campaign = {
   status: string; startDate: string | null; endDate: string | null;
   notes: string | null; utmSlug: string; createdAt: string;
   posts: { id: string; platform: string; status: string }[];
+  clickCount: number;
+  landingCount: number;
   leadCount: number;
 };
 
@@ -481,12 +483,12 @@ export default function AdminClient({
       .replace(/^-|-$/g, '');
 
   const buildCampaignUrl = (slug: string, source = 'linkedin', medium = 'social') =>
-    `${window.location.origin}/pricing?utm_source=${source}&utm_medium=${medium}&utm_campaign=${slug}`;
+    `${window.location.origin}/c/${slug}?source=${encodeURIComponent(source)}&medium=${encodeURIComponent(medium)}`;
 
   const copyUtmLink = (slug: string) => {
     const url = buildCampaignUrl(slug);
     navigator.clipboard.writeText(url);
-    toast.success('UTM link copied!');
+    toast.success('Campaign link copied!');
   };
 
   const copyPostWithLink = (content: string, platform: string, slug: string) => {
@@ -1159,6 +1161,8 @@ export default function AdminClient({
                       </div>
                       <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-600">
                         <span>{c.posts.length} posts</span>
+                        <span>{c.clickCount} clicks</span>
+                        <span>{c.landingCount} landings</span>
                         <span>{c.leadCount} leads</span>
                         <span>{c.platforms.join(', ')}</span>
                       </div>
@@ -1297,20 +1301,24 @@ export default function AdminClient({
                       </div>
 
                       {/* Stats row */}
-                      <div className="grid grid-cols-3 gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div className="bg-[#0F1923] rounded-xl p-3 text-center">
+                          <div className="text-xl font-bold text-brand">{selectedCampaign.clickCount}</div>
+                          <div className="text-xs text-slate-500">Clicks</div>
+                        </div>
+                        <div className="bg-[#0F1923] rounded-xl p-3 text-center">
+                          <div className="text-xl font-bold text-brand">{selectedCampaign.landingCount}</div>
+                          <div className="text-xs text-slate-500">Landings</div>
+                        </div>
                         <div className="bg-[#0F1923] rounded-xl p-3 text-center">
                           <div className="text-xl font-bold text-brand">{selectedCampaign.leadCount}</div>
                           <div className="text-xs text-slate-500">Leads Attributed</div>
                         </div>
                         <div className="bg-[#0F1923] rounded-xl p-3 text-center">
-                          <div className="text-xl font-bold text-brand">{campaignPosts.length}</div>
-                          <div className="text-xs text-slate-500">Posts</div>
-                        </div>
-                        <div className="bg-[#0F1923] rounded-xl p-3 text-center">
                           <div className="text-xl font-bold text-brand">
                             {campaignPosts.filter((p) => p.status === 'PUBLISHED').length}
                           </div>
-                          <div className="text-xs text-slate-500">Published</div>
+                          <div className="text-xs text-slate-500">Published Posts</div>
                         </div>
                       </div>
 
@@ -1318,7 +1326,7 @@ export default function AdminClient({
                       <div className="bg-brand/5 border border-brand/20 rounded-xl p-3">
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0">
-                            <div className="text-xs font-semibold text-slate-400 mb-0.5">Campaign UTM Link</div>
+                            <div className="text-xs font-semibold text-slate-400 mb-0.5">Campaign Tracking Link</div>
                             <div className="font-mono text-xs text-slate-200 truncate">
                               {buildCampaignUrl(selectedCampaign.utmSlug)}
                             </div>
