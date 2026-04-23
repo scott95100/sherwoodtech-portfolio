@@ -7,38 +7,58 @@ function adminOnly(session: any) {
   return !session || session.user?.role !== 'ADMIN';
 }
 
+function isMissingCampaignEventStorage(error: any) {
+  return error?.code === 'P2021'
+    || error?.code === 'P2022'
+    || error?.message?.includes('campaignEvent')
+    || error?.message?.includes('CampaignEvent');
+}
+
 // GET all campaigns with post count + lead count
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (adminOnly(session)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const campaigns = await (prisma as any).campaign.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      posts: { select: { id: true, platform: true, status: true } },
-    },
-  });
+  try {
+    const campaigns = await (prisma as any).campaign.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        posts: { select: { id: true, platform: true, status: true } },
+      },
+    });
 
-  // For each campaign, count leads attributed to it via utm_campaign = utmSlug
-  const campaignsWithLeads = await Promise.all(
-    campaigns.map(async (c: any) => {
-      const [leadCount, clickCount, landingCount] = await Promise.all([
-        (prisma as any).projectInquiry.count({
+    const campaignsWithLeads = await Promise.all(
+      campaigns.map(async (c: any) => {
+        const leadCount = await (prisma as any).projectInquiry.count({
           where: { utmCampaign: c.utmSlug },
-        }),
-        (prisma as any).campaignEvent.count({
-          where: { campaignId: c.id, eventType: 'CLICK' },
-        }),
-        (prisma as any).campaignEvent.count({
-          where: { campaignId: c.id, eventType: 'LANDING' },
-        }),
-      ]);
+        });
 
-      return { ...c, leadCount, clickCount, landingCount };
-    })
-  );
+        try {
+          const [clickCount, landingCount] = await Promise.all([
+            (prisma as any).campaignEvent.count({
+              where: { campaignId: c.id, eventType: 'CLICK' },
+            }),
+            (prisma as any).campaignEvent.count({
+              where: { campaignId: c.id, eventType: 'LANDING' },
+            }),
+          ]);
 
-  return NextResponse.json({ campaigns: campaignsWithLeads });
+          return { ...c, leadCount, clickCount, landingCount };
+        } catch (error) {
+          if (!isMissingCampaignEventStorage(error)) {
+            throw error;
+          }
+
+          return { ...c, leadCount, clickCount: 0, landingCount: 0 };
+        }
+      })
+    );
+
+    return NextResponse.json({ campaigns: campaignsWithLeads });
+  } catch (error) {
+    console.error('Failed to load campaigns:', error);
+    return NextResponse.json({ error: 'Failed to load campaigns' }, { status: 500 });
+  }
 }
 
 // POST create campaign
