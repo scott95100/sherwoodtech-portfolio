@@ -1605,7 +1605,9 @@ export default function AdminClient({
                                 <FiSend size={13} /> Generate Draft
                               </button>
                               <button
-                                onClick={editingPost ? updatePost : createPost}
+                                onClick={() => {
+                                  void (editingPost ? updatePost() : createPost());
+                                }}
                                 disabled={campaignLoading}
                                 className="btn-primary text-sm"
                               >
