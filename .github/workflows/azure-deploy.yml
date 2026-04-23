@@ -43,7 +43,7 @@ jobs:
         run: |
           npm ci
           ./node_modules/.bin/prisma generate
-          ./node_modules/.bin/prisma migrate deploy
+          ./node_modules/.bin/prisma db push
           node prisma/seed.js
 
       - name: Configure Container App environment
