@@ -432,6 +432,21 @@ enum CampaignEventType {
   LANDING
 }
 
+model SiteVisit {
+  id        String   @id @default(cuid())
+  sessionId String
+  path      String
+  source    String?
+  referrer  String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+  @@index([source])
+  @@index([sessionId])
+}
+
 // ─── Invoices & Payments ──────────────────────────────────────────────────────
 
 model Invoice {

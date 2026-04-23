@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp, FiRadio, FiCopy, FiEdit2, FiX, FiDollarSign, FiSend, FiExternalLink } from 'react-icons/fi';
+import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp, FiRadio, FiCopy, FiEdit2, FiX, FiDollarSign, FiSend, FiExternalLink, FiGlobe } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 type User = { id: string; name: string; email: string; role: string; createdAt: Date; isActive: boolean };
@@ -54,6 +54,21 @@ type Campaign = {
   leadCount: number;
 };
 
+type SiteTrafficPage = { path: string; views: number; lastVisitedAt: string };
+type SiteTrafficReferrer = { source: string; views: number };
+type SiteTrafficVisit = { id: string; path: string; source: string; createdAt: string };
+type SiteTraffic = {
+  available: boolean;
+  totalViews: number;
+  viewsToday: number;
+  views7d: number;
+  uniqueVisitors7d: number;
+  uniqueVisitors30d: number;
+  topPages: SiteTrafficPage[];
+  topReferrers: SiteTrafficReferrer[];
+  recentVisits: SiteTrafficVisit[];
+};
+
 const statusColors: Record<string, string> = {
   DISCOVERY: 'bg-purple-100 text-purple-700',
   PROPOSAL: 'bg-blue-100 text-blue-700',
@@ -74,7 +89,7 @@ export default function AdminClient({
   projects: Project[];
   inquiries: Inquiry[];
 }) {
-  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'campaigns' | 'invoices'>('users');
+  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'campaigns' | 'traffic' | 'invoices'>('users');
   const [userList, setUserList] = useState(users);
   const [msgList, setMsgList] = useState(messages);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -126,6 +141,19 @@ export default function AdminClient({
   });
   const [cpLoading, setCpLoading] = useState(false);
   const [showCpForm, setShowCpForm] = useState(false);
+  const [trafficLoaded, setTrafficLoaded] = useState(false);
+  const [trafficLoading, setTrafficLoading] = useState(false);
+  const [siteTraffic, setSiteTraffic] = useState<SiteTraffic>({
+    available: false,
+    totalViews: 0,
+    viewsToday: 0,
+    views7d: 0,
+    uniqueVisitors7d: 0,
+    uniqueVisitors30d: 0,
+    topPages: [],
+    topReferrers: [],
+    recentVisits: [],
+  });
 
   const markRead = async (id: string) => {
     try {
@@ -276,6 +304,22 @@ export default function AdminClient({
       toast.success('Lead deleted');
     } catch {
       toast.error('Failed to delete');
+    }
+  };
+
+  const loadSiteTraffic = async () => {
+    if (trafficLoaded) return;
+    setTrafficLoading(true);
+    try {
+      const res = await fetch('/api/admin/site-traffic');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setSiteTraffic(data);
+      setTrafficLoaded(true);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to load site traffic');
+    } finally {
+      setTrafficLoading(false);
     }
   };
 
@@ -599,6 +643,7 @@ export default function AdminClient({
     { key: 'users',       label: 'Users',           icon: <FiUsers size={16} />,      count: users.length },
     { key: 'messages',    label: 'Messages',         icon: <FiMail size={16} />,       count: msgList.filter((m) => m.status === 'UNREAD').length },
     { key: 'leads',       label: 'Leads',            icon: <FiTrendingUp size={16} />, count: inquiries.filter((i) => i.status === 'NEW').length },
+    { key: 'traffic',     label: 'Site Traffic',     icon: <FiGlobe size={16} />,      count: null },
     { key: 'campaigns',   label: 'Campaigns',        icon: <FiRadio size={16} />,      count: campaigns.filter((c) => c.status === 'ACTIVE').length },
     { key: 'clients',     label: 'Client Projects',  icon: <FiFolder size={16} />,     count: null },
     { key: 'invitations', label: 'Invitations',      icon: <FiLink size={16} />,       count: null },
@@ -650,6 +695,7 @@ export default function AdminClient({
                   if (t.key === 'invitations') loadInvitations();
                   if (t.key === 'clients') loadClientProjects();
                   if (t.key === 'campaigns') loadCampaigns();
+                  if (t.key === 'traffic') loadSiteTraffic();
                   if (t.key === 'invoices') loadInvoices();
                 }}
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
@@ -1147,6 +1193,107 @@ export default function AdminClient({
                           ✉ Draft Proposal Email
                         </a>
                       </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {tab === 'traffic' && (
+              <div className="space-y-6">
+                {trafficLoading && !trafficLoaded && (
+                  <p className="text-slate-500 text-sm">Loading site traffic...</p>
+                )}
+
+                {!trafficLoading && !siteTraffic.available && (
+                  <div className="border border-dashed border-[#243044] rounded-xl p-5 text-sm text-slate-500">
+                    Site traffic tracking is deployed in the app, but the SiteVisit storage is not available yet in the current database. Once the migration is present, this panel will populate automatically.
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+                  <div className="bg-[#0F1923] rounded-xl p-4 border border-[#243044]">
+                    <div className="text-2xl font-bold text-brand">{siteTraffic.totalViews}</div>
+                    <div className="text-xs text-slate-500 mt-1">Total Recorded Views</div>
+                  </div>
+                  <div className="bg-[#0F1923] rounded-xl p-4 border border-[#243044]">
+                    <div className="text-2xl font-bold text-brand">{siteTraffic.viewsToday}</div>
+                    <div className="text-xs text-slate-500 mt-1">Last 24 Hours</div>
+                  </div>
+                  <div className="bg-[#0F1923] rounded-xl p-4 border border-[#243044]">
+                    <div className="text-2xl font-bold text-brand">{siteTraffic.views7d}</div>
+                    <div className="text-xs text-slate-500 mt-1">Last 7 Days</div>
+                  </div>
+                  <div className="bg-[#0F1923] rounded-xl p-4 border border-[#243044]">
+                    <div className="text-2xl font-bold text-brand">{siteTraffic.uniqueVisitors30d}</div>
+                    <div className="text-xs text-slate-500 mt-1">Unique Visitors, 30 Days</div>
+                  </div>
+                </div>
+
+                <div className="grid xl:grid-cols-3 gap-4">
+                  <div className="xl:col-span-2 border border-[#243044] rounded-xl p-5 bg-[#0F1923]">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-semibold text-slate-200">Top Landing Pages</h3>
+                      <span className="text-xs text-slate-500">Last 30 days</span>
+                    </div>
+                    {siteTraffic.topPages.length === 0 ? (
+                      <p className="text-sm text-slate-600 py-6 text-center">No site landing data yet.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {siteTraffic.topPages.map((page) => (
+                          <div key={page.path} className="flex items-center justify-between gap-3 border border-[#243044] rounded-lg px-4 py-3 bg-[#1A2535]">
+                            <div className="min-w-0">
+                              <div className="font-mono text-sm text-slate-100 truncate">{page.path}</div>
+                              <div className="text-xs text-slate-500 mt-1">Last visit {new Date(page.lastVisitedAt).toLocaleString()}</div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <div className="text-lg font-bold text-brand">{page.views}</div>
+                              <div className="text-xs text-slate-500">views</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border border-[#243044] rounded-xl p-5 bg-[#0F1923]">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-semibold text-slate-200">Top Referrers</h3>
+                      <span className="text-xs text-slate-500">Last 30 days</span>
+                    </div>
+                    {siteTraffic.topReferrers.length === 0 ? (
+                      <p className="text-sm text-slate-600 py-6 text-center">No referrers recorded yet.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {siteTraffic.topReferrers.map((referrer) => (
+                          <div key={referrer.source} className="flex items-center justify-between gap-3 border border-[#243044] rounded-lg px-4 py-3 bg-[#1A2535]">
+                            <div className="text-sm text-slate-200 truncate">{referrer.source}</div>
+                            <div className="text-sm font-semibold text-brand shrink-0">{referrer.views}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="border border-[#243044] rounded-xl p-5 bg-[#0F1923]">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-semibold text-slate-200">Recent Visits</h3>
+                    <span className="text-xs text-slate-500">Latest recorded landings</span>
+                  </div>
+                  {siteTraffic.recentVisits.length === 0 ? (
+                    <p className="text-sm text-slate-600 py-6 text-center">No visits recorded yet.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {siteTraffic.recentVisits.map((visit) => (
+                        <div key={visit.id} className="flex items-center justify-between gap-3 border border-[#243044] rounded-lg px-4 py-3 bg-[#1A2535]">
+                          <div className="min-w-0">
+                            <div className="font-mono text-sm text-slate-100 truncate">{visit.path}</div>
+                            <div className="text-xs text-slate-500 mt-1">{visit.source}</div>
+                          </div>
+                          <div className="text-xs text-slate-500 shrink-0">{new Date(visit.createdAt).toLocaleString()}</div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

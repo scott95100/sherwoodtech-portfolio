@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from '@/components/Providers';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import SiteTrafficTracker from '@/components/SiteTrafficTracker';
 import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={inter.className}>
         <Providers>
+          <SiteTrafficTracker />
           {/* Global background — fixed so it doesn't scroll with content */}
           <div
             className="fixed inset-0 -z-10 bg-[#0F1923] bg-cover bg-center bg-no-repeat"
