@@ -2,32 +2,39 @@
 
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-
-const EXCLUDED_PREFIXES = ['/api', '/admin', '/dashboard', '/client-portal', '/_next'];
-const SESSION_KEY = 'stc-site-traffic-session';
-
-function isTrackablePath(pathname: string) {
-  return pathname !== '' && !EXCLUDED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
-}
+import { useSession } from 'next-auth/react';
+import {
+  getSiteTrafficOptOut,
+  isTrackableSitePath,
+  setSiteTrafficOptOut,
+  SITE_TRAFFIC_OPTOUT_KEY,
+  SITE_TRAFFIC_SESSION_KEY,
+} from '@/lib/siteTraffic';
 
 function getSessionId() {
-  const existing = window.sessionStorage.getItem(SESSION_KEY);
+  const existing = window.sessionStorage.getItem(SITE_TRAFFIC_SESSION_KEY);
   if (existing) return existing;
 
   const sessionId = typeof crypto !== 'undefined' && 'randomUUID' in crypto
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-  window.sessionStorage.setItem(SESSION_KEY, sessionId);
+  window.sessionStorage.setItem(SITE_TRAFFIC_SESSION_KEY, sessionId);
   return sessionId;
 }
 
 export default function SiteTrafficTracker() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const lastTrackedPath = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!pathname || !isTrackablePath(pathname) || lastTrackedPath.current === pathname) {
+    const isAdminSession = session?.user?.role === 'ADMIN';
+    if (isAdminSession) {
+      setSiteTrafficOptOut(true);
+    }
+
+    if (!pathname || !isTrackableSitePath(pathname) || lastTrackedPath.current === pathname || getSiteTrafficOptOut()) {
       return;
     }
 
@@ -52,6 +59,21 @@ export default function SiteTrafficTracker() {
     }).catch(() => {
       window.sessionStorage.removeItem(trackingKey);
     });
+  }, [pathname, session?.user?.role]);
+
+  useEffect(() => {
+    const syncOptOut = () => {
+      if (getSiteTrafficOptOut()) {
+        lastTrackedPath.current = pathname || lastTrackedPath.current;
+      }
+    };
+
+    window.addEventListener('storage', syncOptOut);
+    window.addEventListener(SITE_TRAFFIC_OPTOUT_KEY, syncOptOut as EventListener);
+    return () => {
+      window.removeEventListener('storage', syncOptOut);
+      window.removeEventListener(SITE_TRAFFIC_OPTOUT_KEY, syncOptOut as EventListener);
+    };
   }, [pathname]);
 
   return null;

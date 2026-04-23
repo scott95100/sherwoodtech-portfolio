@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isTrackableSitePath } from '@/lib/siteTraffic';
 
 function isMissingSiteVisitStorage(error: any) {
   return error?.code === 'P2021'
@@ -8,20 +9,18 @@ function isMissingSiteVisitStorage(error: any) {
     || error?.message?.includes('SiteVisit');
 }
 
-function isTrackablePath(path: string) {
-  return path !== ''
-    && !path.startsWith('/api')
-    && !path.startsWith('/admin')
-    && !path.startsWith('/dashboard')
-    && !path.startsWith('/client-portal')
-    && !path.startsWith('/_next');
-}
-
-function normalizeSource(referrer: string | null) {
+function normalizeSource(referrer: string | null, host: string | null) {
   if (!referrer) return 'Direct';
 
   try {
-    return new URL(referrer).hostname.replace(/^www\./, '') || 'Referral';
+    const referrerHost = new URL(referrer).hostname.replace(/^www\./, '');
+    const currentHost = (host || '').replace(/^www\./, '');
+
+    if (referrerHost && currentHost && referrerHost === currentHost) {
+      return 'Direct';
+    }
+
+    return referrerHost || 'Referral';
   } catch {
     return 'Referral';
   }
@@ -36,7 +35,7 @@ export async function POST(req: NextRequest) {
       ? body.sessionId.trim()
       : 'anonymous';
 
-    if (!path || !isTrackablePath(path)) {
+    if (!path || !isTrackableSitePath(path)) {
       return NextResponse.json({ tracked: false }, { status: 200 });
     }
 
@@ -44,7 +43,7 @@ export async function POST(req: NextRequest) {
       data: {
         sessionId,
         path,
-        source: normalizeSource(referrer),
+        source: normalizeSource(referrer, req.headers.get('host')),
         referrer,
         userAgent: req.headers.get('user-agent'),
       },

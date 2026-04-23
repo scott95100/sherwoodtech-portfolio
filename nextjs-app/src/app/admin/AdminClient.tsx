@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp, FiRadio, FiCopy, FiEdit2, FiX, FiDollarSign, FiSend, FiExternalLink, FiGlobe } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { getSiteTrafficOptOut, setSiteTrafficOptOut, SITE_TRAFFIC_OPTOUT_KEY } from '@/lib/siteTraffic';
 
 type User = { id: string; name: string; email: string; role: string; createdAt: Date; isActive: boolean };
 type Message = { id: string; name: string; email: string; subject: string; message: string; status: string; createdAt: Date };
@@ -143,6 +144,7 @@ export default function AdminClient({
   const [showCpForm, setShowCpForm] = useState(false);
   const [trafficLoaded, setTrafficLoaded] = useState(false);
   const [trafficLoading, setTrafficLoading] = useState(false);
+  const [trafficOptOut, setTrafficOptOutState] = useState(false);
   const [siteTraffic, setSiteTraffic] = useState<SiteTraffic>({
     available: false,
     totalViews: 0,
@@ -154,6 +156,17 @@ export default function AdminClient({
     topReferrers: [],
     recentVisits: [],
   });
+
+  useEffect(() => {
+    setTrafficOptOutState(getSiteTrafficOptOut());
+  }, []);
+
+  const updateTrafficOptOut = (value: boolean) => {
+    setSiteTrafficOptOut(value);
+    setTrafficOptOutState(value);
+    window.dispatchEvent(new Event(SITE_TRAFFIC_OPTOUT_KEY));
+    toast.success(value ? 'This browser will be ignored in site traffic' : 'This browser will be tracked again');
+  };
 
   const markRead = async (id: string) => {
     try {
@@ -1201,6 +1214,23 @@ export default function AdminClient({
 
             {tab === 'traffic' && (
               <div className="space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 border border-[#243044] rounded-xl p-4 bg-[#0F1923]">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-200">Ignore Your Own Visits</h3>
+                    <p className="text-xs text-slate-500 mt-1">When enabled, this browser will not be counted in site traffic. Admin sessions are opted out automatically.</p>
+                  </div>
+                  <button
+                    onClick={() => updateTrafficOptOut(!trafficOptOut)}
+                    className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                      trafficOptOut
+                        ? 'bg-brand text-white border-brand'
+                        : 'bg-[#1A2535] text-slate-300 border-[#243044]'
+                    }`}
+                  >
+                    {trafficOptOut ? 'Ignoring This Browser' : 'Ignore This Browser'}
+                  </button>
+                </div>
+
                 {trafficLoading && !trafficLoaded && (
                   <p className="text-slate-500 text-sm">Loading site traffic...</p>
                 )}
