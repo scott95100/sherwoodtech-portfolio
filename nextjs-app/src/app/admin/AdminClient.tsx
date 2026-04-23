@@ -94,6 +94,7 @@ export default function AdminClient({
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [showPostForm, setShowPostForm] = useState(false);
   const [editingPost, setEditingPost] = useState<CampaignPost | null>(null);
+  const [campaignSlugEdited, setCampaignSlugEdited] = useState(false);
   const [campaignForm, setCampaignForm] = useState({
     name: '', goal: '', platforms: [] as string[], status: 'DRAFT',
     startDate: '', endDate: '', notes: '', utmSlug: '',
@@ -314,6 +315,7 @@ export default function AdminClient({
       if (!res.ok) throw new Error(data.error);
       setCampaigns((prev) => [{ ...data.campaign, posts: [], leadCount: 0 }, ...prev]);
       setCampaignForm({ name: '', goal: '', platforms: [], status: 'DRAFT', startDate: '', endDate: '', notes: '', utmSlug: '' });
+      setCampaignSlugEdited(false);
       setShowCampaignForm(false);
       toast.success('Campaign created');
     } catch (e: any) {
@@ -469,10 +471,34 @@ export default function AdminClient({
     toast.success('Payment link copied!');
   };
 
+  const slugifyCampaignName = (value: string) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+  const buildCampaignUrl = (slug: string, source = 'linkedin', medium = 'social') =>
+    `${window.location.origin}/pricing?utm_source=${source}&utm_medium=${medium}&utm_campaign=${slug}`;
+
   const copyUtmLink = (slug: string) => {
-    const url = `${window.location.origin}/pricing?utm_source=linkedin&utm_medium=social&utm_campaign=${slug}`;
+    const url = buildCampaignUrl(slug);
     navigator.clipboard.writeText(url);
     toast.success('UTM link copied!');
+  };
+
+  const copyPostWithLink = (content: string, platform: string, slug: string) => {
+    const medium = platform === 'email' ? 'outreach' : 'social';
+    navigator.clipboard.writeText(`${content}\n\n${buildCampaignUrl(slug, platform, medium)}`);
+    toast.success('Post + campaign link copied!');
+  };
+
+  const openLinkedInWithCopiedPost = (content: string, slug: string) => {
+    copyPostWithLink(content, 'linkedin', slug);
+    window.open('https://www.linkedin.com/feed/', '_blank', 'noopener,noreferrer');
+    toast.success('LinkedIn opened. Your post is on the clipboard.');
   };
 
   const tabs = [
@@ -1094,16 +1120,42 @@ export default function AdminClient({
                         <div className="sm:col-span-2">
                           <label className="block text-xs font-semibold text-slate-400 mb-1">Campaign Name *</label>
                           <input className="input w-full" placeholder="e.g. Salesforce Pilot Launch Q2"
-                            value={campaignForm.name} onChange={(e) => setCampaignForm((p) => ({ ...p, name: e.target.value }))} />
+                            value={campaignForm.name} onChange={(e) => {
+                              const name = e.target.value;
+                              setCampaignForm((p) => ({
+                                ...p,
+                                name,
+                                utmSlug: campaignSlugEdited ? p.utmSlug : slugifyCampaignName(name),
+                              }));
+                            }} />
                         </div>
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-semibold text-slate-400 mb-1">UTM Slug * <span className="text-slate-600 font-normal">(lowercase, hyphens only)</span></label>
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <label className="block text-xs font-semibold text-slate-400">UTM Slug * <span className="text-slate-600 font-normal">(auto-generated, editable)</span></label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCampaignSlugEdited(false);
+                                setCampaignForm((p) => ({ ...p, utmSlug: slugifyCampaignName(p.name) }));
+                              }}
+                              className="text-xs text-brand font-semibold hover:underline"
+                            >
+                              Regenerate
+                            </button>
+                          </div>
                           <input className="input w-full font-mono" placeholder="e.g. sf-pilot-q2-2026"
-                            value={campaignForm.utmSlug} onChange={(e) => setCampaignForm((p) => ({ ...p, utmSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }))} />
+                            value={campaignForm.utmSlug} onChange={(e) => {
+                              setCampaignSlugEdited(true);
+                              setCampaignForm((p) => ({ ...p, utmSlug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') }));
+                            }} />
                           {campaignForm.utmSlug && (
-                            <p className="text-xs text-slate-600 mt-1">
-                              Link: <span className="font-mono">/pricing?utm_source=linkedin&utm_campaign={campaignForm.utmSlug}</span>
-                            </p>
+                            <div className="mt-2 rounded-lg bg-[#0F1923] border border-[#243044] p-3">
+                              <div className="text-xs font-semibold text-slate-400 mb-1">Ready-to-post campaign link</div>
+                              <div className="font-mono text-xs text-slate-200 break-all">{buildCampaignUrl(campaignForm.utmSlug)}</div>
+                              <button type="button" onClick={() => copyUtmLink(campaignForm.utmSlug)} className="text-xs text-brand font-semibold hover:underline mt-2">
+                                Copy link
+                              </button>
+                            </div>
                           )}
                         </div>
                         <div className="sm:col-span-2">
@@ -1209,7 +1261,7 @@ export default function AdminClient({
                           <div className="min-w-0">
                             <div className="text-xs font-semibold text-slate-400 mb-0.5">Campaign UTM Link</div>
                             <div className="font-mono text-xs text-slate-200 truncate">
-                              /pricing?utm_source=linkedin&utm_medium=social&utm_campaign={selectedCampaign.utmSlug}
+                              {buildCampaignUrl(selectedCampaign.utmSlug)}
                             </div>
                           </div>
                           <button onClick={() => copyUtmLink(selectedCampaign.utmSlug)}
@@ -1308,15 +1360,20 @@ export default function AdminClient({
                               </button>
                               <button
                                 onClick={() => {
-                                  navigator.clipboard.writeText(
-                                    postForm.content + `\n\n👉 ${window.location.origin}/pricing?utm_source=${postForm.platform}&utm_medium=social&utm_campaign=${selectedCampaign.utmSlug}`
-                                  );
-                                  toast.success('Post + UTM link copied!');
+                                  copyPostWithLink(postForm.content, postForm.platform, selectedCampaign.utmSlug);
                                 }}
                                 className="btn-secondary text-sm flex items-center gap-1.5"
                               >
                                 <FiCopy size={13} /> Copy with Link
                               </button>
+                              {postForm.platform === 'linkedin' && (
+                                <button
+                                  onClick={() => openLinkedInWithCopiedPost(postForm.content, selectedCampaign.utmSlug)}
+                                  className="btn-secondary text-sm flex items-center gap-1.5"
+                                >
+                                  <FiExternalLink size={13} /> Open LinkedIn
+                                </button>
+                              )}
                             </div>
                           </div>
                         )}
@@ -1346,14 +1403,18 @@ export default function AdminClient({
                                 <div className="flex items-center gap-2 shrink-0">
                                   <button
                                     onClick={() => {
-                                      navigator.clipboard.writeText(
-                                        post.content + `\n\n👉 ${window.location.origin}/pricing?utm_source=${post.platform}&utm_medium=social&utm_campaign=${selectedCampaign.utmSlug}`
-                                      );
-                                      toast.success('Copied!');
+                                      copyPostWithLink(post.content, post.platform, selectedCampaign.utmSlug);
                                     }}
                                     className="text-slate-600 hover:text-brand p-1"
                                     title="Copy post + link"
                                   ><FiCopy size={14} /></button>
+                                  {post.platform === 'linkedin' && (
+                                    <button
+                                      onClick={() => openLinkedInWithCopiedPost(post.content, selectedCampaign.utmSlug)}
+                                      className="text-slate-600 hover:text-brand p-1"
+                                      title="Open LinkedIn"
+                                    ><FiExternalLink size={14} /></button>
+                                  )}
                                   <button
                                     onClick={() => {
                                       setEditingPost(post);
