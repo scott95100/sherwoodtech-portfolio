@@ -41,8 +41,8 @@ jobs:
           ADMIN_NAME: ${{ secrets.ADMIN_NAME }}
         working-directory: nextjs-app
         run: |
-          npm ci --prefix . 2>/dev/null || true
-          npx prisma generate
+          npm ci
+          ./node_modules/.bin/prisma generate
           node prisma/seed.js
 
       - name: Configure Container App environment
