@@ -56,4 +56,4 @@ ENV HOSTNAME="0.0.0.0"
 
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
-CMD npx prisma migrate deploy 2>/dev/null; node prisma/seed.js 2>/dev/null; node server.js
+CMD ["sh", "-c", "npx prisma migrate deploy && node prisma/seed.js && node server.js"]
