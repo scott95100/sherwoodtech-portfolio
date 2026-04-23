@@ -355,7 +355,24 @@ export default function AdminClient({
     }
   };
 
-  const createPost = async () => {
+  const syncCampaignPostSummary = (
+    campaignId: string,
+    updatePosts: (posts: Array<{ id: string; platform: string; status: string }>) => Array<{ id: string; platform: string; status: string }>
+  ) => {
+    setCampaigns((prev) => prev.map((campaign) => (
+      campaign.id === campaignId
+        ? { ...campaign, posts: updatePosts(campaign.posts) }
+        : campaign
+    )));
+
+    setSelectedCampaign((prev) => (
+      prev && prev.id === campaignId
+        ? { ...prev, posts: updatePosts(prev.posts) }
+        : prev
+    ));
+  };
+
+  const createPost = async (openInLinkedIn = false) => {
     if (!selectedCampaign || !postForm.content) return toast.error('Content is required');
     setCampaignLoading(true);
     try {
@@ -367,9 +384,16 @@ export default function AdminClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setCampaignPosts((prev) => [data.post, ...prev]);
+      syncCampaignPostSummary(selectedCampaign.id, (posts) => [
+        { id: data.post.id, platform: data.post.platform, status: data.post.status },
+        ...posts,
+      ]);
       setPostForm({ platform: 'linkedin', content: '', status: 'DRAFT', scheduledAt: '', notes: '' });
       setShowPostForm(false);
       toast.success('Post saved');
+      if (openInLinkedIn) {
+        openLinkedInWithCopiedPost(data.post.content, selectedCampaign.utmSlug);
+      }
     } catch (e: any) {
       toast.error(e.message);
     } finally {
@@ -377,7 +401,7 @@ export default function AdminClient({
     }
   };
 
-  const updatePost = async () => {
+  const updatePost = async (openInLinkedIn = false) => {
     if (!editingPost || !selectedCampaign) return;
     setCampaignLoading(true);
     try {
@@ -389,10 +413,18 @@ export default function AdminClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setCampaignPosts((prev) => prev.map((p) => p.id === editingPost.id ? data.post : p));
+      syncCampaignPostSummary(selectedCampaign.id, (posts) => posts.map((post) => (
+        post.id === editingPost.id
+          ? { ...post, platform: data.post.platform, status: data.post.status }
+          : post
+      )));
       setEditingPost(null);
       setPostForm({ platform: 'linkedin', content: '', status: 'DRAFT', scheduledAt: '', notes: '' });
       setShowPostForm(false);
       toast.success('Post updated');
+      if (openInLinkedIn) {
+        openLinkedInWithCopiedPost(data.post.content, selectedCampaign.utmSlug);
+      }
     } catch (e: any) {
       toast.error(e.message);
     } finally {
@@ -406,6 +438,7 @@ export default function AdminClient({
     try {
       await fetch(`/api/admin/campaigns/${selectedCampaign.id}/posts/${postId}`, { method: 'DELETE' });
       setCampaignPosts((prev) => prev.filter((p) => p.id !== postId));
+      syncCampaignPostSummary(selectedCampaign.id, (posts) => posts.filter((post) => post.id !== postId));
       toast.success('Post deleted');
     } catch {
       toast.error('Failed to delete');
@@ -1441,10 +1474,10 @@ export default function AdminClient({
                               </button>
                               {postForm.platform === 'linkedin' && (
                                 <button
-                                  onClick={() => openLinkedInWithCopiedPost(postForm.content, selectedCampaign.utmSlug)}
+                                  onClick={() => editingPost ? updatePost(true) : createPost(true)}
                                   className="btn-secondary text-sm flex items-center gap-1.5"
                                 >
-                                  <FiExternalLink size={13} /> Open LinkedIn
+                                  <FiExternalLink size={13} /> Save + Open LinkedIn
                                 </button>
                               )}
                             </div>
