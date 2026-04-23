@@ -29,9 +29,14 @@ export async function GET(req: NextRequest) {
 
     const campaignsWithLeads = await Promise.all(
       campaigns.map(async (c: any) => {
-        const leadCount = await (prisma as any).projectInquiry.count({
-          where: { utmCampaign: c.utmSlug },
-        });
+        const [pricingLeadCount, betaApplicationCount] = await Promise.all([
+          (prisma as any).projectInquiry.count({
+            where: { utmCampaign: c.utmSlug },
+          }),
+          prisma.waitlist.count({
+            where: { utmCampaign: c.utmSlug },
+          }),
+        ]);
 
         try {
           const [clickCount, landingCount] = await Promise.all([
@@ -43,13 +48,27 @@ export async function GET(req: NextRequest) {
             }),
           ]);
 
-          return { ...c, leadCount, clickCount, landingCount };
+          return {
+            ...c,
+            pricingLeadCount,
+            betaApplicationCount,
+            conversionCount: pricingLeadCount + betaApplicationCount,
+            clickCount,
+            landingCount,
+          };
         } catch (error) {
           if (!isMissingCampaignEventStorage(error)) {
             throw error;
           }
 
-          return { ...c, leadCount, clickCount: 0, landingCount: 0 };
+          return {
+            ...c,
+            pricingLeadCount,
+            betaApplicationCount,
+            conversionCount: pricingLeadCount + betaApplicationCount,
+            clickCount: 0,
+            landingCount: 0,
+          };
         }
       })
     );
@@ -67,7 +86,7 @@ export async function POST(req: NextRequest) {
   if (adminOnly(session)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { name, goal, platforms, status, startDate, endDate, notes, utmSlug } = body;
+  const { name, goal, platforms, status, landingPath, startDate, endDate, notes, utmSlug } = body;
 
   if (!name || !utmSlug) {
     return NextResponse.json({ error: 'Name and UTM slug are required' }, { status: 400 });
@@ -85,6 +104,7 @@ export async function POST(req: NextRequest) {
         goal: goal || null,
         platforms: platforms || [],
         status: status || 'DRAFT',
+        landingPath: typeof landingPath === 'string' && landingPath.startsWith('/') ? landingPath : '/pricing',
         startDate: startDate ? new Date(startDate) : null,
         endDate: endDate ? new Date(endDate) : null,
         notes: notes || null,

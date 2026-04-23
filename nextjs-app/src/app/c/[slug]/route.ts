@@ -6,7 +6,15 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   const source = req.nextUrl.searchParams.get('source') || 'linkedin';
   const medium = req.nextUrl.searchParams.get('medium') || 'social';
 
-  const destination = new URL('/pricing', req.nextUrl.origin);
+  const campaign = await (prisma as any).campaign.findUnique({
+    where: { utmSlug: slug },
+    select: { id: true, landingPath: true },
+  });
+
+  const rawLandingPath = campaign?.landingPath && campaign.landingPath.startsWith('/')
+    ? campaign.landingPath
+    : '/pricing';
+  const destination = new URL(rawLandingPath, req.nextUrl.origin);
   req.nextUrl.searchParams.forEach((value, key) => {
     if (key !== 'source' && key !== 'medium') {
       destination.searchParams.set(key, value);
@@ -15,11 +23,6 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   destination.searchParams.set('utm_source', source);
   destination.searchParams.set('utm_medium', medium);
   destination.searchParams.set('utm_campaign', slug);
-
-  const campaign = await (prisma as any).campaign.findUnique({
-    where: { utmSlug: slug },
-    select: { id: true },
-  });
 
   if (campaign) {
     try {

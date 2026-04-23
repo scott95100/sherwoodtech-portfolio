@@ -23,6 +23,35 @@ type Inquiry = {
   createdAt: string;
 };
 
+type BetaApplication = {
+  id: string;
+  name: string | null;
+  email: string;
+  company: string | null;
+  role: string | null;
+  teamSize: string | null;
+  environmentCount: number | null;
+  toolStack: string[];
+  useCase: string | null;
+  biggestPain: string | null;
+  managesClientWorkloads: boolean;
+  willingToInterview: boolean;
+  linkedinUrl: string | null;
+  notes: string | null;
+  status: 'NEW' | 'REVIEWING' | 'APPROVED' | 'WAITLISTED' | 'REJECTED';
+  adminNotes: string | null;
+  reviewedAt: string | Date | null;
+  contactedAt: string | Date | null;
+  source: string | null;
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+  referrer: string | null;
+  landingPath: string | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
+
 type InvoiceLineItem = { description: string; amount: number };
 type Invoice = {
   id: string;
@@ -47,12 +76,14 @@ type CampaignPost = {
 
 type Campaign = {
   id: string; name: string; goal: string | null; platforms: string[];
-  status: string; startDate: string | null; endDate: string | null;
+  status: string; landingPath: string; startDate: string | null; endDate: string | null;
   notes: string | null; utmSlug: string; createdAt: string;
   posts: { id: string; platform: string; status: string }[];
   clickCount: number;
   landingCount: number;
-  leadCount: number;
+  pricingLeadCount: number;
+  betaApplicationCount: number;
+  conversionCount: number;
 };
 
 type SiteTrafficPage = { path: string; views: number; lastVisitedAt: string };
@@ -84,19 +115,23 @@ export default function AdminClient({
   messages,
   projects,
   inquiries: initialInquiries,
+  betaApplications: initialBetaApplications,
 }: {
   users: User[];
   messages: Message[];
   projects: Project[];
   inquiries: Inquiry[];
+  betaApplications: BetaApplication[];
 }) {
-  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'campaigns' | 'traffic' | 'invoices'>('users');
+  const [tab, setTab] = useState<'users' | 'messages' | 'projects' | 'clients' | 'invitations' | 'leads' | 'beta' | 'campaigns' | 'traffic' | 'invoices'>('users');
   const [userList, setUserList] = useState(users);
   const [msgList, setMsgList] = useState(messages);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [clientProjects, setClientProjects] = useState<ClientProject[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
+  const [betaApplications, setBetaApplications] = useState<BetaApplication[]>(initialBetaApplications);
+  const [selectedBetaApplication, setSelectedBetaApplication] = useState<BetaApplication | null>(null);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('CLIENT');
   const [inviteLoading, setInviteLoading] = useState(false);
@@ -114,7 +149,7 @@ export default function AdminClient({
   const [editingPost, setEditingPost] = useState<CampaignPost | null>(null);
   const [campaignSlugEdited, setCampaignSlugEdited] = useState(false);
   const [campaignForm, setCampaignForm] = useState({
-    name: '', goal: '', platforms: [] as string[], status: 'DRAFT',
+    name: '', goal: '', platforms: [] as string[], status: 'DRAFT', landingPath: '/pricing',
     startDate: '', endDate: '', notes: '', utmSlug: '',
   });
   const [postForm, setPostForm] = useState({
@@ -320,6 +355,45 @@ export default function AdminClient({
     }
   };
 
+  const updateBetaApplication = async (
+    id: string,
+    payload: { status?: BetaApplication['status']; adminNotes?: string; contactedAt?: string | null }
+  ) => {
+    try {
+      const res = await fetch(`/api/admin/beta-applications/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setBetaApplications((prev) => prev.map((application) => (
+        application.id === id ? data.application : application
+      )));
+      if (selectedBetaApplication?.id === id) {
+        setSelectedBetaApplication(data.application);
+      }
+      toast.success('Beta application updated');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to update beta application');
+    }
+  };
+
+  const deleteBetaApplication = async (id: string) => {
+    if (!confirm('Delete this beta application?')) return;
+    try {
+      const res = await fetch(`/api/admin/beta-applications/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setBetaApplications((prev) => prev.filter((application) => application.id !== id));
+      if (selectedBetaApplication?.id === id) setSelectedBetaApplication(null);
+      toast.success('Beta application deleted');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to delete beta application');
+    }
+  };
+
   const loadSiteTraffic = async () => {
     if (trafficLoaded) return;
     setTrafficLoading(true);
@@ -410,8 +484,16 @@ export default function AdminClient({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setCampaigns((prev) => [{ ...data.campaign, posts: [], leadCount: 0 }, ...prev]);
-      setCampaignForm({ name: '', goal: '', platforms: [], status: 'DRAFT', startDate: '', endDate: '', notes: '', utmSlug: '' });
+      setCampaigns((prev) => [{
+        ...data.campaign,
+        posts: [],
+        pricingLeadCount: 0,
+        betaApplicationCount: 0,
+        conversionCount: 0,
+        clickCount: 0,
+        landingCount: 0,
+      }, ...prev]);
+      setCampaignForm({ name: '', goal: '', platforms: [], status: 'DRAFT', landingPath: '/pricing', startDate: '', endDate: '', notes: '', utmSlug: '' });
       setCampaignSlugEdited(false);
       setShowCampaignForm(false);
       toast.success('Campaign created');
@@ -694,6 +776,7 @@ export default function AdminClient({
     { key: 'users',       label: 'Users',           icon: <FiUsers size={16} />,      count: users.length },
     { key: 'messages',    label: 'Messages',         icon: <FiMail size={16} />,       count: msgList.filter((m) => m.status === 'UNREAD').length },
     { key: 'leads',       label: 'Leads',            icon: <FiTrendingUp size={16} />, count: inquiries.filter((i) => i.status === 'NEW').length },
+    { key: 'beta',        label: 'Beta Apps',        icon: <FiSend size={16} />,       count: betaApplications.filter((application) => application.status === 'NEW').length },
     { key: 'traffic',     label: 'Site Traffic',     icon: <FiGlobe size={16} />,      count: null },
     { key: 'campaigns',   label: 'Campaigns',        icon: <FiRadio size={16} />,      count: campaigns.filter((c) => c.status === 'ACTIVE').length },
     { key: 'clients',     label: 'Client Projects',  icon: <FiFolder size={16} />,     count: null },
@@ -730,8 +813,8 @@ export default function AdminClient({
             <div className="text-slate-500 text-sm">New Leads</div>
           </div>
           <div className="bg-[#1A2535] rounded-xl shadow-sm p-5 text-center">
-            <div className="text-3xl font-bold text-brand mb-1">{invitations.filter((i) => !i.used).length}</div>
-            <div className="text-slate-500 text-sm">Pending Invites</div>
+            <div className="text-3xl font-bold text-brand mb-1">{betaApplications.filter((application) => application.status === 'NEW').length}</div>
+            <div className="text-slate-500 text-sm">New Beta Apps</div>
           </div>
         </div>
 
@@ -756,7 +839,7 @@ export default function AdminClient({
                 }`}
               >
                 {t.icon} {t.label}
-                {(t.key === 'messages' || t.key === 'leads') && (t.count ?? 0) > 0 && (
+                {(t.key === 'messages' || t.key === 'leads' || t.key === 'beta') && (t.count ?? 0) > 0 && (
                   <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {t.count}
                   </span>
@@ -1250,6 +1333,214 @@ export default function AdminClient({
               </div>
             )}
 
+            {tab === 'beta' && (
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h2 className="text-lg font-bold text-white mb-4">
+                    Beta Applications ({betaApplications.length})
+                  </h2>
+                  {betaApplications.length === 0 ? (
+                    <p className="text-slate-600 text-center py-8">No beta applications yet.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {betaApplications.map((application) => (
+                        <button
+                          key={application.id}
+                          onClick={() => setSelectedBetaApplication(application)}
+                          className={`w-full text-left border rounded-xl p-4 transition-all ${
+                            selectedBetaApplication?.id === application.id
+                              ? 'border-brand bg-brand/5'
+                              : 'border-[#243044] hover:border-brand/30'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-white text-sm truncate">{application.name || application.email}</p>
+                              <p className="text-xs text-slate-500">{application.email}</p>
+                              <p className="text-xs text-slate-600 truncate">
+                                {[application.role, application.company].filter(Boolean).join(' · ') || 'Independent operator'}
+                              </p>
+                            </div>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                              application.status === 'NEW' ? 'bg-red-50 text-red-500' :
+                              application.status === 'REVIEWING' ? 'bg-yellow-50 text-yellow-600' :
+                              application.status === 'APPROVED' ? 'bg-green-50 text-green-600' :
+                              application.status === 'WAITLISTED' ? 'bg-blue-50 text-blue-600' :
+                              'bg-[#1A2535] text-slate-500'
+                            }`}>
+                              {application.status.replace('_', ' ')}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 mt-2 text-xs text-slate-600">
+                            <span>{application.environmentCount ?? 'n/a'} envs</span>
+                            <span>·</span>
+                            <span>{application.teamSize || 'team size unknown'}</span>
+                            <span>·</span>
+                            <span>{application.utmCampaign || application.source || 'direct'}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  {!selectedBetaApplication ? (
+                    <div className="border border-dashed border-[#243044] rounded-xl p-8 text-center text-slate-600 text-sm h-full flex items-center justify-center">
+                      Select a beta application to review fit, attribution, and outreach readiness
+                    </div>
+                  ) : (
+                    <div className="border border-[#243044] rounded-xl p-6 space-y-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-bold text-white text-lg">{selectedBetaApplication.name || selectedBetaApplication.email}</h3>
+                          <p className="text-sm text-slate-500">{selectedBetaApplication.email}</p>
+                          <p className="text-xs text-slate-600 mt-1">
+                            {[selectedBetaApplication.role, selectedBetaApplication.company].filter(Boolean).join(' · ') || 'No company provided'}
+                          </p>
+                        </div>
+                        <button onClick={() => deleteBetaApplication(selectedBetaApplication.id)} className="text-red-400 hover:text-red-600">
+                          <FiTrash2 size={16} />
+                        </button>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-[#0F1923] via-[#162032] to-[#0a1525] text-white rounded-xl p-4 grid grid-cols-3 gap-3 text-center">
+                        <div>
+                          <div className="text-brand/70 text-xs mb-0.5">Status</div>
+                          <div className="font-bold text-sm">{selectedBetaApplication.status.replace('_', ' ')}</div>
+                        </div>
+                        <div>
+                          <div className="text-brand/70 text-xs mb-0.5">Environments</div>
+                          <div className="font-bold text-sm">{selectedBetaApplication.environmentCount ?? 'n/a'}</div>
+                        </div>
+                        <div>
+                          <div className="text-brand/70 text-xs mb-0.5">Interview</div>
+                          <div className="font-bold text-sm">{selectedBetaApplication.willingToInterview ? 'Yes' : 'No'}</div>
+                        </div>
+                      </div>
+
+                      <dl className="text-sm space-y-2">
+                        <div className="flex justify-between gap-4">
+                          <dt className="text-slate-500">Team size</dt>
+                          <dd className="font-medium text-right">{selectedBetaApplication.teamSize || 'Not provided'}</dd>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <dt className="text-slate-500">Client workloads</dt>
+                          <dd className="font-medium text-right">{selectedBetaApplication.managesClientWorkloads ? 'Yes' : 'No'}</dd>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <dt className="text-slate-500">LinkedIn</dt>
+                          <dd className="font-medium text-right">
+                            {selectedBetaApplication.linkedinUrl ? (
+                              <a href={selectedBetaApplication.linkedinUrl} target="_blank" rel="noreferrer" className="text-brand hover:underline inline-flex items-center gap-1">
+                                Open <FiExternalLink size={12} />
+                              </a>
+                            ) : 'Not provided'}
+                          </dd>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <dt className="text-slate-500">Attribution</dt>
+                          <dd className="font-medium text-right">{selectedBetaApplication.utmCampaign || selectedBetaApplication.source || 'Direct'}</dd>
+                        </div>
+                      </dl>
+
+                      <div>
+                        <p className="text-xs font-semibold text-slate-500 mb-1">Primary Use Case</p>
+                        <p className="text-sm text-slate-200 leading-relaxed">{selectedBetaApplication.useCase || 'Not provided'}</p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-semibold text-slate-500 mb-1">Biggest Pain</p>
+                        <p className="text-sm text-slate-200 leading-relaxed">{selectedBetaApplication.biggestPain || 'Not provided'}</p>
+                      </div>
+
+                      {selectedBetaApplication.toolStack.length > 0 && (
+                        <div>
+                          <p className="text-xs font-semibold text-slate-500 mb-2">Current Tooling</p>
+                          <div className="flex flex-wrap gap-1">
+                            {selectedBetaApplication.toolStack.map((tool) => (
+                              <span key={tool} className="text-xs bg-brand/10 text-brand px-2 py-0.5 rounded-full">{tool}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedBetaApplication.notes && (
+                        <div>
+                          <p className="text-xs font-semibold text-slate-500 mb-1">Applicant Notes</p>
+                          <p className="text-sm text-slate-200 leading-relaxed">{selectedBetaApplication.notes}</p>
+                        </div>
+                      )}
+
+                      <div className="rounded-xl border border-[#243044] bg-[#0F1923] p-4 space-y-2 text-sm">
+                        <div className="flex justify-between gap-4">
+                          <span className="text-slate-500">UTM Source</span>
+                          <span className="text-slate-200 text-right">{selectedBetaApplication.utmSource || 'n/a'}</span>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <span className="text-slate-500">UTM Medium</span>
+                          <span className="text-slate-200 text-right">{selectedBetaApplication.utmMedium || 'n/a'}</span>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <span className="text-slate-500">Landing Path</span>
+                          <span className="text-slate-200 text-right">{selectedBetaApplication.landingPath || 'n/a'}</span>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <span className="text-slate-500">Submitted</span>
+                          <span className="text-slate-200 text-right">{new Date(selectedBetaApplication.createdAt).toLocaleString()}</span>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-[#243044] pt-4 space-y-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Update Status</label>
+                          <select
+                            value={selectedBetaApplication.status}
+                            onChange={(e) => updateBetaApplication(selectedBetaApplication.id, { status: e.target.value as BetaApplication['status'] })}
+                            className="input text-sm w-full"
+                          >
+                            <option value="NEW">New</option>
+                            <option value="REVIEWING">Reviewing</option>
+                            <option value="APPROVED">Approved</option>
+                            <option value="WAITLISTED">Waitlisted</option>
+                            <option value="REJECTED">Rejected</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Internal Notes</label>
+                          <textarea
+                            className="input text-sm w-full"
+                            rows={3}
+                            placeholder="Fit notes, follow-up angle, or objections..."
+                            defaultValue={selectedBetaApplication.adminNotes || ''}
+                            onBlur={(e) => {
+                              if (e.target.value !== (selectedBetaApplication.adminNotes || '')) {
+                                updateBetaApplication(selectedBetaApplication.id, { adminNotes: e.target.value });
+                              }
+                            }}
+                          />
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => updateBetaApplication(selectedBetaApplication.id, { contactedAt: new Date().toISOString() })}
+                            className="btn-secondary text-sm"
+                          >
+                            {selectedBetaApplication.contactedAt ? 'Update Contacted Time' : 'Mark Contacted'}
+                          </button>
+                          <a
+                            href={`mailto:${selectedBetaApplication.email}?subject=${encodeURIComponent('Omnis DevOps beta application')}`}
+                            className="btn-primary text-sm text-center block flex-1"
+                          >
+                            Email Applicant
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {tab === 'traffic' && (
               <div className="space-y-6">
                 <div className="flex flex-wrap items-center justify-between gap-3 border border-[#243044] rounded-xl p-4 bg-[#0F1923]">
@@ -1419,7 +1710,7 @@ export default function AdminClient({
                         <span>{c.posts.length} posts</span>
                         <span>{c.clickCount} clicks</span>
                         <span>{c.landingCount} landings</span>
-                        <span>{c.leadCount} leads</span>
+                        <span>{c.conversionCount} conversions</span>
                         <span>{c.platforms.join(', ')}</span>
                       </div>
                     </button>
@@ -1481,6 +1772,19 @@ export default function AdminClient({
                           <label className="block text-xs font-semibold text-slate-400 mb-1">Goal</label>
                           <input className="input w-full" placeholder="e.g. Generate 5 Salesforce pilot leads"
                             value={campaignForm.goal} onChange={(e) => setCampaignForm((p) => ({ ...p, goal: e.target.value }))} />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-slate-400 mb-1">Landing Path</label>
+                          <input
+                            className="input w-full font-mono"
+                            placeholder="/platform"
+                            value={campaignForm.landingPath}
+                            onChange={(e) => setCampaignForm((p) => ({
+                              ...p,
+                              landingPath: e.target.value.startsWith('/') ? e.target.value : `/${e.target.value.replace(/^\/+/, '')}`,
+                            }))}
+                          />
+                          <p className="text-xs text-slate-600 mt-1">Use /platform for beta campaigns and /pricing for service lead campaigns.</p>
                         </div>
                         <div>
                           <label className="block text-xs font-semibold text-slate-400 mb-1">Platforms</label>
@@ -1567,8 +1871,8 @@ export default function AdminClient({
                           <div className="text-xs text-slate-500">Landings</div>
                         </div>
                         <div className="bg-[#0F1923] rounded-xl p-3 text-center">
-                          <div className="text-xl font-bold text-brand">{selectedCampaign.leadCount}</div>
-                          <div className="text-xs text-slate-500">Leads Attributed</div>
+                          <div className="text-xl font-bold text-brand">{selectedCampaign.conversionCount}</div>
+                          <div className="text-xs text-slate-500">Conversions</div>
                         </div>
                         <div className="bg-[#0F1923] rounded-xl p-3 text-center">
                           <div className="text-xl font-bold text-brand">
@@ -1586,11 +1890,27 @@ export default function AdminClient({
                             <div className="font-mono text-xs text-slate-200 truncate">
                               {buildCampaignUrl(selectedCampaign.utmSlug)}
                             </div>
+                            <div className="text-xs text-slate-500 mt-1">Redirects to {selectedCampaign.landingPath}</div>
                           </div>
                           <button onClick={() => copyUtmLink(selectedCampaign.utmSlug)}
                             className="shrink-0 flex items-center gap-1.5 text-brand text-xs font-semibold hover:underline">
                             <FiCopy size={13} /> Copy
                           </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="bg-[#0F1923] rounded-xl p-3 border border-[#243044] text-center">
+                          <div className="text-lg font-bold text-brand">{selectedCampaign.pricingLeadCount}</div>
+                          <div className="text-xs text-slate-500">Pricing Leads</div>
+                        </div>
+                        <div className="bg-[#0F1923] rounded-xl p-3 border border-[#243044] text-center">
+                          <div className="text-lg font-bold text-brand">{selectedCampaign.betaApplicationCount}</div>
+                          <div className="text-xs text-slate-500">Beta Apps</div>
+                        </div>
+                        <div className="bg-[#0F1923] rounded-xl p-3 border border-[#243044] text-center">
+                          <div className="text-lg font-bold text-brand">{selectedCampaign.clickCount > 0 ? `${Math.round((selectedCampaign.conversionCount / selectedCampaign.clickCount) * 100)}%` : '0%'}</div>
+                          <div className="text-xs text-slate-500">Click to Conversion</div>
                         </div>
                       </div>
 

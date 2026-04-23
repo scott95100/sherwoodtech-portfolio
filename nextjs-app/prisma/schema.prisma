@@ -366,6 +366,7 @@ model Campaign {
   goal        String?          // e.g. "Generate 5 leads for Salesforce pilot"
   platforms   String[]         // e.g. ["linkedin", "twitter"]
   status      CampaignStatus   @default(DRAFT)
+  landingPath String           @default("/pricing")
   startDate   DateTime?
   endDate     DateTime?
   notes       String?
@@ -490,11 +491,43 @@ enum InvoiceStatus {
 
 // ─── Omnis DevOps Waitlist ───────────────────────────────────────────────────
 
+enum BetaApplicationStatus {
+  NEW
+  REVIEWING
+  APPROVED
+  WAITLISTED
+  REJECTED
+}
+
 model Waitlist {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  company   String?
-  source    String?  @default("platform-page")
-  createdAt DateTime @default(now())
+  id                     String                @id @default(cuid())
+  email                  String                @unique
+  name                   String?
+  company                String?
+  role                   String?
+  teamSize               String?
+  environmentCount       Int?
+  toolStack              String[]              @default([])
+  useCase                String?
+  biggestPain            String?
+  managesClientWorkloads Boolean               @default(false)
+  willingToInterview     Boolean               @default(false)
+  linkedinUrl            String?
+  notes                  String?
+  status                 BetaApplicationStatus @default(NEW)
+  adminNotes             String?
+  reviewedAt             DateTime?
+  contactedAt            DateTime?
+  source                 String?               @default("platform-page")
+  utmSource              String?
+  utmMedium              String?
+  utmCampaign            String?
+  referrer               String?
+  landingPath            String?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+
+  @@index([status])
+  @@index([utmCampaign])
+  @@index([createdAt])
 }
