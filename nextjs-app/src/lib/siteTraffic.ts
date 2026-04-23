@@ -2,9 +2,12 @@ export const SITE_TRAFFIC_OPTOUT_KEY = 'stc-site-traffic-optout';
 export const SITE_TRAFFIC_SESSION_KEY = 'stc-site-traffic-session';
 
 const EXCLUDED_PREFIXES = ['/api', '/admin', '/dashboard', '/client-portal', '/_next'];
+const EXCLUDED_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
 
 export function isTrackableSitePath(pathname: string) {
-  return pathname !== '' && !EXCLUDED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  return pathname !== ''
+    && !EXCLUDED_PATHS.includes(pathname)
+    && !EXCLUDED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 export function getSiteTrafficOptOut() {

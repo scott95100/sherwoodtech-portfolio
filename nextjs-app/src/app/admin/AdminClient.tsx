@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FiUsers, FiMail, FiFolder, FiCheck, FiLink, FiTrash2, FiPlus, FiTrendingUp, FiRadio, FiCopy, FiEdit2, FiX, FiDollarSign, FiSend, FiExternalLink, FiGlobe } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import { getSiteTrafficOptOut, setSiteTrafficOptOut, SITE_TRAFFIC_OPTOUT_KEY } from '@/lib/siteTraffic';
+import { getSiteTrafficOptOut, setSiteTrafficOptOut, SITE_TRAFFIC_OPTOUT_KEY, SITE_TRAFFIC_SESSION_KEY } from '@/lib/siteTraffic';
 
 type User = { id: string; name: string; email: string; role: string; createdAt: Date; isActive: boolean };
 type Message = { id: string; name: string; email: string; subject: string; message: string; status: string; createdAt: Date };
@@ -333,6 +333,44 @@ export default function AdminClient({
       toast.error(e.message || 'Failed to load site traffic');
     } finally {
       setTrafficLoading(false);
+    }
+  };
+
+  const refreshSiteTraffic = async () => {
+    setTrafficLoaded(false);
+    setTrafficLoading(true);
+    try {
+      const res = await fetch('/api/admin/site-traffic');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setSiteTraffic(data);
+      setTrafficLoaded(true);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to load site traffic');
+    } finally {
+      setTrafficLoading(false);
+    }
+  };
+
+  const deleteMyTrafficVisits = async () => {
+    const sessionId = window.sessionStorage.getItem(SITE_TRAFFIC_SESSION_KEY);
+    if (!sessionId) {
+      toast.error('No browser traffic session found');
+      return;
+    }
+
+    if (!confirm('Delete traffic records collected from this browser session?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/site-traffic?sessionId=${encodeURIComponent(sessionId)}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast.success(`Deleted ${data.deletedCount} visit${data.deletedCount === 1 ? '' : 's'} from this browser session`);
+      await refreshSiteTraffic();
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to delete visits');
     }
   };
 
@@ -1217,18 +1255,26 @@ export default function AdminClient({
                 <div className="flex flex-wrap items-center justify-between gap-3 border border-[#243044] rounded-xl p-4 bg-[#0F1923]">
                   <div>
                     <h3 className="text-sm font-semibold text-slate-200">Ignore Your Own Visits</h3>
-                    <p className="text-xs text-slate-500 mt-1">When enabled, this browser will not be counted in site traffic. Admin sessions are opted out automatically.</p>
+                    <p className="text-xs text-slate-500 mt-1">When enabled, this browser will not be counted in site traffic. Admin sessions are opted out automatically, and auth pages are excluded entirely.</p>
                   </div>
-                  <button
-                    onClick={() => updateTrafficOptOut(!trafficOptOut)}
-                    className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-colors ${
-                      trafficOptOut
-                        ? 'bg-brand text-white border-brand'
-                        : 'bg-[#1A2535] text-slate-300 border-[#243044]'
-                    }`}
-                  >
-                    {trafficOptOut ? 'Ignoring This Browser' : 'Ignore This Browser'}
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={deleteMyTrafficVisits}
+                      className="px-3 py-2 rounded-lg text-sm font-semibold border border-[#243044] bg-[#1A2535] text-slate-300 transition-colors hover:border-red-500 hover:text-red-400"
+                    >
+                      Delete My Existing Visits
+                    </button>
+                    <button
+                      onClick={() => updateTrafficOptOut(!trafficOptOut)}
+                      className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                        trafficOptOut
+                          ? 'bg-brand text-white border-brand'
+                          : 'bg-[#1A2535] text-slate-300 border-[#243044]'
+                      }`}
+                    >
+                      {trafficOptOut ? 'Ignoring This Browser' : 'Ignore This Browser'}
+                    </button>
+                  </div>
                 </div>
 
                 {trafficLoading && !trafficLoaded && (
