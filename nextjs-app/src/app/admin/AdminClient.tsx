@@ -501,6 +501,65 @@ export default function AdminClient({
     toast.success('LinkedIn opened. Your post is on the clipboard.');
   };
 
+  const buildGeneratedPost = ({
+    campaign,
+    platform,
+    notes,
+  }: {
+    campaign: Pick<Campaign, 'name' | 'goal' | 'notes' | 'utmSlug'>;
+    platform: string;
+    notes: string;
+  }) => {
+    const goal = campaign.goal?.trim();
+    const campaignNotes = campaign.notes?.trim();
+    const postNotes = notes.trim();
+    const focusLine = goal || `We're running a focused push around ${campaign.name}.`;
+    const supportLine = postNotes || campaignNotes || 'If this is on your roadmap, I can share a practical next-step plan.';
+
+    if (platform === 'twitter') {
+      return `${campaign.name}\n\n${focusLine}\n\n${supportLine}`.slice(0, 280);
+    }
+
+    if (platform === 'email') {
+      return [
+        `Subject: ${campaign.name}`,
+        '',
+        `Hi,`,
+        '',
+        focusLine,
+        supportLine,
+        '',
+        'If you want, I can send over a short outline of scope, timeline, and next steps.',
+        '',
+        'Scott',
+      ].join('\n');
+    }
+
+    return [
+      `If ${campaign.name} is relevant to your team right now, this is the conversation I want to have.`,
+      '',
+      focusLine,
+      '',
+      supportLine,
+      '',
+      'I put together a short breakdown of how STC would approach it, what to prioritize first, and where teams usually lose time.',
+      '',
+      'If you want the outline, take a look here:',
+    ].join('\n');
+  };
+
+  const generatePostDraft = (campaign: Pick<Campaign, 'name' | 'goal' | 'notes' | 'utmSlug'>) => {
+    setPostForm((prev) => ({
+      ...prev,
+      content: buildGeneratedPost({
+        campaign,
+        platform: prev.platform,
+        notes: prev.notes,
+      }),
+    }));
+    toast.success('Draft generated');
+  };
+
   const tabs = [
     { key: 'users',       label: 'Users',           icon: <FiUsers size={16} />,      count: users.length },
     { key: 'messages',    label: 'Messages',         icon: <FiMail size={16} />,       count: msgList.filter((m) => m.status === 'UNREAD').length },
@@ -1351,6 +1410,12 @@ export default function AdminClient({
                               </div>
                             </div>
                             <div className="flex gap-2">
+                              <button
+                                onClick={() => generatePostDraft(selectedCampaign)}
+                                className="btn-secondary text-sm flex items-center gap-1.5"
+                              >
+                                <FiSend size={13} /> Generate Draft
+                              </button>
                               <button
                                 onClick={editingPost ? updatePost : createPost}
                                 disabled={campaignLoading}
