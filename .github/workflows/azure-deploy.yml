@@ -65,6 +65,7 @@ jobs:
           CONTACT_NOTIFICATION_EMAIL: ${{ secrets.CONTACT_NOTIFICATION_EMAIL }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_NAME: ${{ secrets.ADMIN_NAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: |
           az containerapp update \
             --name stc-webapp \
@@ -77,4 +78,31 @@ jobs:
             "AZURE_EMAIL_SENDER=$AZURE_EMAIL_SENDER" \
             "CONTACT_NOTIFICATION_EMAIL=$CONTACT_NOTIFICATION_EMAIL" \
             "ADMIN_EMAIL=$ADMIN_EMAIL" \
-            "ADMIN_NAME=$ADMIN_NAME"
+            "ADMIN_NAME=$ADMIN_NAME" \
+            "ADMIN_PASSWORD=$ADMIN_PASSWORD"
+
+      - name: Verify new revision is ready
+        run: |
+          echo "Waiting for latest revision to become ready..."
+          for i in $(seq 1 20); do
+            LATEST=$(az containerapp revision list \
+              --name stc-webapp \
+              --resource-group stc-production \
+              --query "reverse(sort_by(@, &properties.createdTime))[0]" \
+              --output json)
+            READY=$(echo "$LATEST" | jq -r '.properties.healthState')
+            REVISION=$(echo "$LATEST" | jq -r '.name')
+            echo "Revision $REVISION health: $READY"
+            if [ "$READY" = "Healthy" ]; then
+              echo "✅ Revision $REVISION is ready."
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "❌ New revision did not become healthy within 5 minutes."
+          az containerapp logs show \
+            --name stc-webapp \
+            --resource-group stc-production \
+            --revision "$REVISION" \
+            --tail 100 || true
+          exit 1
