@@ -32,7 +32,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const application = await prisma.waitlist.update({
       where: { id: params.id },
       data: {
-        status: status as any,
+        ...(status ? { status: status as any } : {}),
         adminNotes,
         contactedAt,
         reviewedAt: status && status !== 'NEW' ? new Date() : undefined,
