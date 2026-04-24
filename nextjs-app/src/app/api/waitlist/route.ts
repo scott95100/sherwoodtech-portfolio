@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { sendBetaApplicationConfirmation } from '@/lib/email';
 
 function normalizeOptionalString(value: unknown) {
   if (typeof value !== 'string') return null;
@@ -115,6 +116,11 @@ export async function POST(req: NextRequest) {
         landingPath,
       },
     });
+
+    // Send confirmation email to applicant — fire and forget, don't block the response
+    sendBetaApplicationConfirmation(email, name).catch((err) =>
+      console.error('Beta confirmation email failed:', err)
+    );
 
     return NextResponse.json({ success: true, application }, { status: 201 });
   } catch (error) {
